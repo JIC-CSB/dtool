@@ -21,7 +21,7 @@ def test_generate_manifest():
 
     from dtool import generate_manifest
 
-    expected_manifest_file = os.path.join(TEST_OUTPUT_DATA, 'raw_manifest.json')
+    expected_manifest_file = os.path.join(TEST_OUTPUT_DATA, 'manifest.json')
     with open(expected_manifest_file) as fh:
         expected = json.load(fh)
 
@@ -40,16 +40,3 @@ def test_generate_full_file_list():
     actual = generate_full_file_list(test_archive_path)
 
     assert sorted(actual) == sorted(expected)
-
-def test_generate_archive_manifest():
-
-    from dtool import generate_archive_manifest
-
-    expected_manifest_file = os.path.join(TEST_OUTPUT_DATA, 'manifest.json')
-    with open(expected_manifest_file) as fh:
-        expected = json.load(fh)
-
-    test_archive_path = os.path.join(TEST_INPUT_DATA, 'archive')
-    actual = generate_archive_manifest(test_archive_path)
-
-    assert actual == expected

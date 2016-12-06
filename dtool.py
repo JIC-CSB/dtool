@@ -2,8 +2,10 @@
 """Tool for managing JIC archive data."""
 
 import os
+import json
 import hashlib
 import argparse
+import subprocess
 
 def shasum(filename):
     """Return hex digest of SHA-1 hash of file."""
@@ -19,7 +21,7 @@ def shasum(filename):
     return hasher.hexdigest()
 
 def generate_manifest(path):
-    """Return manfifest data structure.
+    """Return archive manfifest data structure.
 
     Structure includes all files in the filesystem rooted at path with:
 
@@ -46,23 +48,9 @@ def generate_manifest(path):
         entry['mtime'] = st_mtime
         entries.append(entry)
 
-    return entries
+    manifest = { "file_list" : entries }
 
-def generate_archive_manifest(path):
-    """Return archive data structure.
-
-    This is a file manifest (see generate_manifest) rooted at the 'archive'
-    level.
-    """
-
-    raw_manifest = generate_manifest(path)
-
-    for entry in raw_manifest:
-        filename = entry['path']
-        archive_filename = os.path.join('archive', filename)
-        entry['path'] = archive_filename
-
-    return raw_manifest 
+    return manifest
 
 def generate_full_file_list(path):
     """Return a list of fully qualified paths to all files in directories under
@@ -70,7 +58,11 @@ def generate_full_file_list(path):
 
     file_list = []
 
-    path_length = 1 + len(path)
+    # FIXME - platform dependency
+    if path[-1] == '/':
+        path_length = len(path)
+    else:
+        path_length = 1 + len(path)
     
     for dirpath, dirnames, filenames in os.walk(path):
         for fn in filenames:
@@ -79,14 +71,48 @@ def generate_full_file_list(path):
 
     return file_list
 
-def create_archive_manifest():
+def create_manifest(args):
 
-    pass
+    archive_root_path, _ = os.path.split(args.data_path)
+    manifest_filename = os.path.join(archive_root_path, 'manifest.json')
+
+    manifest_data = generate_manifest(args.data_path)
+
+    with open(manifest_filename, 'w') as f:
+        json.dump(manifest_data, f, indent=4)
+
+def create_archive(args):
+
+    archive_name = 'arc.tar'
+
+    tar_command = ['tar', '-cvf', os.path.join('..', archive_name), '.']
+    subprocess.call(tar_command, cwd=args.data_path)
+
+    gzip_command = ['gzip', archive_name]
+    subprocess.call(gzip_command)
 
 def main():
 
-    parser = argparse.ArgumentParser(__doc__)  
+    parser = argparse.ArgumentParser(description=__doc__)
 
+    subparsers = parser.add_subparsers(help='sub-command help', 
+                                        dest='subparser_name')
+
+    parser_manifest = subparsers.add_parser('manifest', help='Manage data manifest')
+    manifest_subparsers = parser_manifest.add_subparsers()
+    parser_manifest_create = manifest_subparsers.add_parser('create', help='Create data manifest')
+    parser_manifest_create.set_defaults(func=create_manifest)
+    parser_manifest_create.add_argument('data_path', help='Path to data')
+
+    parser_archive = subparsers.add_parser('archive', help='Manage data archive')
+    archive_subparsers = parser_archive.add_subparsers()
+    parser_archive_create = archive_subparsers.add_parser('create', help='Create data archive')
+    parser_archive_create.set_defaults(func=create_archive)
+    parser_archive_create.add_argument('data_path', help='Path to data')
+
+    args = parser.parse_args()
+
+    args.func(args)
     
 
 if __name__ == "__main__":
