@@ -1,0 +1,14 @@
+[
+    {
+        "path": "archive/file1.txt", 
+        "mtime": 1481020003.0, 
+        "hash": "a250369afb3eeaa96fb0df99e7755ba784dfd69c", 
+        "size": 17
+    }, 
+    {
+        "path": "archive/dir1/file2.txt", 
+        "mtime": 1481020011.0, 
+        "hash": "02804e1255f67e979946b0f8d1d38a78c0fefb83", 
+        "size": 14
+    }
+]
