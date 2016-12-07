@@ -1,4 +1,8 @@
+.coverage
+
 *.swp
 *.pyc
 
+*.egg-info/
+.tox/
 env/
