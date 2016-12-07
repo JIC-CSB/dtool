@@ -28,7 +28,10 @@ def test_generate_manifest():
     test_archive_path = os.path.join(TEST_INPUT_DATA, 'archive')
     actual = generate_manifest(test_archive_path)
 
-    assert(actual == expected)
+    for a, e in zip(actual["file_list"], expected["file_list"]):
+        assert a["path"] == e["path"]
+        assert a["hash"] == e["hash"]
+        assert a["size"] == e["size"]
 
 def test_generate_full_file_list():
 
