@@ -7,6 +7,13 @@ import hashlib
 import argparse
 import subprocess
 
+VERBOSE = True
+
+def log(message):
+
+    if VERBOSE:
+        print(message)
+
 def shasum(filename):
     """Return hex digest of SHA-1 hash of file."""
 
@@ -34,8 +41,10 @@ def generate_manifest(path):
 
     full_file_list = generate_full_file_list(path)
 
+    log('Building manifest')
     entries = []
-    for filename in full_file_list:
+    for n, filename in enumerate(full_file_list):
+        log('Processing ({}/{}) {}'.format(1+n, len(full_file_list), filename))
         fq_filename = os.path.join(path, filename)
         st_size = os.stat(fq_filename).st_size
         st_mtime = os.stat(fq_filename).st_mtime
@@ -59,6 +68,7 @@ def generate_full_file_list(path):
     file_list = []
 
     # FIXME - platform dependency
+    log('Generating file list')
     if path[-1] == '/':
         path_length = len(path)
     else:
