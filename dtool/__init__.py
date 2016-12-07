@@ -9,10 +9,12 @@ import subprocess
 
 VERBOSE = True
 
+
 def log(message):
 
     if VERBOSE:
         print(message)
+
 
 def shasum(filename):
     """Return hex digest of SHA-1 hash of file."""
@@ -26,6 +28,7 @@ def shasum(filename):
             buf = f.read(BUF_SIZE)
 
     return hasher.hexdigest()
+
 
 def generate_manifest(path):
     """Return archive manfifest data structure.
@@ -57,9 +60,10 @@ def generate_manifest(path):
         entry['mtime'] = st_mtime
         entries.append(entry)
 
-    manifest = { "file_list" : entries }
+    manifest = dict(file_list=entries)
 
     return manifest
+
 
 def generate_full_file_list(path):
     """Return a list of fully qualified paths to all files in directories under
@@ -73,13 +77,14 @@ def generate_full_file_list(path):
         path_length = len(path)
     else:
         path_length = 1 + len(path)
-    
+
     for dirpath, dirnames, filenames in os.walk(path):
         for fn in filenames:
             relative_path = os.path.join(dirpath, fn)
             file_list.append(relative_path[path_length:])
 
     return file_list
+
 
 def create_manifest(args):
 
@@ -91,6 +96,7 @@ def create_manifest(args):
     with open(manifest_filename, 'w') as f:
         json.dump(manifest_data, f, indent=4)
 
+
 def create_archive(args):
 
     archive_name = 'arc.tar'
@@ -101,29 +107,33 @@ def create_archive(args):
     gzip_command = ['gzip', archive_name]
     subprocess.call(gzip_command)
 
+
 def main():
 
     parser = argparse.ArgumentParser(description=__doc__)
 
-    subparsers = parser.add_subparsers(help='sub-command help', 
-                                        dest='subparser_name')
+    subparsers = parser.add_subparsers(help='sub-command help',
+                                       dest='subparser_name')
 
-    parser_manifest = subparsers.add_parser('manifest', help='Manage data manifest')
-    manifest_subparsers = parser_manifest.add_subparsers()
-    parser_manifest_create = manifest_subparsers.add_parser('create', help='Create data manifest')
-    parser_manifest_create.set_defaults(func=create_manifest)
-    parser_manifest_create.add_argument('data_path', help='Path to data')
+    manifest_p = subparsers.add_parser('manifest', help='Manage data manifest')
+    manifest_sps = manifest_p.add_subparsers()
+    manifest_create_p = manifest_sps.add_parser('create',
+                                                help='Create data manifest')
+    manifest_create_p.set_defaults(func=create_manifest)
+    manifest_create_p.add_argument('data_path', help='Path to data')
 
-    parser_archive = subparsers.add_parser('archive', help='Manage data archive')
-    archive_subparsers = parser_archive.add_subparsers()
-    parser_archive_create = archive_subparsers.add_parser('create', help='Create data archive')
-    parser_archive_create.set_defaults(func=create_archive)
-    parser_archive_create.add_argument('data_path', help='Path to data')
+    archive_p = subparsers.add_parser('archive',
+                                      help='Manage data archive')
+    archive_sps = archive_p.add_subparsers()
+    archive_creates_p = archive_sps.add_parser('create',
+                                               help='Create data archive')
+    archive_creates_p.set_defaults(func=create_archive)
+    archive_creates_p.add_argument('data_path', help='Path to data')
 
     args = parser.parse_args()
 
     args.func(args)
-    
+
 
 if __name__ == "__main__":
     main()
