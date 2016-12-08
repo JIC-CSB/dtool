@@ -40,9 +40,9 @@ def shasum(filename):
 
 
 def generate_manifest(path):
-    """Return archive manfifest data structure.
+    """Return archive manifest data structure.
 
-    Structure includes all files in the filesystem rooted at path with:
+    Structure includes all files in the file system rooted at path with:
 
     * Relative path
     * SHA1 hash
