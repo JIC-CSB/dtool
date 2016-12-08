@@ -85,12 +85,12 @@ def generate_full_file_list(path):
     return file_list
 
 
-def create_manifest(args):
+def create_manifest(path):
 
-    archive_root_path, _ = os.path.split(args.data_path)
+    archive_root_path, _ = os.path.split(path)
     manifest_filename = os.path.join(archive_root_path, 'manifest.json')
 
-    manifest_data = generate_manifest(args.data_path)
+    manifest_data = generate_manifest(path)
 
     with open(manifest_filename, 'w') as f:
         json.dump(manifest_data, f, indent=4)

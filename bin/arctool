@@ -2,8 +2,10 @@
 """Manage archiving of data."""
 
 import argparse
-from dtool import create_archive, create_manifest
 
+import click
+
+from dtool import create_archive, create_manifest
 
 def main():
 
@@ -31,5 +33,34 @@ def main():
 
     args.func(args)
 
+
+@click.group()
+def cli():
+    pass
+
+@cli.command()
+@click.option('--staging_path', 
+              help='Path to staging area where new archive will be created',
+              default='.',
+              type=click.Path(exists=True))
+def new(staging_path):
+    print('Start new archive in {}'.format(staging_path))
+
+@cli.group()
+def manifest():
+    pass
+
+@manifest.command()
+@click.argument('path', 'Path to archive directory.', 
+                type=click.Path(exists=True))
+def create(path):
+    create_manifest(path)
+
+@cli.group()
+def archive():
+    pass
+  
+#cli = click.CommandCollection(sources=[manifest, archive, init])
+
 if __name__ == "__main__":
-    main()
+    cli()
