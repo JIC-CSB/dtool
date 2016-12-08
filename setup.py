@@ -5,5 +5,4 @@ version = "0.2.0"
 
 setup(name="dtool",
       version=version,
-      packages=["dtool"],
-)
+      packages=["dtool"])

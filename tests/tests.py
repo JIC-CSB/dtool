@@ -7,6 +7,7 @@ HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "input")
 TEST_OUTPUT_DATA = os.path.join(HERE, "data", "output")
 
+
 def test_shasum():
 
     from dtool import shasum
@@ -17,6 +18,7 @@ def test_shasum():
     actual = shasum(test_file)
 
     assert actual == expected
+
 
 def test_generate_manifest():
 
@@ -33,6 +35,7 @@ def test_generate_manifest():
         assert a["path"] == e["path"]
         assert a["hash"] == e["hash"]
         assert a["size"] == e["size"]
+
 
 def test_generate_full_file_list():
 
