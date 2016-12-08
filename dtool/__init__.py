@@ -97,6 +97,10 @@ def generate_full_file_list(path):
 
 def create_manifest(path):
 
+    # Remove trailing slash.
+    if path[-1] == "/":
+        path = path[:-1]
+
     archive_root_path, _ = os.path.split(path)
     manifest_filename = os.path.join(archive_root_path, 'manifest.json')
 

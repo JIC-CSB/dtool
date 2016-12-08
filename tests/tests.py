@@ -2,6 +2,8 @@
 
 import os
 import json
+import shutil
+import tempfile
 
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "input")
@@ -47,3 +49,30 @@ def test_generate_full_file_list():
     actual = generate_full_file_list(test_archive_path)
 
     assert sorted(actual) == sorted(expected)
+
+
+def test_create_manifest():
+    from dtool import create_manifest
+
+    tmp_dir = tempfile.mkdtemp()
+    tmp_project = os.path.join(tmp_dir, "proj")
+
+    shutil.copytree(TEST_INPUT_DATA, tmp_project)
+    create_manifest(os.path.join(tmp_project, "archive"))
+
+    manifest_path = os.path.join(tmp_project, "manifest.json")
+    assert os.path.isfile(manifest_path)
+    shutil.rmtree(tmp_dir)
+
+def test_create_manifest_strip_trailing_slash():
+    from dtool import create_manifest
+
+    tmp_dir = tempfile.mkdtemp()
+    tmp_project = os.path.join(tmp_dir, "proj")
+
+    shutil.copytree(TEST_INPUT_DATA, tmp_project)
+    create_manifest(os.path.join(tmp_project, "archive/"))
+
+    manifest_path = os.path.join(tmp_project, "manifest.json")
+    assert os.path.isfile(manifest_path)
+    shutil.rmtree(tmp_dir)
