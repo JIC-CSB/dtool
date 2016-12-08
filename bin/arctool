@@ -7,6 +7,7 @@ import click
 
 from dtool import create_archive, create_manifest, new_archive
 
+
 def main():
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -38,6 +39,7 @@ def main():
 def cli():
     pass
 
+
 @cli.command()
 @click.option('--staging_path',
               help='Path to staging area where new archive will be created',
@@ -47,9 +49,11 @@ def new(staging_path):
     print('Starting new archive in {}'.format(staging_path))
     new_archive(staging_path)
 
+
 @cli.group()
 def manifest():
     pass
+
 
 @manifest.command()
 @click.argument('path', 'Path to archive directory.',
@@ -57,11 +61,11 @@ def manifest():
 def create(path):
     create_manifest(path)
 
+
 @cli.group()
 def archive():
     pass
 
-#cli = click.CommandCollection(sources=[manifest, archive, init])
 
 if __name__ == "__main__":
     cli()
