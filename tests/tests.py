@@ -64,6 +64,7 @@ def test_create_manifest():
     assert os.path.isfile(manifest_path)
     shutil.rmtree(tmp_dir)
 
+
 def test_create_manifest_strip_trailing_slash():
     from dtool import create_manifest
 
