@@ -24,6 +24,10 @@ def log(message):
 def shasum(filename):
     """Return hex digest of SHA-1 hash of file."""
 
+    # Tried using Mac native shasum. But this was slower.
+    # Maybe not surprising as shasum on Mac was a Perl script,
+    # i.e. not a compiled binary.
+
     BUF_SIZE = 65536
     hasher = hashlib.sha1()
     with open(filename, 'rb') as f:
