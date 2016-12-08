@@ -1,9 +1,9 @@
 {
   "project_name": "improve_crop_yields",
   "dataset_name": "brassica_rnaseq_reads",
-  "owner_name": "Jane Blogs",
-  "owner_email": "jane.blogs@jic.ac.uk",
-  "owner_unix_username": "blogsj",
+  "owner_name": "Your Name",
+  "owner_email": "your.name@jic.ac.uk",
+  "owner_unix_username": "namey",
   "archive_date": "{% now 'utc', '%Y-%m-%d' %}",
   "_extensions": ["jinja2_time.TimeExtension"]
 }

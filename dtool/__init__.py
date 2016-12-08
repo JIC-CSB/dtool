@@ -5,6 +5,7 @@ import os
 import json
 import hashlib
 import subprocess
+import getpass
 
 from cookiecutter.main import cookiecutter
 
@@ -102,9 +103,12 @@ def create_manifest(path):
 
 
 def new_archive(staging_path):
-
+    unix_username = getpass.getuser()
+    email = "{}.nbi.ac.uk".format(unix_username)
     archive_template = os.path.join(TEMPLATE_DIR, 'archive')
-    cookiecutter(archive_template, output_dir=staging_path)
+    cookiecutter(archive_template, output_dir=staging_path,
+                 extra_context=dict(owner_unix_username=unix_username,
+                                    owner_email=email))
 
 
 def create_archive(args):
