@@ -114,7 +114,7 @@ def create_manifest(path):
 
 def new_archive(staging_path, no_input=False):
     unix_username = getpass.getuser()
-    email = "{}.nbi.ac.uk".format(unix_username)
+    email = "{}@nbi.ac.uk".format(unix_username)
     archive_template = os.path.join(TEMPLATE_DIR, 'archive')
     extra_context = dict(owner_unix_username=unix_username,
                          owner_email=email)
@@ -124,12 +124,14 @@ def new_archive(staging_path, no_input=False):
                  extra_context=extra_context)
 
 
-def create_archive(args):
+def create_archive(path):
 
-    archive_name = 'arc.tar'
+    path = os.path.abspath(path)
+    path = split_safe_path(path)
+    staging_path, dataset_name = os.path.split(path)
 
-    tar_command = ['tar', '-cvf', os.path.join('..', archive_name), '.']
-    subprocess.call(tar_command, cwd=args.data_path)
+    tar_output_filename = dataset_name + '.tar'
 
-    gzip_command = ['gzip', archive_name]
-    subprocess.call(gzip_command)
+    tar_command = ['tar', '-cf', tar_output_filename, dataset_name]
+
+    subprocess.call(tar_command, cwd=staging_path)

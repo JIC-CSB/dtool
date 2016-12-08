@@ -37,6 +37,11 @@ def create(path):
 def archive():
     pass
 
+@archive.command()
+@click.argument('path', 'Path to dataset directory.',
+                type=click.Path(exists=True))
+def create(path):
+    create_archive(path)
 
 if __name__ == "__main__":
     cli()
