@@ -6,8 +6,12 @@ import json
 import hashlib
 import subprocess
 
+from cookiecutter.main import cookiecutter
+
 VERBOSE = True
 
+HERE = os.path.dirname(__file__)
+TEMPLATE_DIR = os.path.join(HERE, 'templates')
 
 def log(message):
 
@@ -95,6 +99,10 @@ def create_manifest(path):
     with open(manifest_filename, 'w') as f:
         json.dump(manifest_data, f, indent=4)
 
+def new_archive():
+
+    archive_template = os.path.join(TEMPLATE_DIR, 'archive')
+    cookiecutter(archive_template)
 
 def create_archive(args):
 

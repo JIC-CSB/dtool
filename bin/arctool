@@ -4,8 +4,9 @@
 import argparse
 
 import click
+from cookiecutter.main import cookiecutter
 
-from dtool import create_archive, create_manifest
+from dtool import create_archive, create_manifest, new_archive
 
 def main():
 
@@ -44,7 +45,8 @@ def cli():
               default='.',
               type=click.Path(exists=True))
 def new(staging_path):
-    print('Start new archive in {}'.format(staging_path))
+    print('Starting new archive in {}'.format(staging_path))
+    new_archive()
 
 @cli.group()
 def manifest():
