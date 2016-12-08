@@ -101,10 +101,10 @@ def create_manifest(path):
         json.dump(manifest_data, f, indent=4)
 
 
-def new_archive():
+def new_archive(staging_path):
 
     archive_template = os.path.join(TEMPLATE_DIR, 'archive')
-    cookiecutter(archive_template)
+    cookiecutter(archive_template, output_dir=staging_path)
 
 
 def create_archive(args):
