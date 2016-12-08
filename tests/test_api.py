@@ -7,9 +7,21 @@ import tarfile
 import tempfile
 from distutils.dir_util import copy_tree
 
+from pytest import fixture
+
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "input")
 TEST_OUTPUT_DATA = os.path.join(HERE, "data", "output")
+
+
+@fixture
+def tmp_dir(request):
+    d = tempfile.mkdtemp()
+
+    @request.addfinalizer
+    def teardown():
+        shutil.rmtree(d)
+    return d
 
 
 def test_split_safe_path():
@@ -60,10 +72,9 @@ def test_generate_full_file_list():
     assert sorted(actual) == sorted(expected)
 
 
-def test_create_manifest():
+def test_create_manifest(tmp_dir):
     from dtool import create_manifest
 
-    tmp_dir = tempfile.mkdtemp()
     tmp_project = os.path.join(tmp_dir, "proj")
 
     shutil.copytree(TEST_INPUT_DATA, tmp_project)
@@ -71,13 +82,11 @@ def test_create_manifest():
 
     manifest_path = os.path.join(tmp_project, "manifest.json")
     assert os.path.isfile(manifest_path)
-    shutil.rmtree(tmp_dir)
 
 
-def test_create_manifest_strip_trailing_slash():
+def test_create_manifest_strip_trailing_slash(tmp_dir):
     from dtool import create_manifest
 
-    tmp_dir = tempfile.mkdtemp()
     tmp_project = os.path.join(tmp_dir, "proj")
 
     shutil.copytree(TEST_INPUT_DATA, tmp_project)
@@ -85,13 +94,11 @@ def test_create_manifest_strip_trailing_slash():
 
     manifest_path = os.path.join(tmp_project, "manifest.json")
     assert os.path.isfile(manifest_path)
-    shutil.rmtree(tmp_dir)
 
 
-def test_new_archive():
+def test_new_archive(tmp_dir):
     from dtool import new_archive
 
-    tmp_dir = tempfile.mkdtemp()
     new_archive(tmp_dir, no_input=True)
 
     readme_yml_path = os.path.join(tmp_dir,
@@ -105,13 +112,10 @@ def test_new_archive():
                                    "README.txt")
     assert os.path.isfile(readme_txt_path)
 
-    shutil.rmtree(tmp_dir)
 
-
-def test_create_archive():
+def test_create_archive(tmp_dir):
     from dtool import create_archive, create_manifest, new_archive
 
-    tmp_dir = tempfile.mkdtemp()
     new_archive(tmp_dir, no_input=True)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
@@ -139,5 +143,3 @@ def test_create_archive():
             actual.add(tarinfo.path)
 
     assert expected == actual, (expected, actual)
-
-    shutil.rmtree(tmp_dir)
