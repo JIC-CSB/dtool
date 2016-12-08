@@ -4,7 +4,6 @@
 import os
 import json
 import hashlib
-import argparse
 import subprocess
 
 VERBOSE = True
@@ -106,34 +105,3 @@ def create_archive(args):
 
     gzip_command = ['gzip', archive_name]
     subprocess.call(gzip_command)
-
-
-def main():
-
-    parser = argparse.ArgumentParser(description=__doc__)
-
-    subparsers = parser.add_subparsers(help='sub-command help',
-                                       dest='subparser_name')
-
-    manifest_p = subparsers.add_parser('manifest', help='Manage data manifest')
-    manifest_sps = manifest_p.add_subparsers()
-    manifest_create_p = manifest_sps.add_parser('create',
-                                                help='Create data manifest')
-    manifest_create_p.set_defaults(func=create_manifest)
-    manifest_create_p.add_argument('data_path', help='Path to data')
-
-    archive_p = subparsers.add_parser('archive',
-                                      help='Manage data archive')
-    archive_sps = archive_p.add_subparsers()
-    archive_creates_p = archive_sps.add_parser('create',
-                                               help='Create data archive')
-    archive_creates_p.set_defaults(func=create_archive)
-    archive_creates_p.add_argument('data_path', help='Path to data')
-
-    args = parser.parse_args()
-
-    args.func(args)
-
-
-if __name__ == "__main__":
-    main()
