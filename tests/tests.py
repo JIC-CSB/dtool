@@ -10,6 +10,13 @@ TEST_INPUT_DATA = os.path.join(HERE, "data", "input")
 TEST_OUTPUT_DATA = os.path.join(HERE, "data", "output")
 
 
+def test_split_safe_path():
+    from dtool import split_safe_path
+    assert split_safe_path("/") == "/"
+    assert split_safe_path("/root") == "/root"
+    assert split_safe_path("/root/") == "/root"
+
+
 def test_shasum():
 
     from dtool import shasum

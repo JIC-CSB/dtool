@@ -21,6 +21,13 @@ def log(message):
         print(message)
 
 
+def split_safe_path(path):
+    """Return paths where trailing slashes have been stripped.
+
+    Required as os.path.split does not behave ideally.
+    """
+    return os.path.normpath(path)
+
 def shasum(filename):
     """Return hex digest of SHA-1 hash of file."""
 
@@ -77,15 +84,12 @@ def generate_manifest(path):
 def generate_full_file_list(path):
     """Return a list of fully qualified paths to all files in directories under
     the given path."""
+    path = split_safe_path(path)
+    path_length = len(path) + 1
 
     file_list = []
 
-    # FIXME - platform dependency
     log('Generating file list')
-    if path[-1] == '/':
-        path_length = len(path)
-    else:
-        path_length = 1 + len(path)
 
     for dirpath, dirnames, filenames in os.walk(path):
         for fn in filenames:
@@ -97,10 +101,7 @@ def generate_full_file_list(path):
 
 def create_manifest(path):
 
-    # Remove trailing slash.
-    if path[-1] == "/":
-        path = path[:-1]
-
+    path = split_safe_path(path)
     archive_root_path, _ = os.path.split(path)
     manifest_filename = os.path.join(archive_root_path, 'manifest.json')
 
