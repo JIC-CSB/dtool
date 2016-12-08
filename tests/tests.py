@@ -3,8 +3,9 @@
 import os
 import json
 
-TEST_INPUT_DATA = 'test_data/input'
-TEST_OUTPUT_DATA = 'test_data/output'
+HERE = os.path.dirname(__file__)
+TEST_INPUT_DATA = os.path.join(HERE, "data", "input")
+TEST_OUTPUT_DATA = os.path.join(HERE, "data", "output")
 
 def test_shasum():
 
