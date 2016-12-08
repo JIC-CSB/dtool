@@ -84,3 +84,23 @@ def test_create_manifest_strip_trailing_slash():
     manifest_path = os.path.join(tmp_project, "manifest.json")
     assert os.path.isfile(manifest_path)
     shutil.rmtree(tmp_dir)
+
+
+def test_new_archive():
+    from dtool import new_archive
+
+    tmp_dir = tempfile.mkdtemp()
+    new_archive(tmp_dir, no_input=True)
+
+    readme_yml_path = os.path.join(tmp_dir,
+                                   "brassica_rnaseq_reads",
+                                   "README.yml")
+    assert os.path.isfile(readme_yml_path)
+
+    readme_txt_path = os.path.join(tmp_dir,
+                                   "brassica_rnaseq_reads",
+                                   "archive",
+                                   "README.txt")
+    assert os.path.isfile(readme_txt_path)
+
+    shutil.rmtree(tmp_dir)

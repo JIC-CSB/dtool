@@ -28,6 +28,7 @@ def split_safe_path(path):
     """
     return os.path.normpath(path)
 
+
 def shasum(filename):
     """Return hex digest of SHA-1 hash of file."""
 
@@ -111,13 +112,16 @@ def create_manifest(path):
         json.dump(manifest_data, f, indent=4)
 
 
-def new_archive(staging_path):
+def new_archive(staging_path, no_input=False):
     unix_username = getpass.getuser()
     email = "{}.nbi.ac.uk".format(unix_username)
     archive_template = os.path.join(TEMPLATE_DIR, 'archive')
-    cookiecutter(archive_template, output_dir=staging_path,
-                 extra_context=dict(owner_unix_username=unix_username,
-                                    owner_email=email))
+    extra_context = dict(owner_unix_username=unix_username,
+                         owner_email=email)
+    cookiecutter(archive_template,
+                 output_dir=staging_path,
+                 no_input=no_input,
+                 extra_context=extra_context)
 
 
 def create_archive(args):
