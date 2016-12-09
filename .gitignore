@@ -1,5 +1,11 @@
 .coverage
 
+*.whl
+
+.cache
+build/
+dist/
+
 *.swp
 *.pyc
 
