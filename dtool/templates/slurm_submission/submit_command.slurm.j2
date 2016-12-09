@@ -4,5 +4,4 @@
 #SBATCH -n {{ job.n_cores }}
 #SBATCH -t 0-00:30
 
-source pigz-2.3.3
-pigz -p {{ job.n_cores }} {{ tar_file }}
+{{ command_string }}

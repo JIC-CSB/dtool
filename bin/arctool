@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 """Manage archiving of data."""
 
+import os
 import click
 
 from dtool import (
+  compress_archive,
   create_archive, 
   create_manifest, 
   new_archive,
-  generate_slurm_compress_script
+  generate_slurm_script
 )
 
 
@@ -49,12 +51,31 @@ def create(path):
     create_archive(path)
 
 @archive.command()
+@click.option('--cores', '-c', default=4, help='Number of CPU cores to use.')
+@click.option('--slurm', '-s', is_flag=True, default=False,
+              help='Rather than running compression, generate SLURM script.')
 @click.argument('path', 'Path to uncompressed archive (tar) file.',
                 type=click.Path(exists=True))
-def compress(path):
-    script = generate_slurm_compress_script(path)
+def compress(path, cores, slurm):
+    # script = generate_slurm_compress_script(path)
 
-    print(script)
+    # print(script)
+
+    path = os.path.abspath(path)
+
+    if not slurm:
+        compress_archive(path, n_threads=cores)
+
+    # WARNING - be VERY careful automating this to submit the job - if the
+    # logic fails, the job will repeatedly submit itself forever!
+    else:
+        job_parameters = { 'n_cores' : cores, 'partition' : 'rg-sv' }
+        command_string = "arctool archive compress -c {} {}".format(cores, 
+                                                                path)
+
+        submit_string = generate_slurm_script(command_string, job_parameters)
+
+        print(submit_string)
 
 if __name__ == "__main__":
     cli()

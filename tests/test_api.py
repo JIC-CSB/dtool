@@ -145,17 +145,42 @@ def test_create_archive(tmp_dir):
     assert expected == actual, (expected, actual)
 
 
+def test_compress_archive(tmp_dir):
+
+    from dtool import create_archive, create_manifest, new_archive
+
+    from dtool import compress_archive
+
+    new_archive(tmp_dir, no_input=True)
+    tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    archive_output_path = os.path.join(tmp_project, 'archive')
+    copy_tree(archive_input_path, archive_output_path)
+    create_manifest(os.path.join(tmp_project, "archive/"))
+
+    create_archive(tmp_project)
+
+    expected_tar_filename = os.path.join(tmp_dir, 'brassica_rnaseq_reads.tar')
+    assert os.path.isfile(expected_tar_filename)
+
+    compress_archive(expected_tar_filename)
+
+    expected_gz_filename = expected_tar_filename + '.gz'
+    assert os.path.isfile(expected_gz_filename)
+    assert not os.path.isfile(expected_tar_filename)
+
+
 def test_generate_slurm_submission_script():
 
-    # use /. at end of path to test path normalisation
-    test_archive_file_path = '/tmp/staging/mytar.tar/.'
+    from dtool import generate_slurm_script
 
-    from dtool import generate_slurm_compress_script
-
-    actual_script = generate_slurm_compress_script(test_archive_file_path)
+    job_parameters = {'n_cores': 8, 'partition': 'rg-sv'}
+    command_string = "arctool archive compress -c 8 /tmp/staging/mytar.tar"
+    actual_script = generate_slurm_script(command_string,
+                                          job_parameters)
 
     actual = actual_script.split('\n')[-1]
 
-    expected = 'pigz -p 8 /tmp/staging/mytar.tar'
+    expected = 'arctool archive compress -c 8 /tmp/staging/mytar.tar'
 
     assert expected == actual, (expected, actual)

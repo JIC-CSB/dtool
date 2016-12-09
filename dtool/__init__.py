@@ -139,16 +139,26 @@ def create_archive(path):
     subprocess.call(tar_command, cwd=staging_path)
 
 
-def generate_slurm_compress_script(path):
-    """Return templated slurm script for compressing tarballs."""
+def compress_archive(path, n_threads=8):
+    """Compress the (tar) archive at the given path.
+
+    Uses pigz for speed."""
 
     path = os.path.abspath(path)
+
+    compress_tool = 'pigz'
+    compress_args = ['-p', str(n_threads), path]
+    compress_command = [compress_tool] + compress_args
+
+    subprocess.call(compress_command)
+
+
+def generate_slurm_script(command_string, job_parameters):
+    """Return templated slurm script for compressing tarballs."""
 
     slurm_templates = os.path.join('templates', 'slurm_submission')
     env = Environment(loader=PackageLoader('dtool', slurm_templates))
 
-    template = env.get_template('submit_compression.slurm.j2')
+    template = env.get_template('submit_command.slurm.j2')
 
-    job_parameters = { 'n_cores' : 8, 'partition' : 'rg-sv' }
-
-    return template.render(job=job_parameters, tar_file=path)
+    return template.render(job=job_parameters, command_string=command_string)
