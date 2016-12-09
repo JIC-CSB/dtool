@@ -149,6 +149,6 @@ def generate_slurm_compress_script(path):
 
     template = env.get_template('submit_compression.slurm.j2')
 
-    job_parameters = { 'n_cores' : 8, 'partition' : 'rg_sv' }
+    job_parameters = { 'n_cores' : 8, 'partition' : 'rg-sv' }
 
     return template.render(job=job_parameters, tar_file=path)
