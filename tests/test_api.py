@@ -150,11 +150,11 @@ def test_generate_slurm_submission_script():
     # use /. at end of path to test path normalisation
     test_archive_file_path = '/tmp/staging/mytar.tar/.'
 
-    from dtool import generate_slurm_submission_script
+    from dtool import generate_slurm_compress_script
 
-    actual_submission_script = generate_slurm_compress_script(test_archive_file_path)
+    actual_script = generate_slurm_compress_script(test_archive_file_path)
 
-    actual = actual_submission_script.split('\n')[-1]
+    actual = actual_script.split('\n')[-1]
 
     expected = 'pigz -p 8 /tmp/staging/mytar.tar'
 
