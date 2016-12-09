@@ -4,6 +4,7 @@
 import os
 import json
 import hashlib
+import tarfile
 import subprocess
 import getpass
 
@@ -162,3 +163,23 @@ def generate_slurm_script(command_string, job_parameters):
     template = env.get_template('submit_command.slurm.j2')
 
     return template.render(job=job_parameters, command_string=command_string)
+
+def summarise_archive(path):
+
+    path = os.path.abspath(path)
+
+    archive_basename = os.path.basename(path)
+    archive_name, exts = archive_basename.split('.', 1)
+    assert exts == 'tar.gz'
+
+    manifest_path = os.path.join(archive_name, 'manifest.json')
+
+    with tarfile.open(path, 'r:gz') as tar:
+        manifest_fp = tar.extractfile(manifest_path)
+        manifest = json.load(manifest_fp)
+
+    summary = {}
+    summary['n_files'] = len(manifest['file_list'])
+
+    return summary
+

@@ -44,11 +44,13 @@ def create(path):
 def archive():
     pass
 
+
 @archive.command()
 @click.argument('path', 'Path to dataset directory.',
                 type=click.Path(exists=True))
 def create(path):
     create_archive(path)
+
 
 @archive.command()
 @click.option('--cores', '-c', default=4, help='Number of CPU cores to use.')
@@ -57,10 +59,6 @@ def create(path):
 @click.argument('path', 'Path to uncompressed archive (tar) file.',
                 type=click.Path(exists=True))
 def compress(path, cores, slurm):
-    # script = generate_slurm_compress_script(path)
-
-    # print(script)
-
     path = os.path.abspath(path)
 
     if not slurm:
@@ -76,6 +74,16 @@ def compress(path, cores, slurm):
         submit_string = generate_slurm_script(command_string, job_parameters)
 
         print(submit_string)
+
+@cli.group()
+def verify():
+    pass
+
+@verify.command()
+@click.argument('path', 'Path to compressed archive.',
+                type=click.Path(exists=True))
+def summary(path):
+    summarise_archive(path)
 
 if __name__ == "__main__":
     cli()

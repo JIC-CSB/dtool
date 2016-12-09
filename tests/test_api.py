@@ -8,6 +8,7 @@ import tempfile
 from distutils.dir_util import copy_tree
 
 import yaml
+import magic
 from pytest import fixture
 
 HERE = os.path.dirname(__file__)
@@ -24,6 +25,35 @@ def tmp_dir(request):
         shutil.rmtree(d)
     return d
 
+@fixture
+def tmp_archive(request):
+
+    from dtool import (
+        compress_archive,
+        create_archive, 
+        create_manifest, 
+        new_archive
+        )
+
+    d = tempfile.mkdtemp()
+
+    @request.addfinalizer
+    def teardown():
+        shutil.rmtree(d)    
+
+    new_archive(d, no_input=True)
+    tmp_project = os.path.join(d, "brassica_rnaseq_reads")
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    archive_output_path = os.path.join(tmp_project, 'archive')
+    copy_tree(archive_input_path, archive_output_path)
+    create_manifest(os.path.join(tmp_project, "archive/"))
+
+    create_archive(tmp_project)
+    compress_archive(tmp_project + '.tar')
+
+    archive_name = tmp_project + '.tar' + '.gz'
+    
+    return archive_name
 
 def test_split_safe_path():
     from dtool import split_safe_path
@@ -190,3 +220,21 @@ def test_generate_slurm_submission_script():
     expected = 'arctool archive compress -c 8 /tmp/staging/mytar.tar'
 
     assert expected == actual, (expected, actual)
+
+def test_archive_fixture(tmp_archive):
+
+    mimetype = magic.from_file(tmp_archive, mime=True)
+
+    assert mimetype == 'application/x-gzip'
+
+def test_summarise_archive(tmp_archive):
+
+    from dtool import summarise_archive
+
+    summary = summarise_archive(tmp_archive)
+
+    assert isinstance(summary, dict)
+
+    assert summary['n_files'] == 3
+
+
