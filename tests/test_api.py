@@ -7,6 +7,7 @@ import tarfile
 import tempfile
 from distutils.dir_util import copy_tree
 
+import yaml
 from pytest import fixture
 
 HERE = os.path.dirname(__file__)
@@ -111,6 +112,11 @@ def test_new_archive(tmp_dir):
                                    "archive",
                                    "README.txt")
     assert os.path.isfile(readme_txt_path)
+
+    # Test that yaml is valid.
+    with open(readme_yml_path, "r") as fh:
+        readme_data = yaml.load(fh)
+    assert readme_data["dataset_name"] == "brassica_rnaseq_reads"
 
 
 def test_create_archive(tmp_dir):
