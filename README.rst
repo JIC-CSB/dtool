@@ -1,6 +1,12 @@
 dtool - manage JIC archive data
 ===============================
 
+Deployment
+----------
+
+1. Build Docker image
+2. Build Singularity image from Docker image
+3. Copy Singularity image to cluster
 
 Development
 -----------
@@ -13,3 +19,4 @@ Install tox using ``pip``::
 Run the test suite using the command::
 
     tox
+
