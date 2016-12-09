@@ -14,5 +14,5 @@ setup(name="dtool",
       long_description=readme,
       url=url,
       download_url="{}/tarball/{}".format(url, version),
-      install_requires=["cookiecutter", "click"],
+      install_requires=["cookiecutter", "click", "jinja2"],
       license="MIT")

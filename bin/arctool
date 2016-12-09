@@ -3,7 +3,12 @@
 
 import click
 
-from dtool import create_archive, create_manifest, new_archive
+from dtool import (
+  create_archive, 
+  create_manifest, 
+  new_archive,
+  generate_slurm_compress_script
+)
 
 
 @click.group()
@@ -42,6 +47,14 @@ def archive():
                 type=click.Path(exists=True))
 def create(path):
     create_archive(path)
+
+@archive.command()
+@click.argument('path', 'Path to uncompressed archive (tar) file.',
+                type=click.Path(exists=True))
+def compress(path):
+    script = generate_slurm_compress_script(path)
+
+    print(script)
 
 if __name__ == "__main__":
     cli()

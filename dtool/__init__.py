@@ -7,6 +7,8 @@ import hashlib
 import subprocess
 import getpass
 
+from jinja2 import Environment, PackageLoader
+
 from cookiecutter.main import cookiecutter
 
 VERBOSE = True
@@ -135,3 +137,18 @@ def create_archive(path):
     tar_command = ['tar', '-cf', tar_output_filename, dataset_name]
 
     subprocess.call(tar_command, cwd=staging_path)
+
+
+def generate_slurm_compress_script(path):
+    """Return templated slurm script for compressing tarballs."""
+
+    path = os.path.abspath(path)
+
+    slurm_templates = os.path.join('templates', 'slurm_submission')
+    env = Environment(loader=PackageLoader('dtool', slurm_templates))
+
+    template = env.get_template('submit_compression.slurm.j2')
+
+    job_parameters = { 'n_cores' : 8, 'partition' : 'rg_sv' }
+
+    return template.render(job=job_parameters, tar_file=path)
