@@ -25,13 +25,14 @@ def tmp_dir(request):
         shutil.rmtree(d)
     return d
 
+
 @fixture
 def tmp_archive(request):
 
     from dtool import (
         compress_archive,
-        create_archive, 
-        create_manifest, 
+        create_archive,
+        create_manifest,
         new_archive
         )
 
@@ -39,7 +40,7 @@ def tmp_archive(request):
 
     @request.addfinalizer
     def teardown():
-        shutil.rmtree(d)    
+        shutil.rmtree(d)
 
     new_archive(d, no_input=True)
     tmp_project = os.path.join(d, "brassica_rnaseq_reads")
@@ -52,8 +53,9 @@ def tmp_archive(request):
     compress_archive(tmp_project + '.tar')
 
     archive_name = tmp_project + '.tar' + '.gz'
-    
+
     return archive_name
+
 
 def test_split_safe_path():
     from dtool import split_safe_path
@@ -221,11 +223,13 @@ def test_generate_slurm_submission_script():
 
     assert expected == actual, (expected, actual)
 
+
 def test_archive_fixture(tmp_archive):
 
     mimetype = magic.from_file(tmp_archive, mime=True)
 
     assert mimetype == 'application/x-gzip'
+
 
 def test_summarise_archive(tmp_archive):
 
@@ -236,5 +240,3 @@ def test_summarise_archive(tmp_archive):
     assert isinstance(summary, dict)
 
     assert summary['n_files'] == 3
-
-

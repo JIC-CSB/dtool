@@ -164,6 +164,7 @@ def generate_slurm_script(command_string, job_parameters):
 
     return template.render(job=job_parameters, command_string=command_string)
 
+
 def summarise_archive(path):
 
     path = os.path.abspath(path)
@@ -182,4 +183,3 @@ def summarise_archive(path):
     summary['n_files'] = len(manifest['file_list'])
 
     return summary
-
