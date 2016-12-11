@@ -19,7 +19,10 @@ TEMPLATE_DIR = os.path.join(HERE, 'templates')
 
 
 def log(message):
+    """Log a message.
 
+    :param message: message to be logged
+    """
     if VERBOSE:
         print(message)
 
@@ -28,12 +31,19 @@ def split_safe_path(path):
     """Return paths where trailing slashes have been stripped.
 
     Required as os.path.split does not behave ideally.
+
+    :param path: path to be sanitised
+    :returns: sanitised path
     """
     return os.path.normpath(path)
 
 
 def shasum(filename):
-    """Return hex digest of SHA-1 hash of file."""
+    """Return hex digest of SHA-1 hash of file.
+
+    :param filename: path to file
+    :returns: shasum of file
+    """
 
     # Tried using Mac native shasum. But this was slower.
     # Maybe not surprising as shasum on Mac was a Perl script,
@@ -60,6 +70,8 @@ def generate_manifest(path):
     * Last modification time
     * Size
 
+    :param path: path to directory with data
+    :returns: manifest represented as a dictionary
     """
 
     full_file_list = generate_full_file_list(path)
@@ -86,8 +98,12 @@ def generate_manifest(path):
 
 
 def generate_full_file_list(path):
-    """Return a list of fully qualified paths to all files in directories under
-    the given path."""
+    """Return list of paths to all files in tree under path.
+
+    :param path: path to directory with data
+    :returns: list of fully qualified paths to all files in directories under
+              the path
+    """
     path = split_safe_path(path)
     path_length = len(path) + 1
 
@@ -104,7 +120,15 @@ def generate_full_file_list(path):
 
 
 def create_manifest(path):
+    """Create manifest for all files in directory under the given path.
 
+    The manifest is created one level up from the given path.
+    This makes the function idempotent, i.e. if it was run again it
+    would create an identical file. This would not be the case if the
+    manifest was created in the given path.
+
+    :param path: path to directory with data
+    """
     path = split_safe_path(path)
     archive_root_path, _ = os.path.split(path)
     manifest_filename = os.path.join(archive_root_path, 'manifest.json')
@@ -114,8 +138,20 @@ def create_manifest(path):
     with open(manifest_filename, 'w') as f:
         json.dump(manifest_data, f, indent=4)
 
+    # Should this return the path to the generated manifest file?
+
 
 def new_archive(staging_path, no_input=False):
+    """Create new archive in the staging path.
+
+    This creates an initial skeleton directory structure that includes
+    a top level README.yml file.
+
+    The no_input parameter exists for automated testing purposes.
+    If it is set to True it disables prompting of user input.
+
+    :param staging_path: path to archiving staging area
+    """
     unix_username = getpass.getuser()
     email = "{}@nbi.ac.uk".format(unix_username)
     archive_template = os.path.join(TEMPLATE_DIR, 'archive')
@@ -126,8 +162,15 @@ def new_archive(staging_path, no_input=False):
                  no_input=no_input,
                  extra_context=extra_context)
 
+    # Should this return the path to the newly created archive in the
+    # staging area?
+
 
 def create_archive(path):
+    """Create archive from path using tar.
+
+    :param path: path to archive in staging area
+    """
 
     path = os.path.abspath(path)
     path = split_safe_path(path)
@@ -139,12 +182,17 @@ def create_archive(path):
 
     subprocess.call(tar_command, cwd=staging_path)
 
+    # Should this return the path to the newly created tarball?
+
 
 def compress_archive(path, n_threads=8):
     """Compress the (tar) archive at the given path.
 
-    Uses pigz for speed."""
+    Uses pigz for speed.
 
+    :param path: path to the archive tarball
+    :param n_threads: number of threads for pigz to use
+    """
     path = os.path.abspath(path)
 
     compress_tool = 'pigz'
@@ -153,10 +201,16 @@ def compress_archive(path, n_threads=8):
 
     subprocess.call(compress_command)
 
+    # Should this return the path to the gzip file.
+
 
 def generate_slurm_script(command_string, job_parameters):
-    """Return templated slurm script for compressing tarballs."""
+    """Return slurm script.
 
+    :param command_string: command to run in slurm script
+    :param job_parameters: dictionary of job parameters
+    :returns: slurm sbatch script
+    """
     slurm_templates = os.path.join('templates', 'slurm_submission')
     env = Environment(loader=PackageLoader('dtool', slurm_templates))
 
@@ -166,7 +220,11 @@ def generate_slurm_script(command_string, job_parameters):
 
 
 def summarise_archive(path):
+    """Return dictionary with summary information about an archive.
 
+    :param path: path to archive tar gzipped file
+    :returns: dictionary of summary information about the archive
+    """
     path = os.path.abspath(path)
 
     archive_basename = os.path.basename(path)
