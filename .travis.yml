@@ -6,5 +6,7 @@ python:
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y pigz
-install: pip install tox-travis
-script: tox
+install: pip install tox-travis flake8
+script:
+  - tox
+  - flake8
