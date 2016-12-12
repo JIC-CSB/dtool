@@ -237,7 +237,11 @@ def summarise_archive(path):
         manifest_fp = tar.extractfile(manifest_path)
         manifest = json.load(manifest_fp)
 
+    total_size = sum(entry['size'] for entry in manifest['file_list'])
+
     summary = {}
     summary['n_files'] = len(manifest['file_list'])
+    summary['total_size'] = total_size
+    summary['manifest'] = manifest
 
     return summary

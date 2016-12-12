@@ -221,11 +221,13 @@ def test_generate_slurm_submission_script():
 
     assert expected == actual, (expected, actual)
 
+
 def test_archive_fixture(tmp_archive):
 
     mimetype = magic.from_file(tmp_archive, mime=True)
 
     assert mimetype == 'application/x-gzip'
+
 
 def test_summarise_archive(tmp_archive):
 
@@ -238,3 +240,6 @@ def test_summarise_archive(tmp_archive):
     assert summary['n_files'] == 3
 
 
+# def test_extract_manifest(tmp_archive):
+
+#     from dtool import extract_manifest

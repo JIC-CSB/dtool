@@ -2,6 +2,7 @@
 """Manage archiving of data."""
 
 import os
+import math
 import click
 
 from dtool import (
@@ -9,7 +10,8 @@ from dtool import (
   create_archive, 
   create_manifest, 
   new_archive,
-  generate_slurm_script
+  generate_slurm_script,
+  summarise_archive
 )
 
 
@@ -83,7 +85,11 @@ def verify():
 @click.argument('path', 'Path to compressed archive.',
                 type=click.Path(exists=True))
 def summary(path):
-    summarise_archive(path)
+    summary_data = summarise_archive(path)
+
+    size_in_gibi = float(summary_data['total_size']) / (2 ** 30)
+    click.echo("Archive contains {} files.".format(summary_data['n_files']))
+    click.echo("Total uncompressed archive size is {:.2f} GiB.".format(size_in_gibi))
 
 if __name__ == "__main__":
     cli()
