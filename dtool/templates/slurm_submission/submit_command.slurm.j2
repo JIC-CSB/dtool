@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #SBATCH -p {{ job.partition }}
-#SBATCH -n {{ job.n_cores }}
-#SBATCH -t 0-00:30
+#SBATCH -c {{ job.n_cores }}
+#SBATCH -n 1
+#SBATCH -t 0-01:30
 
 {{ command_string }}
