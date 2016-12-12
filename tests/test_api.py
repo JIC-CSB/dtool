@@ -257,6 +257,7 @@ def test_extract_manifest(tmp_archive):
 
     assert len(manifest['file_list']) == 3
 
+
 def test_extract_readme(tmp_archive):
 
     from dtool import extract_readme

@@ -291,4 +291,3 @@ def extract_readme(path):
         tar.extract(readme_path, path=archive_dirname)
 
     return os.path.join(archive_dirname, readme_path)
-
