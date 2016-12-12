@@ -25,13 +25,14 @@ def tmp_dir(request):
         shutil.rmtree(d)
     return d
 
+
 @fixture
 def tmp_archive(request):
 
     from dtool import (
         compress_archive,
-        create_archive, 
-        create_manifest, 
+        create_archive,
+        create_manifest,
         new_archive
         )
 
@@ -39,7 +40,7 @@ def tmp_archive(request):
 
     @request.addfinalizer
     def teardown():
-        shutil.rmtree(d)    
+        shutil.rmtree(d)
 
     new_archive(d, no_input=True)
     tmp_project = os.path.join(d, "brassica_rnaseq_reads")
@@ -52,8 +53,11 @@ def tmp_archive(request):
     compress_archive(tmp_project + '.tar')
 
     archive_name = tmp_project + '.tar' + '.gz'
-    
+
+    shutil.rmtree(archive_output_path)
+
     return archive_name
+
 
 def test_split_safe_path():
     from dtool import split_safe_path
@@ -240,6 +244,15 @@ def test_summarise_archive(tmp_archive):
     assert summary['n_files'] == 3
 
 
-# def test_extract_manifest(tmp_archive):
+def test_extract_manifest(tmp_archive):
 
-#     from dtool import extract_manifest
+    from dtool import extract_manifest
+
+    extracted_manifest_path = extract_manifest(tmp_archive)
+
+    assert os.path.isfile(extracted_manifest_path)
+
+    with open(extracted_manifest_path) as f:
+        manifest = json.load(f)
+
+    assert len(manifest['file_list']) == 3

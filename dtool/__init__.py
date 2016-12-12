@@ -245,3 +245,25 @@ def summarise_archive(path):
     summary['manifest'] = manifest
 
     return summary
+
+
+def extract_manifest(path):
+    """Extract manifest from archive into current working directory.
+
+    :param path: path to tar gzziped file
+    :returns: path to extracted manifest file
+    """
+    path = os.path.abspath(path)
+
+    # FIXME - code duplication with above
+    archive_basename = os.path.basename(path)
+    archive_dirname = os.path.dirname(path)
+    archive_name, exts = archive_basename.split('.', 1)
+    assert exts == 'tar.gz'
+
+    manifest_path = os.path.join(archive_name, 'manifest.json')
+
+    with tarfile.open(path, 'r:gz') as tar:
+        tar.extract(manifest_path, path=archive_dirname)
+
+    return os.path.join(archive_dirname, manifest_path)
