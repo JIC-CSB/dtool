@@ -235,7 +235,8 @@ def summarise_archive(path):
 
     with tarfile.open(path, 'r:gz') as tar:
         manifest_fp = tar.extractfile(manifest_path)
-        manifest = json.load(manifest_fp)
+        manifest_str = manifest_fp.read().decode("utf-8")
+        manifest = json.loads(manifest_str)
 
     total_size = sum(entry['size'] for entry in manifest['file_list'])
 
