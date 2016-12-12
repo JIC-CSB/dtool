@@ -128,6 +128,7 @@ def create_manifest(path):
     manifest was created in the given path.
 
     :param path: path to directory with data
+    :returns: path to created manifest
     """
     path = split_safe_path(path)
     archive_root_path, _ = os.path.split(path)
@@ -137,6 +138,8 @@ def create_manifest(path):
 
     with open(manifest_filename, 'w') as f:
         json.dump(manifest_data, f, indent=4)
+
+    return manifest_filename
 
     # Should this return the path to the generated manifest file?
 
@@ -157,19 +160,22 @@ def new_archive(staging_path, no_input=False):
     archive_template = os.path.join(TEMPLATE_DIR, 'archive')
     extra_context = dict(owner_unix_username=unix_username,
                          owner_email=email)
-    cookiecutter(archive_template,
-                 output_dir=staging_path,
-                 no_input=no_input,
-                 extra_context=extra_context)
+    archive_path = cookiecutter(archive_template,
+                                output_dir=staging_path,
+                                no_input=no_input,
+                                extra_context=extra_context)
 
     # Should this return the path to the newly created archive in the
     # staging area?
+
+    return archive_path
 
 
 def create_archive(path):
     """Create archive from path using tar.
 
     :param path: path to archive in staging area
+    :returns: path to created tarball
     """
 
     path = os.path.abspath(path)
@@ -182,6 +188,8 @@ def create_archive(path):
 
     subprocess.call(tar_command, cwd=staging_path)
 
+    return tar_output_filename
+
     # Should this return the path to the newly created tarball?
 
 
@@ -192,8 +200,13 @@ def compress_archive(path, n_threads=8):
 
     :param path: path to the archive tarball
     :param n_threads: number of threads for pigz to use
+    :returns: path to created gzip file
     """
     path = os.path.abspath(path)
+
+    basename = os.path.basename(path)
+    archive_name, ext = os.path.splitext(basename)
+    assert ext == '.tar'
 
     compress_tool = 'pigz'
     compress_args = ['-p', str(n_threads), path]
@@ -201,7 +214,7 @@ def compress_archive(path, n_threads=8):
 
     subprocess.call(compress_command)
 
-    # Should this return the path to the gzip file.
+    return path + '.gz'
 
 
 def generate_slurm_script(command_string, job_parameters):

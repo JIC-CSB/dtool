@@ -2,6 +2,9 @@
 """Manage archiving of data."""
 
 import os
+import json
+
+import yaml
 import click
 
 from dtool import (
@@ -15,6 +18,9 @@ from dtool import (
     summarise_archive
 )
 
+from fluent import sender
+
+logger = sender.FluentSender('arctool', host='localhost', port=24224)
 
 @click.group()
 def cli():
@@ -27,8 +33,28 @@ def cli():
               default='.',
               type=click.Path(exists=True))
 def new(staging_path):
-    print('Starting new archive in {}'.format(staging_path))
-    new_archive(staging_path)
+
+    staging_path = os.path.abspath(staging_path)
+
+    click.secho('Starting new archive in: ', nl=False)
+    click.secho(staging_path, fg='green')
+
+    archive_path = new_archive(staging_path)
+
+    click.secho('Created new archive in: ', nl=False)
+    click.secho(archive_path, fg='green')
+
+    readme_file = os.path.join(archive_path, 'README.yml')
+
+    with open(readme_file) as fh:
+      metadata = yaml.load(fh)
+
+    # Fix problem serializing datetime objects
+    metadata['archive_date'] = str(metadata['archive_date'])
+
+    log_data = {'metadata': metadata,
+                'archive_path': archive_path}
+    logger.emit('new', log_data)
 
 
 @cli.group()
@@ -40,8 +66,15 @@ def manifest():
 @click.argument('path', 'Path to archive directory.',
                 type=click.Path(exists=True))
 def create(path):
-    create_manifest(path)
+    manifest_path = create_manifest(path)
 
+    with open(manifest_path) as fh:
+        manifest = json.load(fh)
+
+    click.secho('Created manifest: ', nl=False)
+    click.secho(manifest_path, fg='green')
+
+    logger.emit('manifest_create', manifest)
 
 @cli.group()
 def archive():
@@ -52,7 +85,23 @@ def archive():
 @click.argument('path', 'Path to dataset directory.',
                 type=click.Path(exists=True))
 def create(path):
-    create_archive(path)
+    path = os.path.abspath(path)
+
+    click.secho('Archiving data at: ', nl=False)
+    click.secho(path, fg='green')
+
+    pre_tar_log = {'archive_path' : path}
+    logger.emit('create_archive', pre_tar_log)
+
+    tar_file_path = os.path.abspath(create_archive(path))
+
+    click.secho('Created archive: ', nl=False)
+    click.secho(tar_file_path, fg='green')
+
+    archive_size = os.stat(tar_file_path).st_size
+    post_tar_log = {'archive_size' : archive_size,
+                    'output_tar_path' : tar_file_path}
+    logger.emit('tar_created', post_tar_log)
 
 
 @archive.command()
@@ -64,8 +113,24 @@ def create(path):
 def compress(path, cores, slurm):
     path = os.path.abspath(path)
 
+
     if not slurm:
-        compress_archive(path, n_threads=cores)
+        click.secho('Compressing archive: ', nl=False)
+        click.secho(path, fg='green')
+
+        pre_log = {'archive_path' : path,
+                   'cores' : cores,
+                   'tar_size' : os.stat(path).st_size}
+        logger.emit('compress_archive', pre_log)
+
+        compressed_archive_path = compress_archive(path, n_threads=cores)
+
+        click.secho('Created compressed file: ', nl=False)
+        click.secho(compressed_archive_path, fg='green')
+
+        post_log = {'compressed_archive_path' : compressed_archive_path,
+                    'gzip_size' : os.stat(compressed_archive_path).st_size}
+        logger.emit('compress_complete', post_log)
 
     # WARNING - be VERY careful automating this to submit the job - if the
     # logic fails, the job will repeatedly submit itself forever!
