@@ -88,8 +88,14 @@ def summary(path):
     summary_data = summarise_archive(path)
 
     size_in_gibi = float(summary_data['total_size']) / (2 ** 30)
-    click.echo("Archive contains {} files.".format(summary_data['n_files']))
-    click.echo("Total uncompressed archive size is {:.2f} GiB.".format(size_in_gibi))
+
+    click.secho("Archive contains", nl=False)
+    click.secho(" {} ".format(summary_data['n_files']), fg='green', nl=False)
+    click.secho("files.")
+
+    click.secho("Total uncompressed archive size is", nl=False)
+    click.secho(" {:.2f} GiB".format(size_in_gibi), fg='green', nl=False)
+    click.secho(".")
 
 if __name__ == "__main__":
     cli()
