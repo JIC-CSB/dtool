@@ -1,7 +1,10 @@
-sudo: false
+sudo: required
 language: python
 python:
   - "2.7"
   - "3.5"
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y pigz
 install: pip install tox-travis
 script: tox
