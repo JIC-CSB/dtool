@@ -1,6 +1,9 @@
 dtool - manage JIC archive data
 ===============================
 
+.. image:: https://travis-ci.org/JIC-CSB/dtool.svg?branch=master
+    :target: https://travis-ci.org/JIC-CSB/dtool
+
 Deployment
 ----------
 
