@@ -252,7 +252,20 @@ def test_extract_manifest(tmp_archive):
 
     assert os.path.isfile(extracted_manifest_path)
 
-    with open(extracted_manifest_path) as f:
-        manifest = json.load(f)
+    with open(extracted_manifest_path) as fh:
+        manifest = json.load(fh)
 
     assert len(manifest['file_list']) == 3
+
+def test_extract_readme(tmp_archive):
+
+    from dtool import extract_readme
+
+    extracted_readme_path = extract_readme(tmp_archive)
+
+    assert os.path.isfile(extracted_readme_path)
+
+    with open(extracted_readme_path) as fh:
+        readme = yaml.load(fh)
+
+    assert readme['dataset_name'] == 'brassica_rnaseq_reads'

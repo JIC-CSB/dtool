@@ -9,6 +9,8 @@ from dtool import (
   compress_archive,
   create_archive, 
   create_manifest, 
+  extract_manifest,
+  extract_readme,
   new_archive,
   generate_slurm_script,
   summarise_archive
@@ -96,6 +98,44 @@ def summary(path):
     click.secho("Total uncompressed archive size is", nl=False)
     click.secho(" {:.2f} GiB".format(size_in_gibi), fg='green', nl=False)
     click.secho(".")
+
+
+@cli.group()
+def extract():
+  pass
+
+
+@extract.command()
+@click.argument('path', 'Path to compressed archive.',
+                type=click.Path(exists=True))
+def manifest(path):
+    extracted_manifest_path = extract_manifest(path)
+    click.secho('Extracted ', nl=False)
+    click.secho(extracted_manifest_path, fg='green')
+
+
+@extract.command()
+@click.argument('path', 'Path to compressed archive.',
+                type=click.Path(exists=True))
+def readme(path):
+    extracted_readme_path = extract_readme(path)
+    click.secho('Extracted ', nl=False)
+    click.secho(extracted_readme_path, fg='green')
+
+
+@extract.command()
+@click.argument('path', 'Path to compressed archive.',
+                type=click.Path(exists=True))
+def metadata(path):
+    extracted_readme_path = extract_readme(path)
+    click.secho('Extracted ', nl=False)
+    click.secho(extracted_readme_path, fg='green')
+    extracted_manifest_path = extract_manifest(path)
+    click.secho('Extracted ', nl=False)
+    click.secho(extracted_manifest_path, fg='green')
+
+   
+
 
 if __name__ == "__main__":
     cli()
