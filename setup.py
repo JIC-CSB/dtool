@@ -16,6 +16,6 @@ setup(name="dtool",
       download_url="{}/tarball/{}".format(url, version),
       install_requires=["cookiecutter",
                         "click",
-                        "fluent",
+                        "fluent-logger",
                         "jinja2"],
       license="MIT")
