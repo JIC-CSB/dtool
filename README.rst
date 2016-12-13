@@ -4,6 +4,10 @@ dtool - manage JIC archive data
 .. image:: https://travis-ci.org/JIC-CSB/dtool.svg?branch=master
     :target: https://travis-ci.org/JIC-CSB/dtool
 
+.. image:: https://codecov.io/github/JIC-CSB/dtool/coverage.svg?branch=master
+   :target: https://codecov.io/github/JIC-CSB/dtool?branch=master
+   :alt: Code Coverage
+
 
 Overview
 --------
