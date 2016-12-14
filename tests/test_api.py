@@ -123,6 +123,13 @@ def test_create_manifest(tmp_dir):
     manifest_path = os.path.join(tmp_project, "manifest.json")
     assert os.path.isfile(manifest_path)
 
+    # Ensure manifest is valid json.
+    with open(manifest_path, "r") as fh:
+        manifest = json.load(fh)
+
+    # Make sure that the "arctool_version" is in the generated manifest.
+    assert "arctool_version" in manifest
+
 
 def test_create_manifest_strip_trailing_slash(tmp_dir):
     from dtool import create_manifest

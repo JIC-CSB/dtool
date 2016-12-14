@@ -95,7 +95,8 @@ def generate_manifest(path):
         entry['mtime'] = st_mtime
         entries.append(entry)
 
-    manifest = dict(file_list=entries)
+    manifest = dict(arctool_version=__version__,
+                    file_list=entries)
 
     return manifest
 
