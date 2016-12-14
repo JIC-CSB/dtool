@@ -18,7 +18,7 @@ HERE = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(HERE, 'templates')
 
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 
 def log(message):
