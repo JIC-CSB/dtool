@@ -18,5 +18,5 @@ setup(name="dtool",
                         "click",
                         "fluent-logger",
                         "jinja2",
-                        "yaml"],
+                        "pyyaml"],
       license="MIT")
