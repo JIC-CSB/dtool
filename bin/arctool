@@ -20,6 +20,7 @@ from dtool import (
 
 from fluent import sender
 
+
 @click.group()
 @click.option('--fluentd-host', envvar='FLUENTD_HOST', default='localhost')
 def cli(fluentd_host):
@@ -47,7 +48,7 @@ def new(staging_path):
     readme_file = os.path.join(archive_path, 'README.yml')
 
     with open(readme_file) as fh:
-      metadata = yaml.load(fh)
+        metadata = yaml.load(fh)
 
     # Fix problem serializing datetime objects
     metadata['archive_date'] = str(metadata['archive_date'])
@@ -55,6 +56,11 @@ def new(staging_path):
     log_data = {'metadata': metadata,
                 'archive_path': archive_path}
     logger.emit('new', log_data)
+
+    manifest_target = os.path.join(archive_path, 'archive')
+    click.secho('Next: ', nl=False)
+    click.secho('arctool manifest create {}'.format(manifest_target),
+                fg='cyan')
 
 
 @cli.group()
@@ -76,6 +82,12 @@ def create(path):
 
     logger.emit('manifest_create', manifest)
 
+    dataset_path, _ = os.path.split(manifest_path)
+    dataset_path = os.path.abspath(dataset_path)
+    click.secho('Next: ', nl=False)
+    click.secho('arctool archive create {}'.format(dataset_path), fg='cyan')
+
+
 @cli.group()
 def archive():
     pass
@@ -90,7 +102,7 @@ def create(path):
     click.secho('Archiving data at: ', nl=False)
     click.secho(path, fg='green')
 
-    pre_tar_log = {'archive_path' : path}
+    pre_tar_log = {'archive_path': path}
     logger.emit('create_archive', pre_tar_log)
 
     tar_file_path = os.path.abspath(create_archive(path))
@@ -99,9 +111,12 @@ def create(path):
     click.secho(tar_file_path, fg='green')
 
     archive_size = os.stat(tar_file_path).st_size
-    post_tar_log = {'archive_size' : archive_size,
-                    'output_tar_path' : tar_file_path}
+    post_tar_log = {'archive_size': archive_size,
+                    'output_tar_path': tar_file_path}
     logger.emit('tar_created', post_tar_log)
+
+    click.secho('Next: ', nl=False)
+    click.secho('arctool archive compress {}'.format(tar_file_path), fg='cyan')
 
 
 @archive.command()
@@ -113,14 +128,13 @@ def create(path):
 def compress(path, cores, slurm):
     path = os.path.abspath(path)
 
-
     if not slurm:
         click.secho('Compressing archive: ', nl=False)
         click.secho(path, fg='green')
 
-        pre_log = {'archive_path' : path,
-                   'cores' : cores,
-                   'tar_size' : os.stat(path).st_size}
+        pre_log = {'archive_path': path,
+                   'cores': cores,
+                   'tar_size': os.stat(path).st_size}
         logger.emit('compress_archive', pre_log)
 
         compressed_archive_path = compress_archive(path, n_threads=cores)
@@ -128,8 +142,8 @@ def compress(path, cores, slurm):
         click.secho('Created compressed file: ', nl=False)
         click.secho(compressed_archive_path, fg='green')
 
-        post_log = {'compressed_archive_path' : compressed_archive_path,
-                    'gzip_size' : os.stat(compressed_archive_path).st_size}
+        post_log = {'compressed_archive_path': compressed_archive_path,
+                    'gzip_size': os.stat(compressed_archive_path).st_size}
         logger.emit('compress_complete', post_log)
 
     # WARNING - be VERY careful automating this to submit the job - if the
