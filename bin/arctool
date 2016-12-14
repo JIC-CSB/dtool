@@ -15,16 +15,19 @@ from dtool import (
     extract_readme,
     new_archive,
     generate_slurm_script,
-    summarise_archive
+    summarise_archive,
+    __version__
 )
 
 from fluent import sender
 
 @click.group()
+@click.version_option(version=__version__)
 @click.option('--fluentd-host', envvar='FLUENTD_HOST', default='localhost')
 def cli(fluentd_host):
     global logger
     logger = sender.FluentSender('arctool', host=fluentd_host, port=24224)
+    logger.emit('version', {'api-version' : __version__})
 
 
 @cli.command()
@@ -66,6 +69,9 @@ def manifest():
 @click.argument('path', 'Path to archive directory.',
                 type=click.Path(exists=True))
 def create(path):
+
+    logger.emit('manifest_create', {'path' : path})
+    
     manifest_path = create_manifest(path)
 
     with open(manifest_path) as fh:
@@ -74,7 +80,7 @@ def create(path):
     click.secho('Created manifest: ', nl=False)
     click.secho(manifest_path, fg='green')
 
-    logger.emit('manifest_create', manifest)
+    logger.emit('manifest', manifest)
 
 @cli.group()
 def archive():
