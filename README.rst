@@ -41,21 +41,14 @@ What the tools in this project do
 6. Provides wrappers to verify the integrity of files in gzipped tar archives
 
 
-Installation
-------------
-
-::
-
-    $ git clone https://github.com/JIC-CSB/dtool.git
-    $ cd dtool
-    $ python setup.py install
-
-
 Usage
 -----
 
 arctool
 ~~~~~~~
+
+Warning: this section of the documentation assumes functionality that will be
+added in a future release.
 
 ``arctool`` is a tool for archiving data.
 
@@ -131,7 +124,17 @@ Compress the archive using gzip compression.
 
     # Add output here
 
-Finally move the gizipped tarball archive into your long term storage.
+Finally move the gzipped tarball archive into your long term storage.
+
+
+Installation
+------------
+
+::
+
+    $ git clone https://github.com/JIC-CSB/dtool.git
+    $ cd dtool
+    $ python setup.py install
 
 
 Deployment
@@ -153,3 +156,8 @@ Run the test suite using the command::
 
     tox
 
+
+Release notes
+-------------
+
+- 0.3.0: Initial tagged release
