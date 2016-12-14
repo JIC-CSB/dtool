@@ -266,46 +266,42 @@ def summarise_archive(path):
     return summary
 
 
-def extract_manifest(path):
+def extract_file(archive_path, file_in_archive):
+    """Extract a file from an archive.
+
+    The archive can be a tarball or a compressed tarball.
+
+    :param archive_path: path to the archive to extract a file from
+    :param file_in_archive: file to extract
+    :returns: path to extracted file
+    """
+    archive_path = os.path.abspath(archive_path)
+
+    archive_basename = os.path.basename(archive_path)
+    archive_dirname = os.path.dirname(archive_path)
+    archive_name, exts = archive_basename.split('.', 1)
+    assert "tar" in exts.split(".")  # exts is expected to be tar or tar.gz
+
+    extract_path = os.path.join(archive_name, file_in_archive)
+    with tarfile.open(archive_path, 'r:*') as tar:
+        tar.extract(extract_path, path=archive_dirname)
+
+    return os.path.join(archive_dirname, extract_path)
+
+
+def extract_manifest(archive_path):
     """Extract manifest from archive into directory where archive is located.
 
-    :param path: path to archive tar gzipped file
+    :param archive_path: path to archive
     :returns: path to extracted manifest file
     """
-    path = os.path.abspath(path)
-
-    # FIXME - code duplication with above
-    archive_basename = os.path.basename(path)
-    archive_dirname = os.path.dirname(path)
-    archive_name, exts = archive_basename.split('.', 1)
-    assert exts == 'tar.gz'
-
-    manifest_path = os.path.join(archive_name, 'manifest.json')
-
-    with tarfile.open(path, 'r:gz') as tar:
-        tar.extract(manifest_path, path=archive_dirname)
-
-    return os.path.join(archive_dirname, manifest_path)
+    return extract_file(archive_path, "manifest.json")
 
 
-def extract_readme(path):
+def extract_readme(archive_path):
     """Extract readme from archive into directory where archive is located.
 
-    :param path: path to archive tar gzipped file
+    :param archive_path: path to archive
     :returns: path to extracted readme file
     """
-
-    path = os.path.abspath(path)
-
-    # FIXME - code duplication with above
-    archive_basename = os.path.basename(path)
-    archive_dirname = os.path.dirname(path)
-    archive_name, exts = archive_basename.split('.', 1)
-    assert exts == 'tar.gz'
-
-    readme_path = os.path.join(archive_name, 'README.yml')
-
-    with tarfile.open(path, 'r:gz') as tar:
-        tar.extract(readme_path, path=archive_dirname)
-
-    return os.path.join(archive_dirname, readme_path)
+    return extract_file(archive_path, "README.yml")
