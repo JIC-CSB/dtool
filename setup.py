@@ -17,5 +17,6 @@ setup(name="dtool",
       install_requires=["cookiecutter",
                         "click",
                         "fluent-logger",
-                        "jinja2"],
+                        "jinja2",
+                        "yaml"],
       license="MIT")
