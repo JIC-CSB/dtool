@@ -66,6 +66,11 @@ def test_split_safe_path():
     assert split_safe_path("/root/") == "/root"
 
 
+def test_version_is_str():
+    from dtool import __version__
+    assert isinstance(__version__, str)
+
+
 def test_shasum():
 
     from dtool import shasum
@@ -151,6 +156,9 @@ def test_new_archive(tmp_dir):
     with open(readme_yml_path, "r") as fh:
         readme_data = yaml.load(fh)
     assert readme_data["dataset_name"] == "brassica_rnaseq_reads"
+
+    # Also test that the README.yml file has a "arctool_version" key.
+    assert "arctool_version" in readme_data
 
 
 def test_create_archive(tmp_dir):

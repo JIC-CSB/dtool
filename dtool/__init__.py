@@ -18,7 +18,7 @@ HERE = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(HERE, 'templates')
 
 
-__version__ == "0.2.0"
+__version__ = "0.2.0"
 
 
 def log(message):
@@ -162,7 +162,8 @@ def new_archive(staging_path, no_input=False):
     email = "{}@nbi.ac.uk".format(unix_username)
     archive_template = os.path.join(TEMPLATE_DIR, 'archive')
     extra_context = dict(owner_unix_username=unix_username,
-                         owner_email=email)
+                         owner_email=email,
+                         version=__version__)
     archive_path = cookiecutter(archive_template,
                                 output_dir=staging_path,
                                 no_input=no_input,
