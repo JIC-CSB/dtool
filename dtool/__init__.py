@@ -189,9 +189,20 @@ def create_archive(path):
 
     tar_output_filename = dataset_name + '.tar'
 
-    tar_command = ['tar', '-cf', tar_output_filename, dataset_name]
+    readme_path = os.path.join(dataset_name, 'README.yml')
+    tar_readme = ['tar', '-cf', tar_output_filename, readme_path]
+    subprocess.call(tar_readme, cwd=staging_path)
 
-    subprocess.call(tar_command, cwd=staging_path)
+    manifest_path = os.path.join(dataset_name, 'manifest.json')
+    tar_manifest = ['tar', '-rf', tar_output_filename, manifest_path]
+    subprocess.call(tar_manifest, cwd=staging_path)
+
+    exclude_manifest = '--exclude={}'.format(manifest_path)
+    exclude_readme = '--exclude={}'.format(readme_path)
+    tar_remainder = ['tar', exclude_manifest, exclude_readme,
+                     '-rf', tar_output_filename, dataset_name]
+
+    subprocess.call(tar_remainder, cwd=staging_path)
 
     return tar_output_filename
 
