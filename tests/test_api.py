@@ -168,6 +168,11 @@ def test_new_archive(tmp_dir):
     # Also test that the README.yml file has a "arctool_version" key.
     assert "arctool_version" in readme_data
 
+    # Also assert that confidential and personally_identifiable_information
+    # are set to False by default.
+    assert not readme_data["confidential"]
+    assert not readme_data["personally_identifiable_information"]
+
 
 def test_create_archive(tmp_dir):
     from dtool import create_archive, create_manifest, new_archive

@@ -163,6 +163,9 @@ Release notes
 Development
 ~~~~~~~~~~~
 
+- *Added "confidential" key to README.yml meta data (defaults to False)*
+- *Added "personally_identifiable_information" key to README.yml meta data
+  (defaults to False)*
 - Added `extract_file()` method to dtool package
 
 0.3.0
