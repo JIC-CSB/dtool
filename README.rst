@@ -160,4 +160,12 @@ Run the test suite using the command::
 Release notes
 -------------
 
-- 0.3.0: Initial tagged release
+Development
+~~~~~~~~~~~
+
+- Added `extract_file()` method to dtool package
+
+0.3.0
+~~~~~
+
+- Initial tagged release
