@@ -20,11 +20,11 @@ from dtool import (
 
 from fluent import sender
 
-logger = sender.FluentSender('arctool', host='localhost', port=24224)
-
 @click.group()
-def cli():
-    pass
+@click.option('--fluentd-host', envvar='FLUENTD_HOST', default='localhost')
+def cli(fluentd_host):
+    global logger
+    logger = sender.FluentSender('arctool', host=fluentd_host, port=24224)
 
 
 @cli.command()
