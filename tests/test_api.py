@@ -5,18 +5,19 @@ import json
 import shutil
 import tarfile
 import tempfile
+import subprocess
 from distutils.dir_util import copy_tree
 
 import yaml
 import magic
-from pytest import fixture
+import pytest
 
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "input")
 TEST_OUTPUT_DATA = os.path.join(HERE, "data", "output")
 
 
-@fixture
+@pytest.fixture
 def tmp_dir(request):
     d = tempfile.mkdtemp()
 
@@ -26,7 +27,7 @@ def tmp_dir(request):
     return d
 
 
-@fixture
+@pytest.fixture
 def tmp_archive(request):
 
     from dtool import (
@@ -167,6 +168,98 @@ def test_new_archive(tmp_dir):
     # Also test that the README.yml file has a "arctool_version" key.
     assert "arctool_version" in readme_data
 
+    # Also assert that confidential and personally_identifiable_information
+    # are set to False by default.
+    assert not readme_data["confidential"]
+    assert not readme_data["personally_identifiable_information"]
+
+
+def test_readme_yml_is_valid(mocker):
+    from dtool import readme_yml_is_valid
+    from dtool import log  # NOQA
+
+    patched_log = mocker.patch("dtool.log")
+
+    assert not readme_yml_is_valid("")
+    patched_log.assert_called_with("README.yml invalid: empty file")
+
+    # This should be ok.
+    assert readme_yml_is_valid("""---
+project_name: some_project
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners:
+  - name: Some One
+    email: ones@example.com
+archive_date: 2016-01-12
+""")
+
+    # Missing a project name.
+    assert not readme_yml_is_valid("""---
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners:
+  - name: Some One
+    email: ones@example.com
+archive_date: 2016-01-12
+""")
+    patched_log.assert_called_with("README.yml is missing: project_name")
+
+    # Invalid date.
+    assert not readme_yml_is_valid("""---
+project_name: some_project
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners: NA
+archive_date: some day
+""")
+    patched_log.assert_called_with(
+        "README.yml invalid: archive_date is not a date")
+
+    # Owners is not a list.
+    assert not readme_yml_is_valid("""---
+project_name: some_project
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners: NA
+archive_date: 2016-01-12
+""")
+    patched_log.assert_called_with("README.yml invalid: owners is not a list")
+
+    # An owner needs a name.
+    assert not readme_yml_is_valid("""---
+project_name: some_project
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners:
+  - name: Some One
+    email: ones@example.com
+  - email: twos@example.com
+archive_date: 2016-01-12
+""")
+    patched_log.assert_called_with(
+        "README.yml invalid: owner is missing a name")
+
+    # An owner needs an email.
+    assert not readme_yml_is_valid("""---
+project_name: some_project
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners:
+  - name: Some One
+    email: ones@example.com
+  - name: Another Two
+archive_date: 2016-01-12
+""")
+    patched_log.assert_called_with(
+        "README.yml invalid: owner is missing an email")
+
 
 def test_create_archive(tmp_dir):
     from dtool import create_archive, create_manifest, new_archive
@@ -257,6 +350,23 @@ def test_summarise_archive(tmp_archive):
     assert isinstance(summary, dict)
 
     assert summary['n_files'] == 3
+
+
+def test_extract_file(tmp_archive):
+    from dtool import extract_file
+    extracted_path = extract_file(tmp_archive, "README.yml")
+    assert os.path.isfile(extracted_path)
+
+    # Remove the extracted file and unzip the tarball.
+    os.unlink(extracted_path)
+    unzip_command = ["gunzip", tmp_archive]
+    subprocess.call(unzip_command)
+    tarball_path, _ = tmp_archive.rsplit(".", 1)
+    assert os.path.isfile(tarball_path)
+
+    # Test that the extract_file method works on unzipped tarballs too.
+    extracted_path = extract_file(tarball_path, "README.yml")
+    assert os.path.isfile(extracted_path)
 
 
 def test_extract_manifest(tmp_archive):

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Manage archiving of data."""
 
+import sys
 import os
 import json
 
@@ -15,7 +16,8 @@ from dtool import (
     extract_readme,
     new_archive,
     generate_slurm_script,
-    summarise_archive
+    summarise_archive,
+    readme_yml_is_valid,
 )
 
 from fluent import sender
@@ -104,11 +106,19 @@ def archive():
 def create(path):
     path = os.path.abspath(path)
 
+    pre_tar_log = {'archive_path' : path}
+    logger.emit('create_archive', pre_tar_log)
+
+    readme_path = os.path.join(path, "README.yml")
+    click.secho('Validating readme at: ', nl=False)
+    click.secho(readme_path, fg='green')
+    readme_str = open(readme_path, "r").read()
+    if not readme_yml_is_valid(readme_str):
+        click.secho("Not valid", fg='red')
+        sys.exit(2)
+
     click.secho('Archiving data at: ', nl=False)
     click.secho(path, fg='green')
-
-    pre_tar_log = {'archive_path': path}
-    logger.emit('create_archive', pre_tar_log)
 
     tar_file_path = os.path.abspath(create_archive(path))
 

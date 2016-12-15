@@ -160,4 +160,16 @@ Run the test suite using the command::
 Release notes
 -------------
 
-- 0.3.0: Initial tagged release
+Development
+~~~~~~~~~~~
+
+- Added README.yml validation upon archive creation
+- *Added "confidential" key to README.yml meta data (defaults to False)*
+- *Added "personally_identifiable_information" key to README.yml meta data
+  (defaults to False)*
+- Added `extract_file()` method to dtool package
+
+0.3.0
+~~~~~
+
+- Initial tagged release
