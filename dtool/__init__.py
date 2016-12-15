@@ -178,7 +178,7 @@ def new_archive(staging_path, no_input=False):
     return archive_path
 
 
-def validate_readme_yml(yml_string):
+def readme_yml_is_valid(yml_string):
     """Return True if README.yml is valid.
 
     :returns: bool

@@ -17,7 +17,7 @@ from dtool import (
     new_archive,
     generate_slurm_script,
     summarise_archive,
-    validate_readme_yml,
+    readme_yml_is_valid,
 )
 
 from fluent import sender
@@ -96,7 +96,7 @@ def create(path):
     click.secho('Validating readme at: ', nl=False)
     click.secho(readme_path, fg='green')
     readme_str = open(readme_path, "r").read()
-    if not validate_readme_yml(readme_str):
+    if not readme_yml_is_valid(readme_str):
         click.secho("Not valid", fg='red')
         sys.exit(2)
 

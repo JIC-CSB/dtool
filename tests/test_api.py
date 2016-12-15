@@ -174,16 +174,16 @@ def test_new_archive(tmp_dir):
     assert not readme_data["personally_identifiable_information"]
 
 
-def test_validate_readme_yml(mocker):
-    from dtool import validate_readme_yml, log
+def test_readme_yml_is_valid(mocker):
+    from dtool import readme_yml_is_valid, log
 
     patched_log = mocker.patch("dtool.log")
 
-    assert not validate_readme_yml("")
+    assert not readme_yml_is_valid("")
     patched_log.assert_called_with("README.yml invalid: empty file")
 
     # This should be ok.
-    assert validate_readme_yml("""---
+    assert readme_yml_is_valid("""---
 project_name: some_project
 dataset_name: data_set_1
 confidential: False
@@ -195,7 +195,7 @@ archive_date: 2016-01-12
 """)
 
     # Missing a project name.
-    assert not validate_readme_yml("""---
+    assert not readme_yml_is_valid("""---
 dataset_name: data_set_1
 confidential: False
 personally_identifiable_information: False
@@ -207,7 +207,7 @@ archive_date: 2016-01-12
     patched_log.assert_called_with("README.yml is missing: project_name")
 
     # Invalid date.
-    assert not validate_readme_yml("""---
+    assert not readme_yml_is_valid("""---
 project_name: some_project
 dataset_name: data_set_1
 confidential: False
@@ -218,7 +218,7 @@ archive_date: some day
     patched_log.assert_called_with("README.yml invalid: archive_date is not a date")
 
     # Owners is not a list.
-    assert not validate_readme_yml("""---
+    assert not readme_yml_is_valid("""---
 project_name: some_project
 dataset_name: data_set_1
 confidential: False
@@ -229,7 +229,7 @@ archive_date: 2016-01-12
     patched_log.assert_called_with("README.yml invalid: owners is not a list")
 
     # An owner needs a name.
-    assert not validate_readme_yml("""---
+    assert not readme_yml_is_valid("""---
 project_name: some_project
 dataset_name: data_set_1
 confidential: False
@@ -243,7 +243,7 @@ archive_date: 2016-01-12
     patched_log.assert_called_with("README.yml invalid: owner is missing a name")
 
     # An owner needs an email.
-    assert not validate_readme_yml("""---
+    assert not readme_yml_is_valid("""---
 project_name: some_project
 dataset_name: data_set_1
 confidential: False
