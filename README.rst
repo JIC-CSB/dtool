@@ -163,6 +163,7 @@ Release notes
 Development
 ~~~~~~~~~~~
 
+- *Include name of hash function in manifest.json*
 - *Changed manifest creation to include file mimetypes from python-magic*
 - Added CLI integration tests
 - *Changed tar creation to force README.yml and manifest.json to be first two files*
