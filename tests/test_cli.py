@@ -47,5 +47,26 @@ def test_everything_except_new_archive(tmp_dir):
 
     cmd = ["arctool", "archive", "create", dataset_path]
     subprocess.call(cmd)
-    tar_path = os.path.join(tmp_dir, "some_project1.tar")
+    tar_path = os.path.join(tmp_dir, "data_set_1.tar")
+    assert os.path.isfile(tar_path)
+
+    cmd = ["arctool", "archive", "compress", tar_path]
+    subprocess.call(cmd)
+    gzip_path = os.path.join(tmp_dir, "data_set_1.tar.gz")
+    assert os.path.isfile(gzip_path)
+
+    # Remove the dataset path to ensure that files are actually extracted.
+    shutil.rmtree(dataset_path)
+
+    cmd = ["arctool", "extract", "readme", gzip_path]
+    subprocess.call(cmd)
+    readme_path = os.path.join(dataset_path, "README.yml")
+    assert os.path.isfile(readme_path)
+
+    cmd = ["arctool", "extract", "manifest", gzip_path]
+    subprocess.call(cmd)
+    manifest_path = os.path.join(dataset_path, "manifest.json")
     assert os.path.isfile(manifest_path)
+
+    cmd = ["arctool", "verify", "summary", gzip_path]
+    subprocess.call(cmd)
