@@ -57,9 +57,14 @@ def new(staging_path):
                 'archive_path': archive_path}
     logger.emit('new', log_data)
 
-    manifest_target = os.path.join(archive_path, 'archive')
-    click.secho('Next: ', nl=False)
-    click.secho('arctool manifest create {}'.format(manifest_target),
+    archive_data_path = os.path.join(archive_path, 'archive')
+
+    click.secho('Now:')
+    click.secho('  1. Edit {}'.format(readme_file), fg='yellow')
+    click.secho('  2. Move archive data into {}'.format(archive_data_path), 
+                fg='yellow')
+    click.secho('Then: ', nl=False)
+    click.secho('arctool manifest create {}'.format(archive_data_path),
                 fg='cyan')
 
 
@@ -145,6 +150,10 @@ def compress(path, cores, slurm):
         post_log = {'compressed_archive_path': compressed_archive_path,
                     'gzip_size': os.stat(compressed_archive_path).st_size}
         logger.emit('compress_complete', post_log)
+
+        click.secho('Now:')
+        click.secho('  Move {} to archive storage'.format(
+            compressed_archive_path), fg='yellow')
 
     # WARNING - be VERY careful automating this to submit the job - if the
     # logic fails, the job will repeatedly submit itself forever!
