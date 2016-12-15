@@ -2,6 +2,8 @@
 arctool_version: {{ cookiecutter.version }}
 project_name: {{ cookiecutter.project_name }}
 dataset_name: {{ cookiecutter.dataset_name }}
+confidential: {{ cookiecutter.confidential }}
+personally_identifiable_information: {{ cookiecutter.personally_identifiable_information }}
 owners:
   - name: {{ cookiecutter.owner_name }}
     email: {{ cookiecutter.owner_email }}
