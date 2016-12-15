@@ -207,14 +207,15 @@ def readme_yml_is_valid(yml_string):
         return False
 
     for owner in readme["owners"]:
-        if not "name" in owner:
+        if "name" not in owner:
             log("README.yml invalid: owner is missing a name")
             return False
-        if not "email" in owner:
+        if "email" not in owner:
             log("README.yml invalid: owner is missing an email")
             return False
 
     return True
+
 
 def create_archive(path):
     """Create archive from path using tar.

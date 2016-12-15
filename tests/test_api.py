@@ -175,7 +175,8 @@ def test_new_archive(tmp_dir):
 
 
 def test_readme_yml_is_valid(mocker):
-    from dtool import readme_yml_is_valid, log
+    from dtool import readme_yml_is_valid
+    from dtool import log  # NOQA
 
     patched_log = mocker.patch("dtool.log")
 
@@ -215,7 +216,8 @@ personally_identifiable_information: False
 owners: NA
 archive_date: some day
 """)
-    patched_log.assert_called_with("README.yml invalid: archive_date is not a date")
+    patched_log.assert_called_with(
+        "README.yml invalid: archive_date is not a date")
 
     # Owners is not a list.
     assert not readme_yml_is_valid("""---
@@ -240,7 +242,8 @@ owners:
   - email: twos@example.com
 archive_date: 2016-01-12
 """)
-    patched_log.assert_called_with("README.yml invalid: owner is missing a name")
+    patched_log.assert_called_with(
+        "README.yml invalid: owner is missing a name")
 
     # An owner needs an email.
     assert not readme_yml_is_valid("""---
@@ -254,7 +257,8 @@ owners:
   - name: Another Two
 archive_date: 2016-01-12
 """)
-    patched_log.assert_called_with("README.yml invalid: owner is missing an email")
+    patched_log.assert_called_with(
+        "README.yml invalid: owner is missing an email")
 
 
 def test_create_archive(tmp_dir):
