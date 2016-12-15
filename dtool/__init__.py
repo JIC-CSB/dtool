@@ -150,23 +150,32 @@ def create_manifest(path):
     # Should this return the path to the generated manifest file?
 
 
-def new_archive(staging_path, no_input=False):
+def new_archive(staging_path, extra_context=dict(), no_input=False):
     """Create new archive in the staging path.
 
     This creates an initial skeleton directory structure that includes
     a top level README.yml file.
 
+    The extra_context parameter can be used to provide values for the
+    cookiecutter template. See the
+    dtool/templates/archive/cookicutter.json file for keys and
+    default values.
+
     The no_input parameter exists for automated testing purposes.
     If it is set to True it disables prompting of user input.
 
     :param staging_path: path to archiving staging area
+    :param extra_context: dictionary with context for cookiecutter template
+    :returns: path to newly created data set archive in the staging area
     """
     unix_username = getpass.getuser()
     email = "{}@nbi.ac.uk".format(unix_username)
     archive_template = os.path.join(TEMPLATE_DIR, 'archive')
-    extra_context = dict(owner_unix_username=unix_username,
-                         owner_email=email,
-                         version=__version__)
+    if "owner_unix_username" not in extra_context:
+        extra_context["owner_unix_username"] = unix_username
+    if "owner_email" not in extra_context:
+        extra_context["owner_email"] = email
+    extra_context["version"] = __version__
     archive_path = cookiecutter(archive_template,
                                 output_dir=staging_path,
                                 no_input=no_input,

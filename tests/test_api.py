@@ -261,6 +261,26 @@ archive_date: 2016-01-12
         "README.yml invalid: owner is missing an email")
 
 
+def test_new_archive_extra_content(tmp_dir):
+    from dtool import new_archive
+
+    extra_context = dict(project_name="some_project",
+                         dataset_name="data_set_1")
+    new_archive(tmp_dir, no_input=True, extra_context=extra_context)
+
+    # Test file creation.
+    readme_yml_path = os.path.join(tmp_dir,
+                                   "data_set_1",
+                                   "README.yml")
+    assert os.path.isfile(readme_yml_path)
+
+    # Test that yaml is valid.
+    with open(readme_yml_path, "r") as fh:
+        readme_data = yaml.load(fh)
+    assert readme_data["project_name"] == "some_project"
+    assert readme_data["dataset_name"] == "data_set_1"
+
+
 def test_create_archive(tmp_dir):
     from dtool import create_archive, create_manifest, new_archive
 
