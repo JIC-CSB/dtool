@@ -18,5 +18,6 @@ setup(name="dtool",
                         "click",
                         "fluent-logger",
                         "jinja2",
-                        "pyyaml"],
+                        "pyyaml",
+                        "python-magic"],
       license="MIT")

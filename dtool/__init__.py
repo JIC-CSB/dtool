@@ -10,6 +10,7 @@ import getpass
 import datetime
 
 import yaml
+import magic
 from jinja2 import Environment, PackageLoader
 
 from cookiecutter.main import cookiecutter
@@ -95,6 +96,7 @@ def generate_manifest(path):
         entry['hash'] = file_hash
         entry['size'] = st_size
         entry['mtime'] = st_mtime
+        entry['mimetype'] = magic.from_file(fq_filename, mime=True)
         entries.append(entry)
 
     manifest = dict(arctool_version=__version__,

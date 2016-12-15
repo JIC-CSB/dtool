@@ -129,8 +129,52 @@ def test_create_manifest(tmp_dir):
     with open(manifest_path, "r") as fh:
         manifest = json.load(fh)
 
+    assert "file_list" in manifest
+
+    file_list = manifest["file_list"]
+    file_dict_by_path = {entry['path']: entry for entry in file_list}
+
+    assert "file1.txt" in file_dict_by_path
+
+    file1_entry = file_dict_by_path["file1.txt"]
+
+    assert file1_entry["mimetype"] == "text/plain"
+
     # Make sure that the "arctool_version" is in the generated manifest.
     assert "arctool_version" in manifest
+
+
+def test_manifest_mimetypes(tmp_dir):
+    from dtool import create_manifest
+
+    tmp_project = os.path.join(tmp_dir, "proj")
+
+    shutil.copytree(TEST_MIMETYPE_DATA, tmp_project)
+    create_manifest(os.path.join(tmp_project, "archive"))
+
+    manifest_path = os.path.join(tmp_project, "manifest.json")
+    assert os.path.isfile(manifest_path)
+
+    # Ensure manifest is valid json.
+    with open(manifest_path, "r") as fh:
+        manifest = json.load(fh)
+
+    file_list = manifest["file_list"]
+
+    expected_mimetypes = {
+        'actually_a_png.txt': 'image/png',
+        'actually_a_text_file.jpg': 'text/plain',
+        'empty_file': 'inode/x-empty',
+        'random_bytes': 'application/octet-stream',
+        'real_text_file.txt': 'text/plain',
+        'tiny.png': 'image/png'
+    }
+
+    for file in file_list:
+        file_path = file['path']
+        actual = file['mimetype']
+        expected = expected_mimetypes[file_path]
+        assert expected == actual
 
 
 def test_create_manifest_strip_trailing_slash(tmp_dir):
