@@ -7,6 +7,7 @@ import hashlib
 import tarfile
 import subprocess
 import getpass
+import datetime
 
 import yaml
 from jinja2 import Environment, PackageLoader
@@ -182,7 +183,6 @@ def validate_readme_yml(yml_string):
 
     :returns: bool
     """
-    valid = True
     readme = yaml.load(yml_string)
     required_keys = ["project_name",
                      "dataset_name",
@@ -193,8 +193,23 @@ def validate_readme_yml(yml_string):
     for key in required_keys:
         if key not in readme:
             log("README.yml is missing: {}".format(key))
-            valid = False
-    return valid
+            return False
+    if not isinstance(readme["archive_date"], datetime.date):
+        log("README.yml invalid: archive_date is not a date")
+        return False
+    if not isinstance(readme["owners"], list):
+        log("README.yml invalid: owners is not a list")
+        return False
+
+    for owner in readme["owners"]:
+        if not "name" in owner:
+            log("README.yml invalid: owner is missing a name")
+            return False
+        if not "email" in owner:
+            log("README.yml invalid: owner is missing an email")
+            return False
+
+    return True
 
 def create_archive(path):
     """Create archive from path using tar.

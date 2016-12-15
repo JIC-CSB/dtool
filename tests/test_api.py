@@ -178,6 +178,8 @@ def test_validate_readme_yml(mocker):
     from dtool import validate_readme_yml, log
 
     patched_log = mocker.patch("dtool.log")
+
+    # This should be ok.
     assert validate_readme_yml("""---
 project_name: some_project
 dataset_name: data_set_1
@@ -189,6 +191,7 @@ owners:
 archive_date: 2016-01-12
 """)
 
+    # Missing a project name.
     assert not validate_readme_yml("""---
 dataset_name: data_set_1
 confidential: False
@@ -200,6 +203,55 @@ archive_date: 2016-01-12
 """)
     patched_log.assert_called_with("README.yml is missing: project_name")
 
+    # Invalid date.
+    assert not validate_readme_yml("""---
+project_name: some_project
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners: NA
+archive_date: some day
+""")
+    patched_log.assert_called_with("README.yml invalid: archive_date is not a date")
+
+    # Owners is not a list.
+    assert not validate_readme_yml("""---
+project_name: some_project
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners: NA
+archive_date: 2016-01-12
+""")
+    patched_log.assert_called_with("README.yml invalid: owners is not a list")
+
+    # An owner needs a name.
+    assert not validate_readme_yml("""---
+project_name: some_project
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners:
+  - name: Some One
+    email: ones@example.com
+  - email: twos@example.com
+archive_date: 2016-01-12
+""")
+    patched_log.assert_called_with("README.yml invalid: owner is missing a name")
+
+    # An owner needs an email.
+    assert not validate_readme_yml("""---
+project_name: some_project
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners:
+  - name: Some One
+    email: ones@example.com
+  - name: Another Two
+archive_date: 2016-01-12
+""")
+    patched_log.assert_called_with("README.yml invalid: owner is missing an email")
 
 def test_create_archive(tmp_dir):
     from dtool import create_archive, create_manifest, new_archive
