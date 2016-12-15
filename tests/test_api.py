@@ -10,14 +10,14 @@ from distutils.dir_util import copy_tree
 
 import yaml
 import magic
-from pytest import fixture
+import pytest
 
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "input")
 TEST_OUTPUT_DATA = os.path.join(HERE, "data", "output")
 
 
-@fixture
+@pytest.fixture
 def tmp_dir(request):
     d = tempfile.mkdtemp()
 
@@ -27,7 +27,7 @@ def tmp_dir(request):
     return d
 
 
-@fixture
+@pytest.fixture
 def tmp_archive(request):
 
     from dtool import (
@@ -172,6 +172,33 @@ def test_new_archive(tmp_dir):
     # are set to False by default.
     assert not readme_data["confidential"]
     assert not readme_data["personally_identifiable_information"]
+
+
+def test_validate_readme_yml(mocker):
+    from dtool import validate_readme_yml, log
+
+    patched_log = mocker.patch("dtool.log")
+    assert validate_readme_yml("""---
+project_name: some_project
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners:
+  - name: Some One
+    email: ones@example.com
+archive_date: 2016-01-12
+""")
+
+    assert not validate_readme_yml("""---
+dataset_name: data_set_1
+confidential: False
+personally_identifiable_information: False
+owners:
+  - name: Some One
+    email: ones@example.com
+archive_date: 2016-01-12
+""")
+    patched_log.assert_called_with("README.yml is missing: project_name")
 
 
 def test_create_archive(tmp_dir):

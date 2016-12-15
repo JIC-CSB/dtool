@@ -8,6 +8,7 @@ import tarfile
 import subprocess
 import getpass
 
+import yaml
 from jinja2 import Environment, PackageLoader
 
 from cookiecutter.main import cookiecutter
@@ -175,6 +176,25 @@ def new_archive(staging_path, no_input=False):
 
     return archive_path
 
+
+def validate_readme_yml(yml_string):
+    """Return True if README.yml is valid.
+
+    :returns: bool
+    """
+    valid = True
+    readme = yaml.load(yml_string)
+    required_keys = ["project_name",
+                     "dataset_name",
+                     "confidential",
+                     "personally_identifiable_information",
+                     "owners",
+                     "archive_date"]
+    for key in required_keys:
+        if key not in readme:
+            log("README.yml is missing: {}".format(key))
+            valid = False
+    return valid
 
 def create_archive(path):
     """Create archive from path using tar.
