@@ -1,9 +1,12 @@
 {
   "project_name": "improve_crop_yields",
   "dataset_name": "brassica_rnaseq_reads",
+  "confidential": false,
+  "personally_identifiable_information": false,
   "owner_name": "Your Name",
   "owner_email": "your.name@jic.ac.uk",
   "owner_unix_username": "namey",
   "archive_date": "{% now 'utc', '%Y-%m-%d' %}",
+  "version": false,
   "_extensions": ["jinja2_time.TimeExtension"]
 }

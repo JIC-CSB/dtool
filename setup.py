@@ -1,7 +1,7 @@
 from setuptools import setup
 
 
-version = "0.2.0"
+version = "0.3.0"
 readme = open("README.rst").read()
 url = "https://github.com/JIC-CSB/dtool"
 
@@ -17,5 +17,6 @@ setup(name="dtool",
       install_requires=["cookiecutter",
                         "click",
                         "fluent-logger",
-                        "jinja2"],
+                        "jinja2",
+                        "pyyaml"],
       license="MIT")
