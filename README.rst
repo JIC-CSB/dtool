@@ -163,6 +163,7 @@ Release notes
 Development
 ~~~~~~~~~~~
 
+- Added README.yml validation upon archive creation
 - *Added "confidential" key to README.yml meta data (defaults to False)*
 - *Added "personally_identifiable_information" key to README.yml meta data
   (defaults to False)*
