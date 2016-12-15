@@ -20,12 +20,17 @@ VERBOSE = True
 HERE = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(HERE, 'templates')
 
+
 __version__ = "0.3.0"
 
+
 class FileHasher(object):
+    """Class for associating hash functions with names."""
+
     def __init__(self, hash_func):
         self.func = hash_func
         self.name = hash_func.__name__
+
     def __call__(self, filename):
         return self.func(filename)
 
@@ -52,7 +57,7 @@ def shasum(filename):
     return hasher.hexdigest()
 
 
-generate_file_hash = FileHasher(shasum) 
+generate_file_hash = FileHasher(shasum)
 
 
 def log(message):
@@ -109,7 +114,8 @@ def generate_manifest(path):
         entries.append(entry)
 
     manifest = dict(arctool_version=__version__,
-                    file_list=entries)
+                    file_list=entries,
+                    hash_function=generate_file_hash.name)
 
     return manifest
 
