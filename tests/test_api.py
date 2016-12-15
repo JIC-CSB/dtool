@@ -143,6 +143,8 @@ def test_create_manifest(tmp_dir):
     # Make sure that the "arctool_version" is in the generated manifest.
     assert "arctool_version" in manifest
 
+    assert "hash_function" in manifest
+
 
 def test_manifest_mimetypes(tmp_dir):
     from dtool import create_manifest
