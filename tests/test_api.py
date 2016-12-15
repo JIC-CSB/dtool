@@ -179,6 +179,9 @@ def test_validate_readme_yml(mocker):
 
     patched_log = mocker.patch("dtool.log")
 
+    assert not validate_readme_yml("")
+    patched_log.assert_called_with("README.yml invalid: empty file")
+
     # This should be ok.
     assert validate_readme_yml("""---
 project_name: some_project

@@ -184,6 +184,11 @@ def validate_readme_yml(yml_string):
     :returns: bool
     """
     readme = yaml.load(yml_string)
+
+    if readme is None:
+            log("README.yml invalid: empty file")
+            return False
+
     required_keys = ["project_name",
                      "dataset_name",
                      "confidential",
