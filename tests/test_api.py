@@ -253,6 +253,7 @@ archive_date: 2016-01-12
 """)
     patched_log.assert_called_with("README.yml invalid: owner is missing an email")
 
+
 def test_create_archive(tmp_dir):
     from dtool import create_archive, create_manifest, new_archive
 
