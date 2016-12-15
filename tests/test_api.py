@@ -13,8 +13,9 @@ import magic
 import pytest
 
 HERE = os.path.dirname(__file__)
-TEST_INPUT_DATA = os.path.join(HERE, "data", "input")
-TEST_OUTPUT_DATA = os.path.join(HERE, "data", "output")
+TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
+TEST_OUTPUT_DATA = os.path.join(HERE, "data", "basic", "output")
+TEST_MIMETYPE_DATA = os.path.join(HERE, "data", "mimetype", "input")
 
 
 @pytest.fixture

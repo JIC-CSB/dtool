@@ -9,8 +9,8 @@ from distutils.dir_util import copy_tree
 import pytest
 
 HERE = os.path.dirname(__file__)
-TEST_INPUT_DATA = os.path.join(HERE, "data", "input")
-TEST_OUTPUT_DATA = os.path.join(HERE, "data", "output")
+TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
+TEST_OUTPUT_DATA = os.path.join(HERE, "data", "basic", "output")
 
 
 @pytest.fixture
