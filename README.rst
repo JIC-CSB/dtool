@@ -163,6 +163,7 @@ Release notes
 Development
 ~~~~~~~~~~~
 
+- Added CLI integration tests
 - *Changed tar creation to force README.yml and manifest.json to be first two files*
 - Added logging of API version to CLI
 - Added --version argument to CLI
