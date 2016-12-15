@@ -20,28 +20,14 @@ VERBOSE = True
 HERE = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(HERE, 'templates')
 
-
 __version__ = "0.3.0"
 
-
-def log(message):
-    """Log a message.
-
-    :param message: message to be logged
-    """
-    if VERBOSE:
-        print(message)
-
-
-def split_safe_path(path):
-    """Return paths where trailing slashes have been stripped.
-
-    Required as os.path.split does not behave ideally.
-
-    :param path: path to be sanitised
-    :returns: sanitised path
-    """
-    return os.path.normpath(path)
+class FileHasher(object):
+    def __init__(self, hash_func):
+        self.func = hash_func
+        self.name = hash_func.__name__
+    def __call__(self, filename):
+        return self.func(filename)
 
 
 def shasum(filename):
@@ -64,6 +50,29 @@ def shasum(filename):
             buf = f.read(BUF_SIZE)
 
     return hasher.hexdigest()
+
+
+generate_file_hash = FileHasher(shasum) 
+
+
+def log(message):
+    """Log a message.
+
+    :param message: message to be logged
+    """
+    if VERBOSE:
+        print(message)
+
+
+def split_safe_path(path):
+    """Return paths where trailing slashes have been stripped.
+
+    Required as os.path.split does not behave ideally.
+
+    :param path: path to be sanitised
+    :returns: sanitised path
+    """
+    return os.path.normpath(path)
 
 
 def generate_manifest(path):
@@ -89,7 +98,7 @@ def generate_manifest(path):
         fq_filename = os.path.join(path, filename)
         st_size = os.stat(fq_filename).st_size
         st_mtime = os.stat(fq_filename).st_mtime
-        file_hash = shasum(fq_filename)
+        file_hash = generate_file_hash(fq_filename)
 
         entry = {}
         entry['path'] = filename
