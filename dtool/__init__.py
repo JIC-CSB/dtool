@@ -153,8 +153,6 @@ def create_manifest(path):
 
     return manifest_filename
 
-    # Should this return the path to the generated manifest file?
-
 
 def new_archive(staging_path, extra_context=dict(), no_input=False):
     """Create new archive in the staging path.
@@ -201,8 +199,9 @@ def new_archive(staging_path, extra_context=dict(), no_input=False):
 
 
 def readme_yml_is_valid(yml_string):
-    """Return True if README.yml is valid.
+    """Return True if string representing README.yml content is valid.
 
+    :param yml_string: string representing content of readme file
     :returns: bool
     """
     readme = yaml.load(yml_string)
@@ -280,8 +279,6 @@ def create_archive(path):
     tar_output_path = os.path.abspath(tar_output_path)
 
     return tar_output_path
-
-    # Should this return the path to the newly created tarball?
 
 
 def compress_archive(path, n_threads=8):
