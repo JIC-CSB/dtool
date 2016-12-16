@@ -22,7 +22,7 @@ HERE = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(HERE, 'templates')
 
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 
 class FileHasher(object):
