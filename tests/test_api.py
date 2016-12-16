@@ -149,9 +149,11 @@ def test_create_manifest(tmp_dir):
     tmp_project = os.path.join(tmp_dir, "proj")
 
     shutil.copytree(TEST_INPUT_DATA, tmp_project)
-    create_manifest(os.path.join(tmp_project, "archive"))
+    manifest_path = create_manifest(os.path.join(tmp_project, "archive"))
 
-    manifest_path = os.path.join(tmp_project, "manifest.json")
+    expected_path = os.path.join(tmp_project, "manifest.json")
+    expected_path = os.path.abspath(expected_path)
+    assert manifest_path == expected_path
     assert os.path.isfile(manifest_path)
 
     # Ensure manifest is valid json.
@@ -229,6 +231,10 @@ def test_new_archive(tmp_dir):
 
     dataset_path = new_archive(tmp_dir, no_input=True)
 
+    expected_path = os.path.join(tmp_dir,
+                                 "brassica_rnaseq_reads")
+    expected_path = os.path.abspath(expected_path)
+    assert dataset_path == expected_path
     assert os.path.isdir(dataset_path)
 
     expected_dataset_file = os.path.join(dataset_path, ".dtool-dataset")
@@ -459,16 +465,16 @@ def test_compress_archive(tmp_dir):
     copy_tree(archive_input_path, archive_output_path)
     create_manifest(os.path.join(tmp_project, "archive/"))
 
-    create_archive(tmp_project)
+    tar_filename = create_archive(tmp_project)
+    assert os.path.isfile(tar_filename)
 
-    expected_tar_filename = os.path.join(tmp_dir, 'brassica_rnaseq_reads.tar')
-    assert os.path.isfile(expected_tar_filename)
+    gzip_filename = compress_archive(tar_filename)
 
-    compress_archive(expected_tar_filename)
-
-    expected_gz_filename = expected_tar_filename + '.gz'
+    expected_gz_filename = tar_filename + '.gz'
+    expected_gz_filename = os.path.abspath(expected_gz_filename)
+    assert gzip_filename == expected_gz_filename
     assert os.path.isfile(expected_gz_filename)
-    assert not os.path.isfile(expected_tar_filename)
+    assert not os.path.isfile(tar_filename)
 
 
 def test_generate_slurm_submission_script():
@@ -504,19 +510,29 @@ def test_summarise_archive(tmp_archive):
 
 def test_extract_file(tmp_archive):
     from dtool import extract_file
-    extracted_path = extract_file(tmp_archive, "README.yml")
-    assert os.path.isfile(extracted_path)
+
+    base_dir, tar_gz_filename = os.path.split(tmp_archive)
+    file_prefix, ext = tar_gz_filename.split(".", 1)
+
+    expected_path = os.path.join(base_dir,
+                                 file_prefix,
+                                 "README.yml")
+    expected_path = os.path.abspath(expected_path)
+    readme_path = extract_file(tmp_archive, "README.yml")
+    assert readme_path == expected_path
+    assert os.path.isfile(readme_path)
 
     # Remove the extracted file and unzip the tarball.
-    os.unlink(extracted_path)
+    os.unlink(readme_path)
     unzip_command = ["gunzip", tmp_archive]
     subprocess.call(unzip_command)
     tarball_path, _ = tmp_archive.rsplit(".", 1)
     assert os.path.isfile(tarball_path)
 
     # Test that the extract_file method works on unzipped tarballs too.
-    extracted_path = extract_file(tarball_path, "README.yml")
-    assert os.path.isfile(extracted_path)
+    readme_path = extract_file(tarball_path, "README.yml")
+    assert readme_path == expected_path
+    assert os.path.isfile(readme_path)
 
 
 def test_extract_manifest(tmp_archive):
