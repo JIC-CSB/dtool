@@ -6,6 +6,7 @@ import shutil
 import tarfile
 import tempfile
 import subprocess
+import contextlib
 from distutils.dir_util import copy_tree
 
 import yaml
@@ -383,6 +384,32 @@ def test_create_archive(tmp_dir):
 
     for e, a in zip(expected, actual):
         assert e == a
+
+@contextlib.contextmanager
+def remember_cwd():
+    cwd = os.getcwd()
+    try: yield
+    finally: os.chdir(cwd)
+
+
+def test_issue_with_log_create_archive_in_different_dir(tmp_dir):
+
+    from dtool import create_archive, create_manifest, new_archive
+
+    new_archive(tmp_dir, no_input=True)
+    tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    archive_output_path = os.path.join(tmp_project, 'archive')
+    copy_tree(archive_input_path, archive_output_path)
+    create_manifest(os.path.join(tmp_project, "archive/"))
+
+    with remember_cwd():
+        os.chdir(tmp_project)
+        actual_tar_path = create_archive(tmp_project)
+
+    expected_tar_path = os.path.join(tmp_dir, 'brassica_rnaseq_reads.tar')
+
+    assert expected_tar_path == actual_tar_path
 
 
 def test_compress_archive(tmp_dir):

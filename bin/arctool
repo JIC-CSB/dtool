@@ -84,7 +84,7 @@ def manifest():
 def create(path):
 
     logger.emit('manifest_create', {'path' : path})
-    
+
     manifest_path = create_manifest(path)
 
     with open(manifest_path) as fh:

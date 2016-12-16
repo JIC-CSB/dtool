@@ -289,7 +289,10 @@ def create_archive(path):
 
     subprocess.call(tar_remainder, cwd=staging_path)
 
-    return tar_output_filename
+    tar_output_path = os.path.join(staging_path, tar_output_filename)
+    tar_output_path = os.path.abspath(tar_output_path)
+
+    return tar_output_path
 
     # Should this return the path to the newly created tarball?
 
