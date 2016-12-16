@@ -163,6 +163,9 @@ Release notes
 Development
 ~~~~~~~~~~~
 
+0.4.0
+~~~~~
+
 - *Create .dtool-dataset with UUID, user and version*
 - *Include name of hash function in manifest.json*
 - *Changed manifest creation to include file mimetypes from python-magic*
