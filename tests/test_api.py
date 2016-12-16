@@ -19,6 +19,19 @@ TEST_OUTPUT_DATA = os.path.join(HERE, "data", "basic", "output")
 TEST_MIMETYPE_DATA = os.path.join(HERE, "data", "mimetype", "input")
 
 
+#############################################################################
+# Test fixtures and helper functions.
+#############################################################################
+
+@contextlib.contextmanager
+def remember_cwd():
+    cwd = os.getcwd()
+    try:
+        yield
+    finally:
+        os.chdir(cwd)
+
+
 @pytest.fixture
 def tmp_dir(request):
     d = tempfile.mkdtemp()
@@ -62,6 +75,17 @@ def tmp_archive(request):
     return archive_name
 
 
+def test_archive_fixture(tmp_archive):
+
+    mimetype = magic.from_file(tmp_archive, mime=True)
+
+    assert mimetype == 'application/x-gzip'
+
+
+#############################################################################
+# Test API helper functions.
+#############################################################################
+
 def test_split_safe_path():
     from dtool import split_safe_path
     assert split_safe_path("/") == "/"
@@ -85,6 +109,10 @@ def test_shasum():
 
     assert actual == expected
 
+
+#############################################################################
+# Test manifest creation functions.
+#############################################################################
 
 def test_generate_manifest():
 
@@ -191,6 +219,10 @@ def test_create_manifest_strip_trailing_slash(tmp_dir):
     manifest_path = os.path.join(tmp_project, "manifest.json")
     assert os.path.isfile(manifest_path)
 
+
+#############################################################################
+# Test new archive functions.
+#############################################################################
 
 def test_new_archive(tmp_dir):
     from dtool import new_archive
@@ -339,6 +371,10 @@ def test_new_archive_extra_content(tmp_dir):
     assert readme_data["dataset_name"] == "data_set_1"
 
 
+#############################################################################
+# Test archive creation functions.
+#############################################################################
+
 def test_create_archive(tmp_dir):
     from dtool import create_archive, create_manifest, new_archive
 
@@ -385,12 +421,6 @@ def test_create_archive(tmp_dir):
     for e, a in zip(expected, actual):
         assert e == a
 
-@contextlib.contextmanager
-def remember_cwd():
-    cwd = os.getcwd()
-    try: yield
-    finally: os.chdir(cwd)
-
 
 def test_issue_with_log_create_archive_in_different_dir(tmp_dir):
 
@@ -411,6 +441,10 @@ def test_issue_with_log_create_archive_in_different_dir(tmp_dir):
 
     assert expected_tar_path == actual_tar_path
 
+
+#############################################################################
+# Test archive compress functions.
+#############################################################################
 
 def test_compress_archive(tmp_dir):
 
@@ -453,12 +487,9 @@ def test_generate_slurm_submission_script():
     assert expected == actual, (expected, actual)
 
 
-def test_archive_fixture(tmp_archive):
-
-    mimetype = magic.from_file(tmp_archive, mime=True)
-
-    assert mimetype == 'application/x-gzip'
-
+#############################################################################
+# Test validation functions.
+#############################################################################
 
 def test_summarise_archive(tmp_archive):
 
