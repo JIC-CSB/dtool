@@ -86,13 +86,6 @@ def test_archive_fixture(tmp_archive):
 # Test API helper functions.
 #############################################################################
 
-def test_split_safe_path():
-    from dtool import split_safe_path
-    assert split_safe_path("/") == "/"
-    assert split_safe_path("/root") == "/root"
-    assert split_safe_path("/root/") == "/root"
-
-
 def test_version_is_str():
     from dtool import __version__
     assert isinstance(__version__, str)
@@ -138,6 +131,19 @@ def test_generate_full_file_list():
     expected = ['file1.txt', 'dir1/file2.txt']
 
     test_archive_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    actual = generate_full_file_list(test_archive_path)
+
+    assert sorted(actual) == sorted(expected)
+
+
+def test_generate_full_file_list_with_trailing_slash():
+
+    from dtool import generate_full_file_list
+
+    expected = ['file1.txt', 'dir1/file2.txt']
+
+    test_archive_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    test_archive_path = test_archive_path + "/"
     actual = generate_full_file_list(test_archive_path)
 
     assert sorted(actual) == sorted(expected)
@@ -426,6 +432,22 @@ def test_create_archive(tmp_dir):
 
     for e, a in zip(expected, actual):
         assert e == a
+
+
+def test_create_archive_with_trailing_slash(tmp_dir):
+    from dtool import create_archive, create_manifest, new_archive
+
+    new_archive(tmp_dir, no_input=True)
+    tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    archive_output_path = os.path.join(tmp_project, 'archive')
+    copy_tree(archive_input_path, archive_output_path)
+    create_manifest(os.path.join(tmp_project, "archive/"))
+
+    create_archive(tmp_project + "/")
+
+    expected_tar_filename = os.path.join(tmp_dir, 'brassica_rnaseq_reads.tar')
+    assert os.path.isfile(expected_tar_filename)
 
 
 def test_issue_with_log_create_archive_in_different_dir(tmp_dir):

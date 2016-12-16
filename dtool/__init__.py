@@ -21,7 +21,6 @@ VERBOSE = True
 HERE = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(HERE, 'templates')
 
-
 __version__ = "0.4.1"
 
 
@@ -68,17 +67,6 @@ def log(message):
     """
     if VERBOSE:
         print(message)
-
-
-def split_safe_path(path):
-    """Return paths where trailing slashes have been stripped.
-
-    Required as os.path.split does not behave ideally.
-
-    :param path: path to be sanitised
-    :returns: sanitised path
-    """
-    return os.path.normpath(path)
 
 
 def generate_manifest(path):
@@ -128,7 +116,7 @@ def generate_full_file_list(path):
     :returns: list of fully qualified paths to all files in directories under
               the path
     """
-    path = split_safe_path(path)
+    path = os.path.abspath(path)
     path_length = len(path) + 1
 
     file_list = []
@@ -154,7 +142,7 @@ def create_manifest(path):
     :param path: path to directory with data
     :returns: path to created manifest
     """
-    path = split_safe_path(path)
+    path = os.path.abspath(path)
     archive_root_path, _ = os.path.split(path)
     manifest_filename = os.path.join(archive_root_path, 'manifest.json')
 
@@ -259,7 +247,6 @@ def create_archive(path):
     """
 
     path = os.path.abspath(path)
-    path = split_safe_path(path)
     staging_path, dataset_name = os.path.split(path)
 
     tar_output_filename = dataset_name + '.tar'
