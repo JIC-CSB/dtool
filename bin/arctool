@@ -30,7 +30,7 @@ from fluent import sender
 def cli(fluentd_host):
     global logger
     logger = sender.FluentSender('arctool', host=fluentd_host, port=24224)
-    logger.emit('version', {'api-version' : __version__})
+    logger.emit('version', {'api-version': __version__})
 
 
 @cli.command()
@@ -66,7 +66,7 @@ def new(staging_path):
 
     click.secho('Now:')
     click.secho('  1. Edit {}'.format(readme_file), fg='yellow')
-    click.secho('  2. Move archive data into {}'.format(archive_data_path), 
+    click.secho('  2. Move archive data into {}'.format(archive_data_path),
                 fg='yellow')
     click.secho('Then: ', nl=False)
     click.secho('arctool manifest create {}'.format(archive_data_path),
@@ -83,7 +83,7 @@ def manifest():
                 type=click.Path(exists=True))
 def create(path):
 
-    logger.emit('manifest_create', {'path' : path})
+    logger.emit('manifest_create', {'path': path})
 
     manifest_path = create_manifest(path)
 
@@ -106,13 +106,13 @@ def archive():
     pass
 
 
-@archive.command()
+@archive.command()  # NOQA
 @click.argument('path', 'Path to dataset directory.',
                 type=click.Path(exists=True))
 def create(path):
     path = os.path.abspath(path)
 
-    pre_tar_log = {'archive_path' : path}
+    pre_tar_log = {'archive_path': path}
     logger.emit('create_archive', pre_tar_log)
 
     readme_path = os.path.join(path, "README.yml")
