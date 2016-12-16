@@ -358,6 +358,7 @@ def test_create_archive(tmp_dir):
     expected_tar_filename = os.path.join(tmp_dir, 'brassica_rnaseq_reads.tar')
     assert os.path.isfile(expected_tar_filename)
 
+    # Test that all expected files are present in archive
     expected = set(['brassica_rnaseq_reads',
                     'brassica_rnaseq_reads/.dtool-dataset',
                     'brassica_rnaseq_reads/archive',
@@ -374,6 +375,19 @@ def test_create_archive(tmp_dir):
             actual.add(tarinfo.path)
 
     assert expected == actual, (expected, actual)
+
+    # Test that order of critical files is correct
+    expected = ['brassica_rnaseq_reads/.dtool-dataset',
+                'brassica_rnaseq_reads/README.yml',
+                'brassica_rnaseq_reads/manifest.json']
+
+    actual = []
+    with tarfile.open(expected_tar_filename, 'r') as tar:
+        for tarinfo in tar:
+            actual.append(tarinfo.path)
+
+    for e, a in zip(expected, actual):
+        assert e == a
 
 
 def test_compress_archive(tmp_dir):

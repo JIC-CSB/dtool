@@ -264,8 +264,12 @@ def create_archive(path):
 
     tar_output_filename = dataset_name + '.tar'
 
+    dataset_info_path = os.path.join(dataset_name, '.dtool-dataset')
+    tar_dataset_info = ['tar', '-cf', tar_output_filename, dataset_info_path]
+    subprocess.call(tar_dataset_info, cwd=staging_path)
+
     readme_path = os.path.join(dataset_name, 'README.yml')
-    tar_readme = ['tar', '-cf', tar_output_filename, readme_path]
+    tar_readme = ['tar', '-rf', tar_output_filename, readme_path]
     subprocess.call(tar_readme, cwd=staging_path)
 
     manifest_path = os.path.join(dataset_name, 'manifest.json')
@@ -274,8 +278,14 @@ def create_archive(path):
 
     exclude_manifest = '--exclude={}'.format(manifest_path)
     exclude_readme = '--exclude={}'.format(readme_path)
-    tar_remainder = ['tar', exclude_manifest, exclude_readme,
-                     '-rf', tar_output_filename, dataset_name]
+    exclude_dataset_info = '--exclude={}'.format(dataset_info_path)
+    tar_remainder = ['tar', 
+                     exclude_manifest, 
+                     exclude_readme,
+                     exclude_dataset_info,
+                     '-rf', 
+                     tar_output_filename, 
+                     dataset_name]
 
     subprocess.call(tar_remainder, cwd=staging_path)
 
