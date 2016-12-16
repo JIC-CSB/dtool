@@ -163,6 +163,13 @@ Release notes
 Development
 ~~~~~~~~~~~
 
+0.4.1
+~~~~~
+
+- *Removed arctool_version from README.yml*
+- Fixed defect where ``arctool create archive`` could not be run from arbitrary location
+
+
 0.4.0
 ~~~~~
 
@@ -179,6 +186,7 @@ Development
 - *Added "personally_identifiable_information" key to README.yml meta data
   (defaults to False)*
 - Added `extract_file()` method to dtool package
+
 
 0.3.0
 ~~~~~
