@@ -198,8 +198,12 @@ def new_archive(staging_path, extra_context=dict(), no_input=False):
                                 no_input=no_input,
                                 extra_context=extra_context)
 
-    # Should this return the path to the newly created archive in the
-    # staging area?
+    dataset_file_path = os.path.join(archive_path, '.dtool-dataset')
+
+    dataset_info = {}
+
+    with open(dataset_file_path, 'w') as f:
+        json.dump(dataset_info, f)
 
     return archive_path
 

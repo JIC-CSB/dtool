@@ -194,7 +194,12 @@ def test_create_manifest_strip_trailing_slash(tmp_dir):
 def test_new_archive(tmp_dir):
     from dtool import new_archive
 
-    new_archive(tmp_dir, no_input=True)
+    dataset_path = new_archive(tmp_dir, no_input=True)
+
+    assert os.path.isdir(dataset_path)
+
+    expected_dataset_file = os.path.join(dataset_path, ".dtool-dataset")
+    assert os.path.isfile(expected_dataset_file)
 
     readme_yml_path = os.path.join(tmp_dir,
                                    "brassica_rnaseq_reads",
@@ -219,6 +224,8 @@ def test_new_archive(tmp_dir):
     # are set to False by default.
     assert not readme_data["confidential"]
     assert not readme_data["personally_identifiable_information"]
+
+
 
 
 def test_readme_yml_is_valid(mocker):
@@ -344,6 +351,7 @@ def test_create_archive(tmp_dir):
     assert os.path.isfile(expected_tar_filename)
 
     expected = set(['brassica_rnaseq_reads',
+                    'brassica_rnaseq_reads/.dtool-dataset',
                     'brassica_rnaseq_reads/archive',
                     'brassica_rnaseq_reads/README.yml',
                     'brassica_rnaseq_reads/manifest.json',
