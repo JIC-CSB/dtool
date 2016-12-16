@@ -1,5 +1,4 @@
 ---
-arctool_version: {{ cookiecutter.version }}
 project_name: {{ cookiecutter.project_name }}
 dataset_name: {{ cookiecutter.dataset_name }}
 confidential: {{ cookiecutter.confidential }}

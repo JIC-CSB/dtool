@@ -225,9 +225,6 @@ def test_new_archive(tmp_dir):
         readme_data = yaml.load(fh)
     assert readme_data["dataset_name"] == "brassica_rnaseq_reads"
 
-    # Also test that the README.yml file has a "arctool_version" key.
-    assert "arctool_version" in readme_data
-
     # Also assert that confidential and personally_identifiable_information
     # are set to False by default.
     assert not readme_data["confidential"]
