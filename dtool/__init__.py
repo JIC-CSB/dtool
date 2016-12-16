@@ -279,12 +279,12 @@ def create_archive(path):
     exclude_manifest = '--exclude={}'.format(manifest_path)
     exclude_readme = '--exclude={}'.format(readme_path)
     exclude_dataset_info = '--exclude={}'.format(dataset_info_path)
-    tar_remainder = ['tar', 
-                     exclude_manifest, 
+    tar_remainder = ['tar',
+                     exclude_manifest,
                      exclude_readme,
                      exclude_dataset_info,
-                     '-rf', 
-                     tar_output_filename, 
+                     '-rf',
+                     tar_output_filename,
                      dataset_name]
 
     subprocess.call(tar_remainder, cwd=staging_path)

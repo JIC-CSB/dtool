@@ -234,8 +234,6 @@ def test_new_archive(tmp_dir):
     assert not readme_data["personally_identifiable_information"]
 
 
-
-
 def test_readme_yml_is_valid(mocker):
     from dtool import readme_yml_is_valid
     from dtool import log  # NOQA
