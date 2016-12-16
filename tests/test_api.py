@@ -212,6 +212,14 @@ def test_new_archive(tmp_dir):
                                    "README.txt")
     assert os.path.isfile(readme_txt_path)
 
+    # Test that .dtool-dataset file is valid
+    with open(expected_dataset_file, 'r') as fh:
+        dataset_info = json.load(fh)
+
+    assert "dtool_version" in dataset_info
+    assert "uuid" in dataset_info
+    assert "unix_username" in dataset_info
+
     # Test that yaml is valid.
     with open(readme_yml_path, "r") as fh:
         readme_data = yaml.load(fh)

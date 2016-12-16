@@ -3,6 +3,7 @@
 
 import os
 import json
+import uuid
 import hashlib
 import tarfile
 import subprocess
@@ -200,7 +201,10 @@ def new_archive(staging_path, extra_context=dict(), no_input=False):
 
     dataset_file_path = os.path.join(archive_path, '.dtool-dataset')
 
-    dataset_info = {}
+    dataset_uuid = str(uuid.uuid4())
+    dataset_info = {'dtool_version': __version__,
+                    'uuid': dataset_uuid,
+                    'unix_username': unix_username}
 
     with open(dataset_file_path, 'w') as f:
         json.dump(dataset_info, f)
