@@ -69,15 +69,40 @@ def log(message):
         print(message)
 
 
+def file_metadata(path):
+    """Return dictionary with file metadata.
+
+    The metadata includes:
+
+    * hash
+    * mtime (last modified time)
+    * size
+    * mimetype
+
+    :param path: path to file
+    :returns: dictionary with file metadata
+    """
+    return dict(hash=generate_file_hash(path),
+                size=os.stat(path).st_size,
+                mtime=os.stat(path).st_mtime,
+                mimetype=magic.from_file(path, mime=True))
+
+
 def generate_manifest(path):
     """Return archive manifest data structure.
 
-    Structure includes all files in the file system rooted at path with:
+    At the top level the manifest includes:
 
-    * Relative path
-    * SHA1 hash
-    * Last modification time
-    * Size
+    * file_list (dictionary with metadata described belwo)
+    * hash_function (name of hash function used)
+
+    The file_list includes all files in the file system rooted at path with:
+
+    * relative path
+    * hash
+    * mtime (last modification time)
+    * size
+    * mimetype
 
     :param path: path to directory with data
     :returns: manifest represented as a dictionary
@@ -90,16 +115,8 @@ def generate_manifest(path):
     for n, filename in enumerate(full_file_list):
         log('Processing ({}/{}) {}'.format(1+n, len(full_file_list), filename))
         fq_filename = os.path.join(path, filename)
-        st_size = os.stat(fq_filename).st_size
-        st_mtime = os.stat(fq_filename).st_mtime
-        file_hash = generate_file_hash(fq_filename)
-
-        entry = {}
+        entry = file_metadata(fq_filename)
         entry['path'] = filename
-        entry['hash'] = file_hash
-        entry['size'] = st_size
-        entry['mtime'] = st_mtime
-        entry['mimetype'] = magic.from_file(fq_filename, mime=True)
         entries.append(entry)
 
     manifest = dict(arctool_version=__version__,

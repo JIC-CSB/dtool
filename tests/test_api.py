@@ -107,6 +107,19 @@ def test_shasum():
 # Test manifest creation functions.
 #############################################################################
 
+def test_file_metadata():
+    from dtool import file_metadata
+    png_path = os.path.join(TEST_MIMETYPE_DATA,
+                            "archive",
+                            "tiny.png")
+    metadata = file_metadata(png_path)
+    expected_keys = ["hash", "size", "mtime", "mimetype"]
+    assert set(expected_keys) == set(metadata.keys())
+    assert metadata["hash"] == "09648d19e11f0b20e5473594fc278afbede3c9a4"
+    assert metadata["size"] == 276
+    assert metadata["mimetype"] == "image/png"
+
+
 def test_generate_manifest():
 
     from dtool import generate_manifest
