@@ -1,7 +1,7 @@
 from setuptools import setup
 
 
-version = "0.4.1"
+version = "0.4.2"
 readme = open("README.rst").read()
 url = "https://github.com/JIC-CSB/dtool"
 

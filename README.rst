@@ -163,6 +163,10 @@ Release notes
 Development
 ~~~~~~~~~~~
 
+
+0.4.2
+~~~~~
+
 - *Removed arctool_version from manifest.json*
 
 
