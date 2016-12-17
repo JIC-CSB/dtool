@@ -119,8 +119,7 @@ def generate_manifest(path):
         entry['path'] = filename
         entries.append(entry)
 
-    manifest = dict(arctool_version=__version__,
-                    file_list=entries,
+    manifest = dict(file_list=entries,
                     hash_function=generate_file_hash.name)
 
     return manifest

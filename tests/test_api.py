@@ -189,10 +189,6 @@ def test_create_manifest(tmp_dir):
     file1_entry = file_dict_by_path["file1.txt"]
 
     assert file1_entry["mimetype"] == "text/plain"
-
-    # Make sure that the "arctool_version" is in the generated manifest.
-    assert "arctool_version" in manifest
-
     assert "hash_function" in manifest
 
 
