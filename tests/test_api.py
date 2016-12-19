@@ -90,18 +90,6 @@ def test_version_is_str():
     assert isinstance(__version__, str)
 
 
-def test_shasum():
-
-    from dtool import shasum
-
-    expected = "a250369afb3eeaa96fb0df99e7755ba784dfd69c"
-
-    test_file = os.path.join(TEST_INPUT_DATA, 'archive', 'file1.txt')
-    actual = shasum(test_file)
-
-    assert actual == expected
-
-
 #############################################################################
 # Test manifest creation functions.
 #############################################################################
