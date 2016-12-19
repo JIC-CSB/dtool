@@ -10,8 +10,6 @@ import click
 
 from dtool import (
     __version__,
-    compress_archive,
-    create_archive,
     extract_manifest,
     extract_readme,
     new_archive,
@@ -21,6 +19,7 @@ from dtool import (
 )
 
 from dtool.manifest import create_manifest
+from dtool.archive import create_archive, compress_archive
 
 from fluent import sender
 
