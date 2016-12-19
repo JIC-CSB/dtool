@@ -6,6 +6,7 @@ from distutils.dir_util import copy_tree
 import contextlib
 import tempfile
 import shutil
+import subprocess
 
 import pytest
 
@@ -30,6 +31,36 @@ def tmp_dir(request):
     def teardown():
         shutil.rmtree(d)
     return d
+
+
+@pytest.fixture
+def tmp_archive(request):
+
+    from dtool import new_archive
+    from dtool.manifest import create_manifest
+    from dtool.archive import create_archive, compress_archive
+
+    d = tempfile.mkdtemp()
+
+    @request.addfinalizer
+    def teardown():
+        shutil.rmtree(d)
+
+    new_archive(d, no_input=True)
+    tmp_project = os.path.join(d, "brassica_rnaseq_reads")
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    archive_output_path = os.path.join(tmp_project, 'archive')
+    copy_tree(archive_input_path, archive_output_path)
+    create_manifest(os.path.join(tmp_project, "archive/"))
+
+    create_archive(tmp_project)
+    compress_archive(tmp_project + '.tar')
+
+    archive_name = tmp_project + '.tar' + '.gz'
+
+    shutil.rmtree(archive_output_path)
+
+    return archive_name
 
 
 def test_create_archive(tmp_dir):
@@ -152,3 +183,30 @@ def test_compress_archive(tmp_dir):
     assert gzip_filename == expected_gz_filename
     assert os.path.isfile(expected_gz_filename)
     assert not os.path.isfile(tar_filename)
+
+
+def test_extract_file(tmp_archive):
+    from dtool.archive import extract_file
+
+    base_dir, tar_gz_filename = os.path.split(tmp_archive)
+    file_prefix, ext = tar_gz_filename.split(".", 1)
+
+    expected_path = os.path.join(base_dir,
+                                 file_prefix,
+                                 "README.yml")
+    expected_path = os.path.abspath(expected_path)
+    readme_path = extract_file(tmp_archive, "README.yml")
+    assert readme_path == expected_path
+    assert os.path.isfile(readme_path)
+
+    # Remove the extracted file and unzip the tarball.
+    os.unlink(readme_path)
+    unzip_command = ["gunzip", tmp_archive]
+    subprocess.call(unzip_command)
+    tarball_path, _ = tmp_archive.rsplit(".", 1)
+    assert os.path.isfile(tarball_path)
+
+    # Test that the extract_file method works on unzipped tarballs too.
+    readme_path = extract_file(tarball_path, "README.yml")
+    assert readme_path == expected_path
+    assert os.path.isfile(readme_path)

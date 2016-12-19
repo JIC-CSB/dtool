@@ -4,7 +4,6 @@ import os
 import json
 import shutil
 import tempfile
-import subprocess
 import contextlib
 from distutils.dir_util import copy_tree
 
@@ -279,33 +278,6 @@ def test_summarise_archive(tmp_archive):
     assert isinstance(summary, dict)
 
     assert summary['n_files'] == 3
-
-
-def test_extract_file(tmp_archive):
-    from dtool import extract_file
-
-    base_dir, tar_gz_filename = os.path.split(tmp_archive)
-    file_prefix, ext = tar_gz_filename.split(".", 1)
-
-    expected_path = os.path.join(base_dir,
-                                 file_prefix,
-                                 "README.yml")
-    expected_path = os.path.abspath(expected_path)
-    readme_path = extract_file(tmp_archive, "README.yml")
-    assert readme_path == expected_path
-    assert os.path.isfile(readme_path)
-
-    # Remove the extracted file and unzip the tarball.
-    os.unlink(readme_path)
-    unzip_command = ["gunzip", tmp_archive]
-    subprocess.call(unzip_command)
-    tarball_path, _ = tmp_archive.rsplit(".", 1)
-    assert os.path.isfile(tarball_path)
-
-    # Test that the extract_file method works on unzipped tarballs too.
-    readme_path = extract_file(tarball_path, "README.yml")
-    assert readme_path == expected_path
-    assert os.path.isfile(readme_path)
 
 
 def test_extract_manifest(tmp_archive):
