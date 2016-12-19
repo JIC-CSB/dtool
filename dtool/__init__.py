@@ -120,6 +120,7 @@ def generate_manifest(path):
         entries.append(entry)
 
     manifest = dict(file_list=entries,
+                    dtool_version=__version__,
                     hash_function=generate_file_hash.name)
 
     return manifest

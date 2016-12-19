@@ -190,6 +190,7 @@ def test_create_manifest(tmp_dir):
 
     assert file1_entry["mimetype"] == "text/plain"
     assert "hash_function" in manifest
+    assert "dtool_version" in manifest
 
 
 def test_manifest_mimetypes(tmp_dir):

@@ -164,6 +164,11 @@ Development
 ~~~~~~~~~~~
 
 
+0.4.3
+~~~~~
+
+- *Added dtool_version to manifest.json*
+
 0.4.2
 ~~~~~
 
