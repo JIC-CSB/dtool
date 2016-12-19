@@ -12,7 +12,6 @@ from dtool import (
     __version__,
     compress_archive,
     create_archive,
-    create_manifest,
     extract_manifest,
     extract_readme,
     new_archive,
@@ -20,6 +19,8 @@ from dtool import (
     summarise_archive,
     readme_yml_is_valid,
 )
+
+from dtool.manifest import create_manifest
 
 from fluent import sender
 
