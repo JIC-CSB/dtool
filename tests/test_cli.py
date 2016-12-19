@@ -37,7 +37,7 @@ def tmp_dir(request):
 
 
 def test_everything_except_new_archive(tmp_dir):
-    from dtool import new_archive
+    from dtool.arctool import new_archive
 
     extra_context = dict(project_name="some_project",
                          dataset_name="data_set_1")

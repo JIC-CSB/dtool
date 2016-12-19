@@ -36,7 +36,7 @@ def tmp_dir(request):
 @pytest.fixture
 def tmp_archive(request):
 
-    from dtool import new_archive
+    from dtool.arctool import new_archive
     from dtool.manifest import create_manifest
     from dtool.archive import create_archive, compress_archive
 
@@ -66,7 +66,7 @@ def tmp_archive(request):
 def test_create_archive(tmp_dir):
     from dtool.archive import create_archive
 
-    from dtool import new_archive
+    from dtool.arctool import new_archive
     from dtool.manifest import create_manifest
 
     new_archive(tmp_dir, no_input=True)
@@ -116,7 +116,7 @@ def test_create_archive(tmp_dir):
 def test_create_archive_with_trailing_slash(tmp_dir):
     from dtool.archive import create_archive
 
-    from dtool import new_archive
+    from dtool.arctool import new_archive
     from dtool.manifest import create_manifest
 
     new_archive(tmp_dir, no_input=True)
@@ -136,7 +136,7 @@ def test_issue_with_log_create_archive_in_different_dir(tmp_dir):
 
     from dtool.archive import create_archive
 
-    from dtool import new_archive
+    from dtool.arctool import new_archive
     from dtool.manifest import create_manifest
 
     new_archive(tmp_dir, no_input=True)
@@ -163,7 +163,7 @@ def test_compress_archive(tmp_dir):
 
     from dtool.archive import create_archive, compress_archive
 
-    from dtool import new_archive
+    from dtool.arctool import new_archive
     from dtool.manifest import create_manifest
 
     new_archive(tmp_dir, no_input=True)

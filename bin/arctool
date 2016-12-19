@@ -8,15 +8,14 @@ import json
 import yaml
 import click
 
-from dtool import (
-    __version__,
+from dtool import __version__
+from dtool.arctool import (
     extract_manifest,
     extract_readme,
     new_archive,
     summarise_archive,
     readme_yml_is_valid,
 )
-
 from dtool.manifest import create_manifest
 from dtool.archive import create_archive, compress_archive
 from dtool.slurm import generate_slurm_script
