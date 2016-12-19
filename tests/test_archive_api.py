@@ -80,21 +80,22 @@ def test_create_archive(tmp_dir):
     assert os.path.isfile(expected_tar_filename)
 
     # Test that all expected files are present in archive
-    expected = set(['brassica_rnaseq_reads',
-                    'brassica_rnaseq_reads/.dtool-dataset',
-                    'brassica_rnaseq_reads/archive',
-                    'brassica_rnaseq_reads/README.yml',
-                    'brassica_rnaseq_reads/manifest.json',
-                    'brassica_rnaseq_reads/archive/README.txt',
-                    'brassica_rnaseq_reads/archive/dir1',
-                    'brassica_rnaseq_reads/archive/file1.txt',
-                    'brassica_rnaseq_reads/archive/dir1/file2.txt'])
+    expected = set([  # 'brassica_rnaseq_reads',
+                      'brassica_rnaseq_reads/.dtool-dataset',
+                      # 'brassica_rnaseq_reads/archive',
+                      'brassica_rnaseq_reads/README.yml',
+                      'brassica_rnaseq_reads/manifest.json',
+                      'brassica_rnaseq_reads/archive/README.txt',
+                      # 'brassica_rnaseq_reads/archive/dir1',
+                      'brassica_rnaseq_reads/archive/file1.txt',
+                      'brassica_rnaseq_reads/archive/dir1/file2.txt'])
 
     actual = set()
     with tarfile.open(expected_tar_filename, 'r') as tar:
         for tarinfo in tar:
             actual.add(tarinfo.path)
 
+    assert len(expected) == len(actual)
     assert expected == actual, (expected, actual)
 
     # Test that order of critical files is correct

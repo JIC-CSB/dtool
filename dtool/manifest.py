@@ -1,7 +1,6 @@
 """Module for generating manifests of data directories."""
 
 import os
-import json
 
 import magic
 

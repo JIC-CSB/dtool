@@ -5,6 +5,50 @@ import subprocess
 import tarfile
 
 
+def intialise_tar_archive(archive_path, fname_to_add):
+    """Initialise a tar archive.
+
+    :param archive_path: path to the directory to archive
+    :param rel_fpath_to_add: relative path to file in the archive directory to
+                             add to tar archive
+    :returns:
+    """
+    archive_path = os.path.abspath(archive_path)
+    working_dir, dataset_name = os.path.split(archive_path)
+
+    tar_output_filename = dataset_name + ".tar"
+    path_to_add = os.path.join(dataset_name, fname_to_add)
+
+    cmd = ["tar", "-cf", tar_output_filename, path_to_add]
+    subprocess.call(cmd, cwd=working_dir)
+
+    abs_path_of_added = os.path.join(working_dir, path_to_add)
+
+    return path_to_add, os.stat(abs_path_of_added).st_size
+
+
+def append_to_tar_archive(archive_path, fname_to_add):
+    """Initialise a tar archive.
+
+    :param archive_path: path to the directory to archive
+    :param rel_fpath_to_add: relative path to file in the archive directory to
+                             add to tar archive
+    :returns:
+    """
+    archive_path = os.path.abspath(archive_path)
+    working_dir, dataset_name = os.path.split(archive_path)
+
+    tar_output_filename = dataset_name + ".tar"
+    path_to_add = os.path.join(dataset_name, fname_to_add)
+
+    cmd = ["tar", "-rf", tar_output_filename, path_to_add]
+    subprocess.call(cmd, cwd=working_dir)
+
+    abs_path_of_added = os.path.join(working_dir, path_to_add)
+
+    return path_to_add, os.stat(abs_path_of_added).st_size
+
+
 def create_archive(path):
     """Create archive from path using tar.
 
@@ -17,30 +61,16 @@ def create_archive(path):
 
     tar_output_filename = dataset_name + '.tar'
 
-    dataset_info_path = os.path.join(dataset_name, '.dtool-dataset')
-    tar_dataset_info = ['tar', '-cf', tar_output_filename, dataset_info_path]
-    subprocess.call(tar_dataset_info, cwd=staging_path)
+    dataset_info_path, _ = intialise_tar_archive(path, ".dtool-dataset")
+    readme_path, _ = append_to_tar_archive(path, "README.yml")
+    manifest_path, _ = append_to_tar_archive(path, "manifest.json")
 
-    readme_path = os.path.join(dataset_name, 'README.yml')
-    tar_readme = ['tar', '-rf', tar_output_filename, readme_path]
-    subprocess.call(tar_readme, cwd=staging_path)
-
-    manifest_path = os.path.join(dataset_name, 'manifest.json')
-    tar_manifest = ['tar', '-rf', tar_output_filename, manifest_path]
-    subprocess.call(tar_manifest, cwd=staging_path)
-
-    exclude_manifest = '--exclude={}'.format(manifest_path)
-    exclude_readme = '--exclude={}'.format(readme_path)
-    exclude_dataset_info = '--exclude={}'.format(dataset_info_path)
-    tar_remainder = ['tar',
-                     exclude_manifest,
-                     exclude_readme,
-                     exclude_dataset_info,
-                     '-rf',
-                     tar_output_filename,
-                     dataset_name]
-
-    subprocess.call(tar_remainder, cwd=staging_path)
+    import json
+    with open(os.path.join(path, "manifest.json")) as fh:
+        manifest = json.load(fh)
+    for entry in manifest["file_list"]:
+        rel_path = os.path.join("archive", entry["path"])
+        p, _ = append_to_tar_archive(path, rel_path)
 
     tar_output_path = os.path.join(staging_path, tar_output_filename)
     tar_output_path = os.path.abspath(tar_output_path)
