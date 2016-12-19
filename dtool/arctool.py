@@ -12,6 +12,7 @@ import yaml
 from cookiecutter.main import cookiecutter
 
 from dtool import __version__, log
+from dtool.manifest import generate_manifest
 from dtool.archive import extract_file
 
 HERE = os.path.dirname(__file__)
@@ -100,6 +101,29 @@ def readme_yml_is_valid(yml_string):
             return False
 
     return True
+
+
+def create_manifest(path):
+    """Create manifest for all files in directory under the given path.
+
+    The manifest is created one level up from the given path.
+    This makes the function idempotent, i.e. if it was run again it
+    would create an identical file. This would not be the case if the
+    manifest was created in the given path.
+
+    :param path: path to directory with data
+    :returns: path to created manifest
+    """
+    path = os.path.abspath(path)
+    archive_root_path, _ = os.path.split(path)
+    manifest_filename = os.path.join(archive_root_path, 'manifest.json')
+
+    manifest_data = generate_manifest(path)
+
+    with open(manifest_filename, 'w') as f:
+        json.dump(manifest_data, f, indent=4)
+
+    return manifest_filename
 
 
 def summarise_archive(path):

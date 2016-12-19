@@ -79,7 +79,7 @@ def test_generate_full_file_list_with_trailing_slash():
 
 
 def test_create_manifest(tmp_dir):
-    from dtool.manifest import create_manifest
+    from dtool.arctool import create_manifest
 
     tmp_project = os.path.join(tmp_dir, "proj")
 
@@ -110,7 +110,7 @@ def test_create_manifest(tmp_dir):
 
 
 def test_manifest_mimetypes(tmp_dir):
-    from dtool.manifest import create_manifest
+    from dtool.arctool import create_manifest
 
     tmp_project = os.path.join(tmp_dir, "proj")
 
@@ -143,7 +143,7 @@ def test_manifest_mimetypes(tmp_dir):
 
 
 def test_create_manifest_strip_trailing_slash(tmp_dir):
-    from dtool.manifest import create_manifest
+    from dtool.arctool import create_manifest
 
     tmp_project = os.path.join(tmp_dir, "proj")
 

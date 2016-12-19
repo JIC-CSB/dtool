@@ -27,8 +27,7 @@ def tmp_dir(request):
 @pytest.fixture
 def tmp_archive(request):
 
-    from dtool.arctool import new_archive
-    from dtool.manifest import create_manifest
+    from dtool.arctool import new_archive, create_manifest
     from dtool.archive import create_archive, compress_archive
 
     d = tempfile.mkdtemp()
