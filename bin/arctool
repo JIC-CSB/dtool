@@ -13,13 +13,13 @@ from dtool import (
     extract_manifest,
     extract_readme,
     new_archive,
-    generate_slurm_script,
     summarise_archive,
     readme_yml_is_valid,
 )
 
 from dtool.manifest import create_manifest
 from dtool.archive import create_archive, compress_archive
+from dtool.slurm import generate_slurm_script
 
 from fluent import sender
 
