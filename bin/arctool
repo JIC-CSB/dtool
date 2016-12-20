@@ -11,13 +11,14 @@ import click
 from dtool import __version__
 from dtool.arctool import (
     create_manifest,
+    create_archive,
     extract_manifest,
     extract_readme,
     new_archive,
     summarise_archive,
     readme_yml_is_valid,
 )
-from dtool.archive import create_archive, compress_archive
+from dtool.archive import compress_archive
 from dtool.slurm import generate_slurm_script
 
 from fluent import sender
