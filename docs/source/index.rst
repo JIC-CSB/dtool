@@ -7,5 +7,6 @@ dtool - a tool for managing data sets
 
    readme
    installation_notes
+   api
    developer_notes
    changelog
