@@ -5,5 +5,7 @@ dtool - a tool for managing data sets
    :maxdepth: 2
    :caption: Table of contents:
 
-   readme.rst
-   changelog.rst
+   readme
+   installation_notes
+   developer_notes
+   changelog
