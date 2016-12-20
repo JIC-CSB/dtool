@@ -156,6 +156,8 @@ def rel_paths_for_archiving(path):
     return rel_paths, tot_size
 
 
+# Should this function be deprecated?
+# It is no longer used by the arctool cli.
 def create_archive(path):
     """Create archive from path using tar.
 
