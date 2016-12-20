@@ -73,7 +73,6 @@ def test_initialise_and_append_to_tar_archive(tmp_dir):
     assert os.path.isfile(expected_path)
 
 
-
 def test_compress_archive(tmp_dir):
 
     from dtool.archive import compress_archive
