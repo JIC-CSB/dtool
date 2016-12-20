@@ -234,21 +234,27 @@ def test_rel_paths_for_archiving(tmp_dir):
     copy_tree(archive_input_path, archive_output_path)
     create_manifest(os.path.join(tmp_project, "archive/"))
 
-    expected = [u".dtool-dataset",
-                u"README.yml",
-                u"manifest.json",
-                u"archive/README.txt",
-                u"archive/file1.txt",
-                u"archive/dir1/file2.txt"]
-    actual = rel_paths_for_archiving(tmp_project)
+    expected_paths = [u".dtool-dataset",
+                      u"README.yml",
+                      u"manifest.json",
+                      u"archive/README.txt",
+                      u"archive/file1.txt",
+                      u"archive/dir1/file2.txt"]
+    actual_paths, actual_size = rel_paths_for_archiving(tmp_project)
+
+    expected_size = 0
+    for p in expected_paths:
+        ap = os.path.join(tmp_project, p)
+        expected_size = expected_size + os.stat(ap).st_size
+    assert actual_size == expected_size
 
     # Ensure that the first free files are in fixed order.
     for i in range(3):
-        assert actual[i] == expected[i]
+        assert actual_paths[i] == expected_paths[i]
 
     # Assert that all files exist.
-    assert len(actual) == len(expected)
-    assert set(actual) == set(expected)
+    assert len(actual_paths) == len(expected_paths)
+    assert set(actual_paths) == set(expected_paths)
 
 
 def test_create_archive(tmp_dir):

@@ -131,24 +131,29 @@ def readme_yml_is_valid(yml_string):
 
 
 def rel_paths_for_archiving(path):
-    """Return list of relative paths for archiving.
+    """Return list of relative paths for archiving and total size.
 
     :param path: path to directory for archiving
-    :returns: list of relative paths for archiving
+    :returns: list of relative paths for archiving, and total size of files
     """
     rel_paths = [u".dtool-dataset",
                  u"README.yml",
                  u"manifest.json"]
+    tot_size = 0
 
-    manifest_fpath = os.path.join(path, "manifest.json")
+    for rp in rel_paths:
+        ap = os.path.join(path, rp)
+        tot_size = tot_size + os.stat(ap).st_size
+
     with open(os.path.join(path, "manifest.json")) as fh:
         manifest = json.load(fh)
 
     for entry in manifest["file_list"]:
+        tot_size = tot_size + entry["size"]
         rpath = os.path.join("archive", entry["path"])
         rel_paths.append(rpath)
 
-    return rel_paths
+    return rel_paths, tot_size
 
 
 def create_archive(path):
@@ -161,7 +166,7 @@ def create_archive(path):
     path = os.path.abspath(path)
     staging_path, dataset_name = os.path.split(path)
 
-    rel_paths = rel_paths_for_archiving(path)
+    rel_paths, tot_size = rel_paths_for_archiving(path)
     initialise_tar_archive(path, rel_paths.pop(0))
     for rpath in rel_paths:
         append_to_tar_archive(path, rpath)

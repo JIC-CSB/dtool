@@ -11,14 +11,18 @@ import click
 from dtool import __version__
 from dtool.arctool import (
     create_manifest,
-    create_archive,
     extract_manifest,
     extract_readme,
     new_archive,
+    rel_paths_for_archiving,
     summarise_archive,
     readme_yml_is_valid,
 )
-from dtool.archive import compress_archive
+from dtool.archive import (
+    initialise_tar_archive,
+    append_to_tar_archive,
+    compress_archive,
+)
 from dtool.slurm import generate_slurm_script
 
 from fluent import sender
@@ -123,10 +127,30 @@ def create(path):
         click.secho("Not valid", fg='red')
         sys.exit(2)
 
+    manifest_path = os.path.join(path, "manifest.json")
+    if not os.path.isfile(manifest_path):
+        click.secho("No manifest file found in archive", fg='red')
+        sys.exit(2)
+
+    dtool_dataset_path = os.path.join(path, ".dtool-dataset")
+    if not os.path.isfile(dtool_dataset_path):
+        click.secho("No .dtool-dataset file found in archive", fg='red')
+        sys.exit(2)
+
+    rel_paths, tot_size = rel_paths_for_archiving(path)
+
+    with click.progressbar(rel_paths,
+                           length=tot_size,
+                           item_show_func=str) as bar:
+        for i, rpath in enumerate(bar):
+            if i == 0:
+                tar_file_path, size = initialise_tar_archive(path, rpath)
+            else:
+                tar_file_path, size = append_to_tar_archive(path, rpath)
+            bar.update(size)
+
     click.secho('Archiving data at: ', nl=False)
     click.secho(path, fg='green')
-
-    tar_file_path = os.path.abspath(create_archive(path))
 
     click.secho('Created archive: ', nl=False)
     click.secho(tar_file_path, fg='green')
