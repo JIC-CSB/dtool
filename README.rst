@@ -163,6 +163,9 @@ Release notes
 Development
 ~~~~~~~~~~~
 
+- Split package into modules: ``archive``, ``arctool``, ``filehasher``,
+  ``manifest`` and ``slurm``
+
 
 0.4.3
 ~~~~~
