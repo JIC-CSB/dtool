@@ -67,6 +67,29 @@ def new_archive(staging_path, extra_context=dict(), no_input=False):
     return archive_path
 
 
+def create_manifest(path):
+    """Create manifest for all files in directory under the given path.
+
+    The manifest is created one level up from the given path.
+    This makes the function idempotent, i.e. if it was run again it
+    would create an identical file. This would not be the case if the
+    manifest was created in the given path.
+
+    :param path: path to directory with data
+    :returns: path to created manifest
+    """
+    path = os.path.abspath(path)
+    archive_root_path, _ = os.path.split(path)
+    manifest_filename = os.path.join(archive_root_path, 'manifest.json')
+
+    manifest_data = generate_manifest(path)
+
+    with open(manifest_filename, 'w') as f:
+        json.dump(manifest_data, f, indent=4)
+
+    return manifest_filename
+
+
 def readme_yml_is_valid(yml_string):
     """Return True if string representing README.yml content is valid.
 
@@ -107,27 +130,25 @@ def readme_yml_is_valid(yml_string):
     return True
 
 
-def create_manifest(path):
-    """Create manifest for all files in directory under the given path.
+def rel_paths_for_archiving(path):
+    """Return list of relative paths for archiving.
 
-    The manifest is created one level up from the given path.
-    This makes the function idempotent, i.e. if it was run again it
-    would create an identical file. This would not be the case if the
-    manifest was created in the given path.
-
-    :param path: path to directory with data
-    :returns: path to created manifest
+    :param path: path to directory for archiving
+    :returns: list of relative paths for archiving
     """
-    path = os.path.abspath(path)
-    archive_root_path, _ = os.path.split(path)
-    manifest_filename = os.path.join(archive_root_path, 'manifest.json')
+    rel_paths = [u".dtool-dataset",
+                 u"README.yml",
+                 u"manifest.json"]
 
-    manifest_data = generate_manifest(path)
+    manifest_fpath = os.path.join(path, "manifest.json")
+    with open(os.path.join(path, "manifest.json")) as fh:
+        manifest = json.load(fh)
 
-    with open(manifest_filename, 'w') as f:
-        json.dump(manifest_data, f, indent=4)
+    for entry in manifest["file_list"]:
+        rpath = os.path.join("archive", entry["path"])
+        rel_paths.append(rpath)
 
-    return manifest_filename
+    return rel_paths
 
 
 def create_archive(path):

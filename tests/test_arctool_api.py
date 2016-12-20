@@ -223,6 +223,34 @@ def test_new_archive_extra_content(tmp_dir):
     assert readme_data["dataset_name"] == "data_set_1"
 
 
+def test_rel_paths_for_archiving(tmp_dir):
+    from dtool.arctool import rel_paths_for_archiving
+
+    from dtool.arctool import new_archive, create_manifest
+    new_archive(tmp_dir, no_input=True)
+    tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    archive_output_path = os.path.join(tmp_project, 'archive')
+    copy_tree(archive_input_path, archive_output_path)
+    create_manifest(os.path.join(tmp_project, "archive/"))
+
+    expected = [u".dtool-dataset",
+                u"README.yml",
+                u"manifest.json",
+                u"archive/README.txt",
+                u"archive/file1.txt",
+                u"archive/dir1/file2.txt"]
+    actual = rel_paths_for_archiving(tmp_project)
+
+    # Ensure that the first free files are in fixed order.
+    for i in range(3):
+        assert actual[i] == expected[i]
+
+    # Assert that all files exist.
+    assert len(actual) == len(expected)
+    assert set(actual) == set(expected)
+
+
 def test_create_archive(tmp_dir):
     from dtool.arctool import create_archive
 
