@@ -130,6 +130,34 @@ def create_manifest(path):
     return manifest_filename
 
 
+def create_archive(path):
+    """Create archive from path using tar.
+
+    :param path: path to archive in staging area
+    :returns: path to created tarball
+    """
+
+    path = os.path.abspath(path)
+    staging_path, dataset_name = os.path.split(path)
+
+    tar_output_filename = dataset_name + '.tar'
+
+    dataset_info_path, _ = initialise_tar_archive(path, ".dtool-dataset")
+    readme_path, _ = append_to_tar_archive(path, "README.yml")
+    manifest_path, _ = append_to_tar_archive(path, "manifest.json")
+
+    with open(os.path.join(path, "manifest.json")) as fh:
+        manifest = json.load(fh)
+    for entry in manifest["file_list"]:
+        rel_path = os.path.join("archive", entry["path"])
+        p, _ = append_to_tar_archive(path, rel_path)
+
+    tar_output_path = os.path.join(staging_path, tar_output_filename)
+    tar_output_path = os.path.abspath(tar_output_path)
+
+    return tar_output_path
+
+
 def summarise_archive(path):
     """Return dictionary with summary information about an archive.
 
@@ -166,34 +194,6 @@ def extract_manifest(archive_path):
     :returns: path to extracted manifest file
     """
     return extract_file(archive_path, "manifest.json")
-
-
-def create_archive(path):
-    """Create archive from path using tar.
-
-    :param path: path to archive in staging area
-    :returns: path to created tarball
-    """
-
-    path = os.path.abspath(path)
-    staging_path, dataset_name = os.path.split(path)
-
-    tar_output_filename = dataset_name + '.tar'
-
-    dataset_info_path, _ = initialise_tar_archive(path, ".dtool-dataset")
-    readme_path, _ = append_to_tar_archive(path, "README.yml")
-    manifest_path, _ = append_to_tar_archive(path, "manifest.json")
-
-    with open(os.path.join(path, "manifest.json")) as fh:
-        manifest = json.load(fh)
-    for entry in manifest["file_list"]:
-        rel_path = os.path.join("archive", entry["path"])
-        p, _ = append_to_tar_archive(path, rel_path)
-
-    tar_output_path = os.path.join(staging_path, tar_output_filename)
-    tar_output_path = os.path.abspath(tar_output_path)
-
-    return tar_output_path
 
 
 def extract_readme(archive_path):
