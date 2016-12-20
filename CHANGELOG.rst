@@ -10,9 +10,12 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- API documentation
+
 Changed
 ^^^^^^^
 
+- Documentation now built using Sphinx
 - Split package into modules: ``archive``, ``arctool``, ``filehasher``,
   ``manifest`` and ``slurm``
 
