@@ -51,6 +51,29 @@ def tmp_archive(request):
     return archive_name
 
 
+def test_initialise_and_append_to_tar_archive(tmp_dir):
+    from dtool.archive import initialise_tar_archive, append_to_tar_archive
+    tmp_project = os.path.join(tmp_dir, "project")
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    archive_output_path = os.path.join(tmp_project, 'archive')
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    copy_tree(archive_input_path, archive_output_path)
+
+    expected_path = os.path.join(tmp_dir, "project.tar")
+    actual_path, actual_size = initialise_tar_archive(tmp_project,
+                                                      "archive/file1.txt")
+    assert actual_path == expected_path
+    assert actual_size == 17
+    assert os.path.isfile(expected_path)
+
+    actual_path, actual_size = append_to_tar_archive(tmp_project,
+                                                     "archive/dir1/file2.txt")
+    assert actual_path == expected_path
+    assert actual_size == 14
+    assert os.path.isfile(expected_path)
+
+
+
 def test_compress_archive(tmp_dir):
 
     from dtool.archive import compress_archive
