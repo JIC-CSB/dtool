@@ -165,17 +165,10 @@ def create_archive(path):
     :returns: path to created tarball
     """
 
-    path = os.path.abspath(path)
-    staging_path, dataset_name = os.path.split(path)
-
     rel_paths, tot_size = rel_paths_for_archiving(path)
-    initialise_tar_archive(path, rel_paths.pop(0))
+    tar_output_path, size = initialise_tar_archive(path, rel_paths.pop(0))
     for rpath in rel_paths:
-        append_to_tar_archive(path, rpath)
-
-    tar_output_filename = dataset_name + '.tar'
-    tar_output_path = os.path.join(staging_path, tar_output_filename)
-    tar_output_path = os.path.abspath(tar_output_path)
+        tar_output_path, size = append_to_tar_archive(path, rpath)
 
     return tar_output_path
 
