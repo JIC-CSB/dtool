@@ -119,6 +119,3 @@ def generate_manifest(path):
                     hash_function=generate_file_hash.name)
 
     return manifest
-
-# FIXME - remove this!
-#generate_full_file_list = generate_relative_paths

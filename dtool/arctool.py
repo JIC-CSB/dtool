@@ -12,7 +12,9 @@ import yaml
 from cookiecutter.main import cookiecutter
 
 from dtool import __version__, log
-from dtool.manifest import generate_manifest
+from dtool.manifest import (
+    generate_manifest,
+)
 from dtool.archive import (
     initialise_tar_archive,
     append_to_tar_archive,
@@ -156,6 +158,22 @@ def rel_paths_for_archiving(path):
     return rel_paths, tot_size
 
 
+def initialise_archive(path):
+
+    initial_files = [u".dtool-dataset",
+                     u"README.yml",
+                     u"manifest.json"]
+
+    first_file = initial_files[0]
+
+    tar_output_path = initialise_tar_archive(path, first_file)
+
+    for file in initial_files[1:]:
+        append_to_tar_archive(path, file)
+
+    return tar_output_path
+
+
 # Should this function be deprecated?
 # It is no longer used by the arctool cli.
 def create_archive(path):
@@ -165,10 +183,18 @@ def create_archive(path):
     :returns: path to created tarball
     """
 
-    rel_paths, tot_size = rel_paths_for_archiving(path)
-    tar_output_path, size = initialise_tar_archive(path, rel_paths.pop(0))
-    for rpath in rel_paths:
-        tar_output_path, size = append_to_tar_archive(path, rpath)
+    tar_output_path = initialise_archive(path)
+
+    manifest_path = os.path.join(path, 'manifest.json')
+    with open(manifest_path) as fh:
+        manifest = json.load(fh)
+
+    filedict_manifest = manifest["file_list"]
+
+    for entry in filedict_manifest:
+        rel_path = entry['path']
+        rel_path = os.path.join('archive', entry['path'])
+        append_to_tar_archive(path, rel_path)
 
     return tar_output_path
 

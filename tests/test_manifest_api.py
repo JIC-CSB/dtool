@@ -171,6 +171,7 @@ def test_generate_filedict_list():
 
     assert expected == actual
 
+
 def test_create_filedict_manifest(tmp_dir):
     from dtool.manifest import create_filedict_manifest
 

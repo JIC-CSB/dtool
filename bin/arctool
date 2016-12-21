@@ -8,6 +8,7 @@ import json
 import yaml
 import click
 
+import dtool
 from dtool import __version__
 from dtool.arctool import (
     create_manifest,
@@ -137,17 +138,25 @@ def create(path):
         click.secho("No .dtool-dataset file found in archive", fg='red')
         sys.exit(2)
 
-    rel_paths, tot_size = rel_paths_for_archiving(path)
+    with open(manifest_path) as fh:
+        manifest = json.load(fh)
+    manifest_filedict = manifest['file_list']
+    tot_size = sum(entry['size'] for entry in manifest_filedict)
 
-    with click.progressbar(rel_paths,
+    tar_file_path = dtool.arctool.initialise_archive(path)
+
+    def show_func(item):
+        if item is None:
+          return ''
+        return str(item['path'])
+
+    with click.progressbar(manifest_filedict,
                            length=tot_size,
-                           item_show_func=str) as bar:
-        for i, rpath in enumerate(bar):
-            if i == 0:
-                tar_file_path, size = initialise_tar_archive(path, rpath)
-            else:
-                tar_file_path, size = append_to_tar_archive(path, rpath)
-            bar.update(size)
+                           item_show_func=show_func) as bar:
+        for entry in bar:
+            rpath = os.path.join('archive', entry['path'])
+            append_to_tar_archive(path, rpath)
+            bar.update(entry['size'])
 
     click.secho('Archiving data at: ', nl=False)
     click.secho(path, fg='green')

@@ -11,7 +11,7 @@ def initialise_tar_archive(archive_path, fname_to_add):
     :param archive_path: path to the directory to archive
     :param rel_fpath_to_add: relative path to file in the archive directory to
                              add to tar archive
-    :returns: tar output filename, size of file
+    :returns: tar output filename
     """
     archive_path = os.path.abspath(archive_path)
     working_dir, dataset_name = os.path.split(archive_path)
@@ -22,10 +22,8 @@ def initialise_tar_archive(archive_path, fname_to_add):
     cmd = ["tar", "-cf", tar_output_filename, path_to_add]
     subprocess.call(cmd, cwd=working_dir)
 
-    abs_path_of_added = os.path.join(working_dir, path_to_add)
-
     tar_output_filename = os.path.join(working_dir, tar_output_filename)
-    return tar_output_filename, os.stat(abs_path_of_added).st_size
+    return tar_output_filename
 
 
 def append_to_tar_archive(archive_path, fname_to_add):
@@ -34,7 +32,7 @@ def append_to_tar_archive(archive_path, fname_to_add):
     :param archive_path: path to the directory to archive
     :param rel_fpath_to_add: relative path to file in the archive directory to
                              add to tar archive
-    :returns: tar output filename, size of file
+    :returns: tar output filename
     """
     archive_path = os.path.abspath(archive_path)
     working_dir, dataset_name = os.path.split(archive_path)
@@ -45,10 +43,8 @@ def append_to_tar_archive(archive_path, fname_to_add):
     cmd = ["tar", "-rf", tar_output_filename, path_to_add]
     subprocess.call(cmd, cwd=working_dir)
 
-    abs_path_of_added = os.path.join(working_dir, path_to_add)
-
     tar_output_filename = os.path.join(working_dir, tar_output_filename)
-    return tar_output_filename, os.stat(abs_path_of_added).st_size
+    return tar_output_filename
 
 
 def compress_archive(path, n_threads=8):
