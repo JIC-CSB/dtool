@@ -53,27 +53,27 @@ def test_generate_manifest():
         assert a["size"] == e["size"]
 
 
-def test_generate_full_file_list():
+def test_generate_relative_paths():
 
-    from dtool.manifest import generate_full_file_list
+    from dtool.manifest import generate_relative_paths
 
     expected = ['file1.txt', 'dir1/file2.txt']
 
     test_archive_path = os.path.join(TEST_INPUT_DATA, 'archive')
-    actual = generate_full_file_list(test_archive_path)
+    actual = generate_relative_paths(test_archive_path)
 
     assert sorted(actual) == sorted(expected)
 
 
-def test_generate_full_file_list_with_trailing_slash():
+def test_generate_relative_paths_with_trailing_slash():
 
-    from dtool.manifest import generate_full_file_list
+    from dtool.manifest import generate_relative_paths
 
     expected = ['file1.txt', 'dir1/file2.txt']
 
     test_archive_path = os.path.join(TEST_INPUT_DATA, 'archive')
     test_archive_path = test_archive_path + "/"
-    actual = generate_full_file_list(test_archive_path)
+    actual = generate_relative_paths(test_archive_path)
 
     assert sorted(actual) == sorted(expected)
 
@@ -152,3 +152,41 @@ def test_create_manifest_strip_trailing_slash(tmp_dir):
 
     manifest_path = os.path.join(tmp_project, "manifest.json")
     assert os.path.isfile(manifest_path)
+
+
+def test_generate_filedict_list():
+    from dtool.manifest import generate_filedict_list
+
+    relative_paths = ['myfile.txt',
+                      'anotherfile.txt',
+                      'adir/afile.txt',
+                      'long/path/separator/file.txt']
+
+    actual = generate_filedict_list(relative_paths)
+
+    expected = [{'path': 'myfile.txt'},
+                {'path': 'anotherfile.txt'},
+                {'path': 'adir/afile.txt'},
+                {'path': 'long/path/separator/file.txt'}]
+
+    assert expected == actual
+
+def test_create_filedict_manifest(tmp_dir):
+    from dtool.manifest import create_filedict_manifest
+
+    tmp_project = os.path.join(tmp_dir, "proj")
+
+    shutil.copytree(TEST_INPUT_DATA, tmp_project)
+
+    filedict_manifest = create_filedict_manifest(
+        os.path.join(tmp_project, "archive/"))
+
+    assert len(filedict_manifest) == 2
+
+    file_dict_by_path = {entry['path']: entry for entry in filedict_manifest}
+
+    assert "file1.txt" in file_dict_by_path
+
+    file1_entry = file_dict_by_path["file1.txt"]
+
+    assert file1_entry["size"] == 17

@@ -8,6 +8,62 @@ from dtool import log, __version__
 from dtool.filehasher import generate_file_hash
 
 
+def generate_relative_paths(path):
+    """Return list of relative paths to all files in tree under path.
+
+    :param path: path to directory with data
+    :returns: list of fully qualified paths to all files in directories under
+              the path
+    """
+    path = os.path.abspath(path)
+    path_length = len(path) + 1
+
+    relative_path_list = []
+
+    log('Generating relative path list')
+
+    for dirpath, dirnames, filenames in os.walk(path):
+        for fn in filenames:
+            relative_path = os.path.join(dirpath, fn)
+            relative_path_list.append(relative_path[path_length:])
+
+    return relative_path_list
+
+
+def generate_filedict_list(rel_path_list):
+
+    filedict_list = []
+    for rel_path in rel_path_list:
+        filedict_list.append(dict(path=rel_path))
+
+    return filedict_list
+
+
+def apply_filedict_update(path_root, filedict_list, generate_dict_func):
+
+    for item in filedict_list:
+        rel_path = item['path']
+        abs_path = os.path.join(path_root, rel_path)
+        extra_data = generate_dict_func(abs_path)
+        item.update(extra_data)
+
+
+def file_size_dict(abs_file_path):
+
+    size = os.stat(abs_file_path).st_size
+
+    return dict(size=size)
+
+
+def create_filedict_manifest(path):
+
+    rel_path_list = generate_relative_paths(path)
+    filedict_list = generate_filedict_list(rel_path_list)
+    apply_filedict_update(path, filedict_list, file_size_dict)
+
+    return filedict_list
+
+
 def file_metadata(path):
     """Return dictionary with file metadata.
 
@@ -47,7 +103,7 @@ def generate_manifest(path):
     :returns: manifest represented as a dictionary
     """
 
-    full_file_list = generate_full_file_list(path)
+    full_file_list = generate_relative_paths(path)
 
     log('Building manifest')
     entries = []
@@ -64,24 +120,5 @@ def generate_manifest(path):
 
     return manifest
 
-
-def generate_full_file_list(path):
-    """Return list of paths to all files in tree under path.
-
-    :param path: path to directory with data
-    :returns: list of fully qualified paths to all files in directories under
-              the path
-    """
-    path = os.path.abspath(path)
-    path_length = len(path) + 1
-
-    file_list = []
-
-    log('Generating file list')
-
-    for dirpath, dirnames, filenames in os.walk(path):
-        for fn in filenames:
-            relative_path = os.path.join(dirpath, fn)
-            file_list.append(relative_path[path_length:])
-
-    return file_list
+# FIXME - remove this!
+#generate_full_file_list = generate_relative_paths
