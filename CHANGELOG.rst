@@ -10,6 +10,7 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- DataSet class loaded from path
 - Progress bar for tar creation
 - API documentation
 
