@@ -52,6 +52,8 @@ def new(staging_path):
     click.secho('Starting new archive in: ', nl=False)
     click.secho(staging_path, fg='green')
 
+    logger.emit('pre_new_archive', {'staging_path': staging_path})
+
     archive_path = new_archive(staging_path)
 
     click.secho('Created new archive in: ', nl=False)
@@ -99,7 +101,7 @@ def manifest():
                 type=click.Path(exists=True))
 def create(path):
 
-    logger.emit('pre_create', {'path': path})
+    logger.emit('pre_create_manifest', {'path': path})
 
     manifest_path = create_manifest(path)
 
@@ -109,9 +111,9 @@ def create(path):
     click.secho('Created manifest: ', nl=False)
     click.secho(manifest_path, fg='green')
 
-    log_data = {'api_call': 'create_manifest',
+    log_data = {'manifest_path': manifest_path,
                 'manifest': manifest}
-    logger.emit('manifest_create', log_data)
+    logger.emit('post_create_manifest', log_data)
 
     dataset_path, _ = os.path.split(manifest_path)
     dataset_path = os.path.abspath(dataset_path)
