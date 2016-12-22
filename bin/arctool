@@ -22,6 +22,7 @@ from dtool.arctool import (
     readme_yml_is_valid,
 )
 from dtool.archive import (
+    Archive,
     initialise_tar_archive,
     append_to_tar_archive,
     compress_archive,
@@ -197,12 +198,14 @@ def create(path):
                 type=click.Path(exists=True))
 def compress(path, cores, slurm):
     path = os.path.abspath(path)
+    archive = Archive.from_file(path)
 
     if not slurm:
         click.secho('Compressing archive: ', nl=False)
         click.secho(path, fg='green')
 
-        pre_log = {'archive_path': path,
+        pre_log = {'dataset_uuid': archive.uuid,
+                   'archive_path': path,
                    'cores': cores,
                    'tar_size': os.stat(path).st_size}
         logger.emit('pre_compress_archive', pre_log)
@@ -212,7 +215,8 @@ def compress(path, cores, slurm):
         click.secho('Created compressed file: ', nl=False)
         click.secho(compressed_archive_path, fg='green')
 
-        post_log = {'compressed_archive_path': compressed_archive_path,
+        post_log = {'dataset_uuid': archive.uuid,
+                    'compressed_archive_path': compressed_archive_path,
                     'gzip_size': os.stat(compressed_archive_path).st_size}
         logger.emit('post_compress_archive', post_log)
 
