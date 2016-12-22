@@ -135,10 +135,12 @@ def archive():
 def create(path):
     path = os.path.abspath(path)
 
-    pre_tar_log = {'archive_path': path}
-    logger.emit('create_archive', pre_tar_log)
+    dataset = DataSet.from_path(path)
+    log_data = {'path' : path,
+                'dataset_uuid': dataset.uuid}
+    logger.emit('pre_create_archive', log_data)
 
-    readme_path = os.path.join(path, "README.yml")
+    readme_path = dataset.readme_file
     click.secho('Validating readme at: ', nl=False)
     click.secho(readme_path, fg='green')
     readme_str = open(readme_path, "r").read()
@@ -149,11 +151,6 @@ def create(path):
     manifest_path = os.path.join(path, "manifest.json")
     if not os.path.isfile(manifest_path):
         click.secho("No manifest file found in archive", fg='red')
-        sys.exit(2)
-
-    dtool_dataset_path = os.path.join(path, ".dtool-dataset")
-    if not os.path.isfile(dtool_dataset_path):
-        click.secho("No .dtool-dataset file found in archive", fg='red')
         sys.exit(2)
 
     with open(manifest_path) as fh:
@@ -183,9 +180,10 @@ def create(path):
     click.secho(tar_file_path, fg='green')
 
     archive_size = os.stat(tar_file_path).st_size
-    post_tar_log = {'archive_size': archive_size,
+    post_tar_log = {'dataset_uuid': dataset.uuid,
+                    'archive_size': archive_size,
                     'output_tar_path': tar_file_path}
-    logger.emit('tar_created', post_tar_log)
+    logger.emit('post_create_archive', post_tar_log)
 
     click.secho('Next: ', nl=False)
     click.secho('arctool archive compress {}'.format(tar_file_path), fg='cyan')
@@ -207,7 +205,7 @@ def compress(path, cores, slurm):
         pre_log = {'archive_path': path,
                    'cores': cores,
                    'tar_size': os.stat(path).st_size}
-        logger.emit('compress_archive', pre_log)
+        logger.emit('pre_compress_archive', pre_log)
 
         compressed_archive_path = compress_archive(path, n_threads=cores)
 
@@ -216,7 +214,7 @@ def compress(path, cores, slurm):
 
         post_log = {'compressed_archive_path': compressed_archive_path,
                     'gzip_size': os.stat(compressed_archive_path).st_size}
-        logger.emit('compress_complete', post_log)
+        logger.emit('post_compress_archive', post_log)
 
         click.secho('Now:')
         click.secho('  Move {} to archive storage'.format(
