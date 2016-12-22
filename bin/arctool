@@ -11,6 +11,7 @@ import click
 import dtool
 from dtool import __version__
 from dtool.arctool import (
+    DataSet,
     create_manifest,
     extract_manifest,
     extract_readme,
