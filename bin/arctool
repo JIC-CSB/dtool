@@ -35,7 +35,8 @@ from fluent import sender
 def cli(fluentd_host):
     global logger
     logger = sender.FluentSender('arctool', host=fluentd_host, port=24224)
-    logger.emit('version', {'api-version': __version__})
+    message = {'api-version': __version__, 'command_line': sys.argv}
+    logger.emit('cli_command', message)
 
 
 @cli.command()
@@ -60,11 +61,17 @@ def new(staging_path):
     with open(readme_file) as fh:
         metadata = yaml.load(fh)
 
+    dataset_file = os.path.join(archive_path, '.dtool-dataset')
+
+    with open(dataset_file) as fh:
+        dataset_info = json.load(fh)
+
     # Fix problem serializing datetime objects
     metadata['archive_date'] = str(metadata['archive_date'])
 
     log_data = {'metadata': metadata,
-                'archive_path': archive_path}
+                'archive_path': archive_path,
+                'dataset_uuid': dataset_info['uuid']}
     logger.emit('new', log_data)
 
     archive_data_path = os.path.join(archive_path, 'archive')
@@ -88,7 +95,7 @@ def manifest():
                 type=click.Path(exists=True))
 def create(path):
 
-    logger.emit('manifest_create', {'path': path})
+    logger.emit('pre_create', {'path': path})
 
     manifest_path = create_manifest(path)
 
@@ -98,7 +105,9 @@ def create(path):
     click.secho('Created manifest: ', nl=False)
     click.secho(manifest_path, fg='green')
 
-    logger.emit('manifest', manifest)
+    log_data = {'api_call': 'create_manifest',
+                'manifest': manifest}
+    logger.emit('manifest_create', log_data)
 
     dataset_path, _ = os.path.split(manifest_path)
     dataset_path = os.path.abspath(dataset_path)
