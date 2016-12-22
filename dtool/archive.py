@@ -23,6 +23,12 @@ class Archive(object):
             info_str = info_fp.read().decode("utf-8")
             archive.info = json.loads(info_str)
 
+        manifest_path = os.path.join(archive.name, 'manifest.json')
+        with tarfile.open(archive.file_path, 'r:*') as tar:
+            manifest_fp = tar.extractfile(manifest_path)
+            manifest_str = manifest_fp.read().decode("utf-8")
+            archive.manifest = json.loads(manifest_str)
+
         archive.uuid = archive.info['uuid']
 
         return archive

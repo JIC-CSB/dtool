@@ -146,3 +146,16 @@ def test_archive_from_tar_file(tmp_archive):
     assert archive.name == 'brassica_rnaseq_reads'
     assert len(archive.uuid) == 36
     assert archive.info['dataset_name'] == 'brassica_rnaseq_reads'
+
+def test_archive_manifest(tmp_archive):
+    from dtool.archive import Archive
+
+    archive = Archive.from_file(tmp_archive)
+
+    manifest = archive.manifest
+
+    assert "file_list" in manifest
+
+    file_list = manifest["file_list"]
+
+    assert "file1.txt" in file_list
