@@ -4,6 +4,9 @@ import os
 import subprocess
 import tarfile
 
+class DataSet(object):
+    pass
+
 
 def initialise_tar_archive(archive_path, fname_to_add):
     """Initialise a tar archive.

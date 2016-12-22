@@ -103,6 +103,7 @@ def test_new_archive(tmp_dir):
     assert "dtool_version" in dataset_info
     assert "uuid" in dataset_info
     assert "unix_username" in dataset_info
+    assert dataset_info['dataset_name'] == 'brassica_rnaseq_reads'
 
     # Test that yaml is valid.
     with open(readme_yml_path, "r") as fh:
@@ -384,3 +385,24 @@ def test_extract_readme(tmp_archive):
         readme = yaml.load(fh)
 
     assert readme['dataset_name'] == 'brassica_rnaseq_reads'
+
+
+# def test_dataset_from_path(tmp_dir):
+
+#     from dtool.arctool import (
+#         new_archive,
+#         create_manifest,
+#     )
+
+#     tmp_dataset = new_archive(tmp_dir, no_input=True)
+#     #tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
+#     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+#     archive_output_path = os.path.join(tmp_dataset, 'archive')
+#     copy_tree(archive_input_path, archive_output_path)
+#     create_manifest(os.path.join(tmp_dataset, "archive/"))
+
+#     from dtool.archive import DataSet
+
+#     dataset = DataSet.from_path(tmp_dataset)
+
+#     assert dataset.name == 'brassica_rnaseq_reads'

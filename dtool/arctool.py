@@ -56,10 +56,16 @@ def new_archive(staging_path, extra_context=dict(), no_input=False):
                                 no_input=no_input,
                                 extra_context=extra_context)
 
+    readme_path = os.path.join(archive_path, 'README.yml')
+    with open(readme_path) as fh:
+        readme = yaml.load(fh)
+    dataset_name = readme['dataset_name']
+
     dataset_file_path = os.path.join(archive_path, '.dtool-dataset')
 
     dataset_uuid = str(uuid.uuid4())
     dataset_info = {'dtool_version': __version__,
+                    'dataset_name': dataset_name,
                     'uuid': dataset_uuid,
                     'unix_username': unix_username}
 
