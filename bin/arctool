@@ -57,28 +57,31 @@ def new(staging_path):
     click.secho('Created new archive in: ', nl=False)
     click.secho(archive_path, fg='green')
 
-    readme_file = os.path.join(archive_path, 'README.yml')
+    # readme_file = os.path.join(archive_path, 'README.yml')
 
-    with open(readme_file) as fh:
-        metadata = yaml.load(fh)
+    # with open(readme_file) as fh:
+    #     metadata = yaml.load(fh)
 
-    dataset_file = os.path.join(archive_path, '.dtool-dataset')
+    # dataset_file = os.path.join(archive_path, '.dtool-dataset')
 
-    with open(dataset_file) as fh:
-        dataset_info = json.load(fh)
+    # with open(dataset_file) as fh:
+    #     dataset_info = json.load(fh)
+
+    dataset = DataSet.from_path(archive_path)
 
     # Fix problem serializing datetime objects
+    metadata = dataset.metadata
     metadata['archive_date'] = str(metadata['archive_date'])
 
     log_data = {'metadata': metadata,
                 'archive_path': archive_path,
-                'dataset_uuid': dataset_info['uuid']}
+                'dataset_uuid': dataset.uuid}
     logger.emit('new', log_data)
 
     archive_data_path = os.path.join(archive_path, 'archive')
 
     click.secho('Now:')
-    click.secho('  1. Edit {}'.format(readme_file), fg='yellow')
+    click.secho('  1. Edit {}'.format(dataset.readme_file), fg='yellow')
     click.secho('  2. Move archive data into {}'.format(archive_data_path),
                 fg='yellow')
     click.secho('Then: ', nl=False)
