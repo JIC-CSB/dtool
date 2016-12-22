@@ -387,22 +387,22 @@ def test_extract_readme(tmp_archive):
     assert readme['dataset_name'] == 'brassica_rnaseq_reads'
 
 
-# def test_dataset_from_path(tmp_dir):
+def test_dataset_from_path(tmp_dir):
 
-#     from dtool.arctool import (
-#         new_archive,
-#         create_manifest,
-#     )
+    from dtool.arctool import (
+        new_archive,
+        create_manifest,
+    )
 
-#     tmp_dataset = new_archive(tmp_dir, no_input=True)
-#     #tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
-#     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
-#     archive_output_path = os.path.join(tmp_dataset, 'archive')
-#     copy_tree(archive_input_path, archive_output_path)
-#     create_manifest(os.path.join(tmp_dataset, "archive/"))
+    tmp_dataset = new_archive(tmp_dir, no_input=True)
+    #tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    archive_output_path = os.path.join(tmp_dataset, 'archive')
+    copy_tree(archive_input_path, archive_output_path)
+    create_manifest(os.path.join(tmp_dataset, "archive/"))
 
-#     from dtool.archive import DataSet
+    from dtool.arctool import DataSet
 
-#     dataset = DataSet.from_path(tmp_dataset)
+    dataset = DataSet.from_path(tmp_dataset)
 
-#     assert dataset.name == 'brassica_rnaseq_reads'
+    assert dataset.name == 'brassica_rnaseq_reads'

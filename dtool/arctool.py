@@ -25,6 +25,21 @@ HERE = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(HERE, 'templates')
 
 
+class DataSet(object):
+
+    @classmethod
+    def from_path(cls, path):
+        dataset_info_file = os.path.join(path, '.dtool-dataset')
+
+        with open(dataset_info_file) as fh:
+            dataset_info = json.load(fh)
+
+        dataset = cls()
+
+        dataset.name = dataset_info['dataset_name']
+
+        return dataset
+
 def new_archive(staging_path, extra_context=dict(), no_input=False):
     """Create new archive in the staging path.
 
