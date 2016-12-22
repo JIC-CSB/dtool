@@ -181,3 +181,16 @@ def verify_all(archive_path):
 
     archive_path = os.path.abspath(archive_path)
 
+    archive = Archive.from_file(archive_path)
+
+    file_list = archive.manifest["file_list"]
+
+    for entry in file_list:
+        file_in_archive = entry['path']
+        manifest_hash = entry['hash']
+        archive_hash = archive.calculate_file_hash(file_in_archive)
+
+        if archive_hash != manifest_hash:
+            return False
+
+    return True
