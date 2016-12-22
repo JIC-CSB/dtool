@@ -121,5 +121,3 @@ def test_extract_file(tmp_archive):
     readme_path = extract_file(tarball_path, "README.yml")
     assert readme_path == expected_path
     assert os.path.isfile(readme_path)
-
-

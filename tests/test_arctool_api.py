@@ -395,7 +395,6 @@ def test_dataset_from_path(tmp_dir):
     )
 
     tmp_dataset = new_archive(tmp_dir, no_input=True)
-    #tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_dataset, 'archive')
     copy_tree(archive_input_path, archive_output_path)
