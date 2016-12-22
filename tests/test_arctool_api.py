@@ -406,3 +406,4 @@ def test_dataset_from_path(tmp_dir):
     dataset = DataSet.from_path(tmp_dataset)
 
     assert dataset.name == 'brassica_rnaseq_reads'
+    assert len(dataset.uuid) == 36

@@ -37,6 +37,7 @@ class DataSet(object):
         dataset = cls()
 
         dataset.name = dataset_info['dataset_name']
+        dataset.uuid = dataset_info['uuid']
 
         return dataset
 
