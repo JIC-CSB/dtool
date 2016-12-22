@@ -28,7 +28,6 @@ class Archive(object):
         return archive
 
 
-
 def initialise_tar_archive(archive_path, fname_to_add):
     """Initialise a tar archive.
 

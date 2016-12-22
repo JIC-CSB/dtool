@@ -132,6 +132,7 @@ def test_archive_from_gz_file(tmp_archive):
     assert len(archive.uuid) == 36
     assert archive.info['dataset_name'] == 'brassica_rnaseq_reads'
 
+
 def test_archive_from_tar_file(tmp_archive):
     from dtool.archive import Archive
 
