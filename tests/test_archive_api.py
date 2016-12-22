@@ -121,3 +121,13 @@ def test_extract_file(tmp_archive):
     readme_path = extract_file(tarball_path, "README.yml")
     assert readme_path == expected_path
     assert os.path.isfile(readme_path)
+
+
+def test_archive_from_file(tmp_archive):
+    from dtool.archive import Archive
+
+    archive = Archive.from_file(tmp_archive)
+
+    assert archive.name == 'brassica_rnaseq_reads'
+    assert len(archive.uuid) == 36
+    assert archive.info['dataset_name'] == 'brassica_rnaseq_reads'

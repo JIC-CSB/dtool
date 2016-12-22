@@ -1,8 +1,32 @@
 """Module wrapping tar and gzip."""
 
 import os
+import json
 import subprocess
 import tarfile
+
+
+class Archive(object):
+
+    @classmethod
+    def from_file(cls, file_path):
+
+        archive = cls()
+
+        archive.file_path = file_path
+        basename = os.path.basename(file_path)
+        archive.name, _ = basename.split('.', 1)
+
+        info_file_path = os.path.join(archive.name, '.dtool-dataset')
+        with tarfile.open(archive.file_path, 'r:*') as tar:
+            info_fp = tar.extractfile(info_file_path)
+            info_str = info_fp.read().decode("utf-8")
+            archive.info = json.loads(info_str)
+
+        archive.uuid = archive.info['uuid']
+
+        return archive
+
 
 
 def initialise_tar_archive(archive_path, fname_to_add):
