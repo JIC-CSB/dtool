@@ -171,3 +171,15 @@ def test_archive_calculate_hash(tmp_archive):
     expected = 'a250369afb3eeaa96fb0df99e7755ba784dfd69c'
 
     assert actual == expected
+
+
+def test_archive_verify_all(tmp_archive):
+    from dtool.archive import verify_all
+
+    assert verify_all(tmp_archive)
+
+def test_verify_file(tmp_archive):
+    from dtool.archive import verify_file
+
+    assert verify_file(tmp_archive, 'file1.txt')
+
