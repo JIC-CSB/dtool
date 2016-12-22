@@ -2,8 +2,21 @@
 
 import os
 import json
+import hashlib
 import subprocess
 import tarfile
+
+
+def shasum_from_file_object(f):
+
+    BUF_SIZE = 65536
+    hasher = hashlib.sha1()
+    buf = f.read(BUF_SIZE)
+    while len(buf) > 0:
+        hasher.update(buf)
+        buf = f.read(BUF_SIZE)
+
+    return hasher.hexdigest()
 
 
 class Archive(object):
@@ -32,6 +45,15 @@ class Archive(object):
         archive.uuid = archive.info['uuid']
 
         return archive
+
+    def calculate_file_hash(self, filename):
+
+        full_file_path = os.path.join(self.name, 'archive', filename)
+
+        with tarfile.open(self.file_path, 'r:*') as tar:
+            fp = tar.extractfile(full_file_path)
+
+            return shasum_from_file_object(fp)
 
 
 def initialise_tar_archive(archive_path, fname_to_add):
