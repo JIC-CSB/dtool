@@ -23,6 +23,7 @@ from dtool.archive import (
     initialise_tar_archive,
     append_to_tar_archive,
     compress_archive,
+    verify_all,
 )
 from dtool.slurm import generate_slurm_script
 
@@ -236,6 +237,23 @@ def summary(path):
     click.secho("Total uncompressed archive size is", nl=False)
     click.secho(" {:.2f} GiB".format(size_in_gibi), fg='green', nl=False)
     click.secho(".")
+
+
+@verify.command()
+@click.argument('path', 'Path to compressed archive.',
+                type=click.Path(exists=True))
+def full(path):
+
+    click.secho("Performing full verification on:", nl=False)
+    click.secho(" {}".format(path), fg='green')
+
+    result = verify_all(path)
+
+    click.secho("Verification ", nl=False)
+    if result:
+        click.secho("passed", fg='green')
+    else:
+        click.secho("failed", fg='red')
 
 
 @cli.group()
