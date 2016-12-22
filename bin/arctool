@@ -4,6 +4,7 @@
 import sys
 import os
 import json
+import getpass
 
 import yaml
 import click
@@ -36,7 +37,9 @@ from fluent import sender
 def cli(fluentd_host):
     global logger
     logger = sender.FluentSender('arctool', host=fluentd_host, port=24224)
-    message = {'api-version': __version__, 'command_line': sys.argv}
+    message = {'api-version': __version__,
+               'command_line': sys.argv,
+               'unix_username': getpass.getuser()}
     logger.emit('cli_command', message)
 
 
