@@ -1,0 +1,16 @@
+digraph arctool {
+
+  node[shape=box fontname="helvetica" fontcolor=black]
+
+  create_new_archive[label="Create data set directory structure"];
+  generate_manifest[label="Generate meta data"];
+  archive_and_compress[label="Archive & compress"];
+
+  node[shape=invtrapezium fontname="helvetica" fontcolor=black]
+  add_data[label="Move files into data set"] ;
+
+  create_new_archive -> add_data;
+  add_data -> generate_manifest;
+  generate_manifest -> archive_and_compress;
+
+}
