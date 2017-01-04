@@ -178,8 +178,8 @@ def test_archive_verify_all(tmp_archive):
 
     assert verify_all(tmp_archive)
 
+
 def test_verify_file(tmp_archive):
     from dtool.archive import verify_file
 
     assert verify_file(tmp_archive, 'file1.txt')
-
