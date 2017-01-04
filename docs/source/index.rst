@@ -6,6 +6,7 @@ dtool - a tool for managing data sets
    :caption: Table of contents:
 
    readme
+   arctool
    installation_notes
    api
    developer_notes
