@@ -10,6 +10,8 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- Add CLI commands for file verification
+- Add API calls for single file verification and all files verification
 - Add logging of dataset UUID to CLI operations
 - Add logging of full command line invocation to CLI
 - Archive class loaded from .tar or .tar.gz file
