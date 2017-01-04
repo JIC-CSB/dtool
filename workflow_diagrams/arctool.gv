@@ -7,9 +7,11 @@ digraph arctool {
   archive_and_compress[label="Archive & compress"];
 
   node[shape=invtrapezium fontname="helvetica" fontcolor=black]
+  update_readme[label="Check and update README"];
   add_data[label="Move files into data set"] ;
 
-  create_new_archive -> add_data;
+  create_new_archive -> update_readme;
+  update_readme -> add_data;
   add_data -> generate_manifest;
   generate_manifest -> archive_and_compress;
 
