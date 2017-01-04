@@ -406,3 +406,8 @@ def test_dataset_from_path(tmp_dir):
 
     assert dataset.name == 'brassica_rnaseq_reads'
     assert len(dataset.uuid) == 36
+    assert dataset.readme_file == os.path.join(tmp_dataset, 'README.yml')
+
+    assert 'dataset_name' in dataset.metadata
+    assert 'project_name' in dataset.metadata
+    assert 'archive_date' in dataset.metadata

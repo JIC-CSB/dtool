@@ -4,6 +4,7 @@
 import sys
 import os
 import json
+import getpass
 
 import yaml
 import click
@@ -11,6 +12,7 @@ import click
 import dtool
 from dtool import __version__
 from dtool.arctool import (
+    DataSet,
     create_manifest,
     extract_manifest,
     extract_readme,
@@ -20,6 +22,7 @@ from dtool.arctool import (
     readme_yml_is_valid,
 )
 from dtool.archive import (
+    Archive,
     initialise_tar_archive,
     append_to_tar_archive,
     compress_archive,
@@ -36,7 +39,10 @@ from fluent import sender
 def cli(fluentd_host):
     global logger
     logger = sender.FluentSender('arctool', host=fluentd_host, port=24224)
-    logger.emit('version', {'api-version': __version__})
+    message = {'api-version': __version__,
+               'command_line': sys.argv,
+               'unix_username': getpass.getuser()}
+    logger.emit('cli_command', message)
 
 
 @cli.command()
@@ -51,27 +57,38 @@ def new(staging_path):
     click.secho('Starting new archive in: ', nl=False)
     click.secho(staging_path, fg='green')
 
+    logger.emit('pre_new_archive', {'staging_path': staging_path})
+
     archive_path = new_archive(staging_path)
 
     click.secho('Created new archive in: ', nl=False)
     click.secho(archive_path, fg='green')
 
-    readme_file = os.path.join(archive_path, 'README.yml')
+    # readme_file = os.path.join(archive_path, 'README.yml')
 
-    with open(readme_file) as fh:
-        metadata = yaml.load(fh)
+    # with open(readme_file) as fh:
+    #     metadata = yaml.load(fh)
+
+    # dataset_file = os.path.join(archive_path, '.dtool-dataset')
+
+    # with open(dataset_file) as fh:
+    #     dataset_info = json.load(fh)
+
+    dataset = DataSet.from_path(archive_path)
 
     # Fix problem serializing datetime objects
+    metadata = dataset.metadata
     metadata['archive_date'] = str(metadata['archive_date'])
 
     log_data = {'metadata': metadata,
-                'archive_path': archive_path}
+                'archive_path': archive_path,
+                'dataset_uuid': dataset.uuid}
     logger.emit('new', log_data)
 
     archive_data_path = os.path.join(archive_path, 'archive')
 
     click.secho('Now:')
-    click.secho('  1. Edit {}'.format(readme_file), fg='yellow')
+    click.secho('  1. Edit {}'.format(dataset.readme_file), fg='yellow')
     click.secho('  2. Move archive data into {}'.format(archive_data_path),
                 fg='yellow')
     click.secho('Then: ', nl=False)
@@ -89,7 +106,7 @@ def manifest():
                 type=click.Path(exists=True))
 def create(path):
 
-    logger.emit('manifest_create', {'path': path})
+    logger.emit('pre_create_manifest', {'path': path})
 
     manifest_path = create_manifest(path)
 
@@ -99,7 +116,9 @@ def create(path):
     click.secho('Created manifest: ', nl=False)
     click.secho(manifest_path, fg='green')
 
-    logger.emit('manifest', manifest)
+    log_data = {'manifest_path': manifest_path,
+                'manifest': manifest}
+    logger.emit('post_create_manifest', log_data)
 
     dataset_path, _ = os.path.split(manifest_path)
     dataset_path = os.path.abspath(dataset_path)
@@ -118,10 +137,12 @@ def archive():
 def create(path):
     path = os.path.abspath(path)
 
-    pre_tar_log = {'archive_path': path}
-    logger.emit('create_archive', pre_tar_log)
+    dataset = DataSet.from_path(path)
+    log_data = {'path' : path,
+                'dataset_uuid': dataset.uuid}
+    logger.emit('pre_create_archive', log_data)
 
-    readme_path = os.path.join(path, "README.yml")
+    readme_path = dataset.readme_file
     click.secho('Validating readme at: ', nl=False)
     click.secho(readme_path, fg='green')
     readme_str = open(readme_path, "r").read()
@@ -132,11 +153,6 @@ def create(path):
     manifest_path = os.path.join(path, "manifest.json")
     if not os.path.isfile(manifest_path):
         click.secho("No manifest file found in archive", fg='red')
-        sys.exit(2)
-
-    dtool_dataset_path = os.path.join(path, ".dtool-dataset")
-    if not os.path.isfile(dtool_dataset_path):
-        click.secho("No .dtool-dataset file found in archive", fg='red')
         sys.exit(2)
 
     with open(manifest_path) as fh:
@@ -166,9 +182,10 @@ def create(path):
     click.secho(tar_file_path, fg='green')
 
     archive_size = os.stat(tar_file_path).st_size
-    post_tar_log = {'archive_size': archive_size,
+    post_tar_log = {'dataset_uuid': dataset.uuid,
+                    'archive_size': archive_size,
                     'output_tar_path': tar_file_path}
-    logger.emit('tar_created', post_tar_log)
+    logger.emit('post_create_archive', post_tar_log)
 
     click.secho('Next: ', nl=False)
     click.secho('arctool archive compress {}'.format(tar_file_path), fg='cyan')
@@ -182,24 +199,27 @@ def create(path):
                 type=click.Path(exists=True))
 def compress(path, cores, slurm):
     path = os.path.abspath(path)
+    archive = Archive.from_file(path)
 
     if not slurm:
         click.secho('Compressing archive: ', nl=False)
         click.secho(path, fg='green')
 
-        pre_log = {'archive_path': path,
+        pre_log = {'dataset_uuid': archive.uuid,
+                   'archive_path': path,
                    'cores': cores,
                    'tar_size': os.stat(path).st_size}
-        logger.emit('compress_archive', pre_log)
+        logger.emit('pre_compress_archive', pre_log)
 
         compressed_archive_path = compress_archive(path, n_threads=cores)
 
         click.secho('Created compressed file: ', nl=False)
         click.secho(compressed_archive_path, fg='green')
 
-        post_log = {'compressed_archive_path': compressed_archive_path,
+        post_log = {'dataset_uuid': archive.uuid,
+                    'compressed_archive_path': compressed_archive_path,
                     'gzip_size': os.stat(compressed_archive_path).st_size}
-        logger.emit('compress_complete', post_log)
+        logger.emit('post_compress_archive', post_log)
 
         click.secho('Now:')
         click.secho('  Move {} to archive storage'.format(
