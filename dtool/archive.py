@@ -2,8 +2,21 @@
 
 import os
 import json
+import hashlib
 import subprocess
 import tarfile
+
+
+def shasum_from_file_object(f):
+
+    BUF_SIZE = 65536
+    hasher = hashlib.sha1()
+    buf = f.read(BUF_SIZE)
+    while len(buf) > 0:
+        hasher.update(buf)
+        buf = f.read(BUF_SIZE)
+
+    return hasher.hexdigest()
 
 
 class Archive(object):
@@ -23,9 +36,24 @@ class Archive(object):
             info_str = info_fp.read().decode("utf-8")
             archive.info = json.loads(info_str)
 
+        manifest_path = os.path.join(archive.name, 'manifest.json')
+        with tarfile.open(archive.file_path, 'r:*') as tar:
+            manifest_fp = tar.extractfile(manifest_path)
+            manifest_str = manifest_fp.read().decode("utf-8")
+            archive.manifest = json.loads(manifest_str)
+
         archive.uuid = archive.info['uuid']
 
         return archive
+
+    def calculate_file_hash(self, filename):
+
+        full_file_path = os.path.join(self.name, 'archive', filename)
+
+        with tarfile.open(self.file_path, 'r:*') as tar:
+            fp = tar.extractfile(full_file_path)
+
+            return shasum_from_file_object(fp)
 
 
 def initialise_tar_archive(archive_path, fname_to_add):
@@ -115,3 +143,54 @@ def extract_file(archive_path, file_in_archive):
         tar.extract(extract_path, path=archive_dirname)
 
     return os.path.join(archive_dirname, extract_path)
+
+
+def verify_file(archive_path, file_in_archive):
+    """Verify single file in archive.
+
+    The archive can be a tarball or a compressed tarball.
+
+    :param archive_path: path to the archive containing the file
+    :param file_in_archive: file to verify
+    :returns: True if checksum matches, False otherwise.
+    """
+    archive_path = os.path.abspath(archive_path)
+
+    archive = Archive.from_file(archive_path)
+
+    file_list = archive.manifest["file_list"]
+
+    filedict_by_path = {entry['path']: entry for entry in file_list}
+
+    file_entry = filedict_by_path[file_in_archive]
+
+    manifest_hash = file_entry['hash']
+    archive_hash = archive.calculate_file_hash(file_in_archive)
+
+    return manifest_hash == archive_hash
+
+
+def verify_all(archive_path):
+    """Verify all files in archive.
+
+    :param archive_path: path to archive containing files
+    :returns: True if all files verify, False otherwise.
+    """
+
+    # TODO - raise exception?
+
+    archive_path = os.path.abspath(archive_path)
+
+    archive = Archive.from_file(archive_path)
+
+    file_list = archive.manifest["file_list"]
+
+    for entry in file_list:
+        file_in_archive = entry['path']
+        manifest_hash = entry['hash']
+        archive_hash = archive.calculate_file_hash(file_in_archive)
+
+        if archive_hash != manifest_hash:
+            return False
+
+    return True

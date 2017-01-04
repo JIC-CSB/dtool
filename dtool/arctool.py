@@ -38,8 +38,15 @@ class DataSet(object):
 
         dataset.name = dataset_info['dataset_name']
         dataset.uuid = dataset_info['uuid']
+        dataset.readme_file = os.path.join(path, 'README.yml')
 
         return dataset
+
+    @property
+    def metadata(self):
+
+        with open(self.readme_file) as fh:
+            return yaml.load(fh)
 
 
 def new_archive(staging_path, extra_context=dict(), no_input=False):
