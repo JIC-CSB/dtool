@@ -4,8 +4,31 @@ CHANGELOG
 This project uses `semantic versioning <http://semver.org/>`_.
 This change log uses principles from `keep a changelog <http://keepachangelog.com/>`_.
 
+
 [Unreleased]
 ~~~~~~~~~~~~
+
+Added
+^^^^^
+
+Changed
+^^^^^^^
+
+Deprecated
+^^^^^^^^^^
+
+Removed
+^^^^^^^
+
+Fixed
+^^^^^
+
+Security
+^^^^^^^^
+
+
+[0.5.0] - 2017-01-09
+~~~~~~~~~~~~~~~~~~~~
 
 Added
 ^^^^^
@@ -25,20 +48,6 @@ Changed
 - Documentation now built using Sphinx
 - Split package into modules: ``archive``, ``arctool``, ``filehasher``,
   ``manifest`` and ``slurm``
-
-
-Deprecated
-^^^^^^^^^^
-
-Removed
-^^^^^^^
-
-Fixed
-^^^^^
-
-Security
-^^^^^^^^
-
 
 
 [0.4.3] - 2016-12-19
