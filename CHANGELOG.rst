@@ -11,6 +11,8 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- Add API call icreate_collection for idempotently creating new collection.
+
 Changed
 ^^^^^^^
 
