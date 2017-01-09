@@ -49,7 +49,7 @@ class DataSet(object):
             return yaml.load(fh)
 
 
-def new_archive(staging_path, extra_context=dict(), no_input=False):
+def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
     """Create new archive in the staging path.
 
     This creates an initial skeleton directory structure that includes

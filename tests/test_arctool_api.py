@@ -38,7 +38,7 @@ def tmp_dir(request):
 @pytest.fixture
 def tmp_archive(request):
 
-    from dtool.arctool import new_archive, create_manifest, create_archive
+    from dtool.arctool import new_archive_dataset, create_manifest, create_archive
     from dtool.archive import compress_archive
 
     d = tempfile.mkdtemp()
@@ -47,7 +47,7 @@ def tmp_archive(request):
     def teardown():
         shutil.rmtree(d)
 
-    new_archive(d, no_input=True)
+    new_archive_dataset(d, no_input=True)
     tmp_project = os.path.join(d, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -71,10 +71,10 @@ def test_archive_fixture(tmp_archive):
     assert mimetype == 'application/x-gzip'
 
 
-def test_new_archive(tmp_dir):
-    from dtool.arctool import new_archive
+def test_new_archive_dataset(tmp_dir):
+    from dtool.arctool import new_archive_dataset
 
-    dataset_path = new_archive(tmp_dir, no_input=True)
+    dataset_path = new_archive_dataset(tmp_dir, no_input=True)
 
     expected_path = os.path.join(tmp_dir,
                                  "brassica_rnaseq_reads")
@@ -204,12 +204,12 @@ archive_date: 2016-01-12
         "README.yml invalid: owner is missing an email")
 
 
-def test_new_archive_extra_content(tmp_dir):
-    from dtool.arctool import new_archive
+def test_new_archive_dataset_extra_content(tmp_dir):
+    from dtool.arctool import new_archive_dataset
 
     extra_context = dict(project_name="some_project",
                          dataset_name="data_set_1")
-    new_archive(tmp_dir, no_input=True, extra_context=extra_context)
+    new_archive_dataset(tmp_dir, no_input=True, extra_context=extra_context)
 
     # Test file creation.
     readme_yml_path = os.path.join(tmp_dir,
@@ -227,8 +227,8 @@ def test_new_archive_extra_content(tmp_dir):
 def test_rel_paths_for_archiving(tmp_dir):
     from dtool.arctool import rel_paths_for_archiving
 
-    from dtool.arctool import new_archive, create_manifest
-    new_archive(tmp_dir, no_input=True)
+    from dtool.arctool import new_archive_dataset, create_manifest
+    new_archive_dataset(tmp_dir, no_input=True)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -261,9 +261,9 @@ def test_rel_paths_for_archiving(tmp_dir):
 def test_create_archive(tmp_dir):
     from dtool.arctool import create_archive
 
-    from dtool.arctool import new_archive, create_manifest
+    from dtool.arctool import new_archive_dataset, create_manifest
 
-    new_archive(tmp_dir, no_input=True)
+    new_archive_dataset(tmp_dir, no_input=True)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -311,9 +311,9 @@ def test_create_archive(tmp_dir):
 def test_create_archive_with_trailing_slash(tmp_dir):
     from dtool.arctool import create_archive
 
-    from dtool.arctool import new_archive, create_manifest
+    from dtool.arctool import new_archive_dataset, create_manifest
 
-    new_archive(tmp_dir, no_input=True)
+    new_archive_dataset(tmp_dir, no_input=True)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -330,9 +330,9 @@ def test_issue_with_log_create_archive_in_different_dir(tmp_dir):
 
     from dtool.arctool import create_archive
 
-    from dtool.arctool import new_archive, create_manifest
+    from dtool.arctool import new_archive_dataset, create_manifest
 
-    new_archive(tmp_dir, no_input=True)
+    new_archive_dataset(tmp_dir, no_input=True)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -390,11 +390,11 @@ def test_extract_readme(tmp_archive):
 def test_dataset_from_path(tmp_dir):
 
     from dtool.arctool import (
-        new_archive,
+        new_archive_dataset,
         create_manifest,
     )
 
-    tmp_dataset = new_archive(tmp_dir, no_input=True)
+    tmp_dataset = new_archive_dataset(tmp_dir, no_input=True)
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_dataset, 'archive')
     copy_tree(archive_input_path, archive_output_path)

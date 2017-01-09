@@ -16,7 +16,7 @@ from dtool.arctool import (
     create_manifest,
     extract_manifest,
     extract_readme,
-    new_archive,
+    new_archive_dataset,
     rel_paths_for_archiving,
     summarise_archive,
     readme_yml_is_valid,
@@ -59,7 +59,7 @@ def new(staging_path):
 
     logger.emit('pre_new_archive', {'staging_path': staging_path})
 
-    archive_path = new_archive(staging_path)
+    archive_path = new_archive_dataset(staging_path)
 
     click.secho('Created new archive in: ', nl=False)
     click.secho(archive_path, fg='green')
