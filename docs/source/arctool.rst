@@ -34,7 +34,7 @@ data associated with the project.
 
 ::
 
-    $ archtool new
+    $ arctool new
 
     # Add ouput here
 
@@ -95,3 +95,20 @@ Compress the archive using gzip compression.
 
 Finally move the gzipped tarball archive into your long term storage.
 
+Logging with fluentd
+~~~~~~~~~~~~~~~~~~~~
+
+arctool sends logs to fluentd, a logging system. The fluentd server can be set
+in two ways:
+
+1. By setting the FLUENTD_HOST environment variable, e.g.:
+
+   ::
+
+       $ export FLUENTD_HOST=my_host.domain
+
+2. By specifying the host on the command line, e.g.:
+
+   ::
+
+       $ arctool --fluentd-host my_host.domain <command>
