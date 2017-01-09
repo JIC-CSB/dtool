@@ -2,6 +2,7 @@
 
 import os
 import json
+import uuid
 import hashlib
 import subprocess
 import tarfile
@@ -194,3 +195,36 @@ def verify_all(archive_path):
             return False
 
     return True
+
+
+def icreate_collection(staging_path, collection_name):
+    """Create new collection. If collection exists, return path to existing
+    collection. The i in icreate refers to the fact that the function is
+    idempotent.
+
+    :param staging_path: path in which to create collection
+    :param collection_name: name of collection to create
+    :returns: Path to collection.
+    """
+
+    staging_path = os.path.abspath(staging_path)
+
+    collection_path = os.path.join(staging_path, collection_name)
+    collection_file_path = os.path.join(collection_path, '.dtool-collection')
+
+    if os.path.isdir(collection_path):
+        if not os.path.isfile(collection_file_path):
+            raise(ValueError('Path exists but is not a collection'))
+        else:
+            return collection_path
+
+    os.mkdir(collection_path)
+
+    collection_uuid = str(uuid.uuid4())
+
+    collection_info = {'uuid': collection_uuid}
+
+    with open(collection_file_path, 'w') as fh:
+        json.dump(collection_info, fh)
+
+    return collection_path

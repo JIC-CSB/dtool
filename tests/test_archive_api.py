@@ -1,6 +1,7 @@
 """Test the archive module."""
 
 import os
+import json
 from distutils.dir_util import copy_tree
 import tempfile
 import shutil
@@ -183,3 +184,44 @@ def test_verify_file(tmp_archive):
     from dtool.archive import verify_file
 
     assert verify_file(tmp_archive, 'file1.txt')
+
+
+def test_icreate_collection(tmp_dir):
+    from dtool.archive import icreate_collection
+
+    expected_path = os.path.join(tmp_dir, 'test_collection')
+
+    assert not os.path.isdir(expected_path)
+
+    collection_path = icreate_collection(tmp_dir, 'test_collection')
+
+    assert expected_path == collection_path
+    assert os.path.isdir(collection_path)
+
+    collection_file_path = os.path.join(collection_path, '.dtool-collection')
+
+    with open(collection_file_path) as fh:
+        collection_info = json.load(fh)
+
+    original_uuid = collection_info['uuid']
+    assert len(original_uuid) == 36
+
+    # Check that function is idempotent
+    collection_path = icreate_collection(tmp_dir, 'test_collection')
+
+    with open(collection_file_path) as fh:
+        collection_info = json.load(fh)
+
+    assert collection_info['uuid'] == original_uuid
+
+
+def test_icreate_raises_valueerror_when_run_on_existing_dir_with_no_collection_file(tmp_dir):  # NOQA
+    from dtool.archive import icreate_collection
+
+    empty_path = os.path.join(tmp_dir, 'test_collection')
+    os.mkdir(empty_path)
+
+    with pytest.raises(ValueError) as excinfo:
+        collection_path = icreate_collection(tmp_dir, 'test_collection')
+
+    assert 'Path exists but is not a collection' in str(excinfo.value)
