@@ -83,3 +83,8 @@ def test_everything_except_new_archive_dataset(tmp_dir):
 
     cmd = ["arctool", "verify", "summary", gzip_path]
     subprocess.call(cmd)
+
+# def test_new_archive_dataset(tmp_dir):
+
+#     import click.CliRunner
+#     from import 

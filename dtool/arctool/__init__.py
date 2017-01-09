@@ -22,7 +22,7 @@ from dtool.archive import (
 )
 
 HERE = os.path.dirname(__file__)
-TEMPLATE_DIR = os.path.join(HERE, 'templates')
+TEMPLATE_DIR = os.path.join(HERE, '..', 'templates')
 
 
 class DataSet(object):

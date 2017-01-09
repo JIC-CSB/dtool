@@ -9,7 +9,6 @@ setup(name="dtool",
       packages=["dtool"],
       version=version,
       description="Tools for managing scientific data",
-      scripts=["bin/arctool"],
       include_package_data=True,
       long_description=readme,
       url=url,
@@ -20,4 +19,7 @@ setup(name="dtool",
                         "jinja2",
                         "pyyaml",
                         "python-magic"],
+      entry_points = {
+            'console_scripts': ['arctool=dtool.arctool.cli:cli']
+      },
       license="MIT")
