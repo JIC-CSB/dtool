@@ -16,6 +16,8 @@ Added
 Changed
 ^^^^^^^
 
+- Change new_archive to new_archive_dataset in arctool API
+
 Deprecated
 ^^^^^^^^^^
 
