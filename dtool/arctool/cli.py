@@ -32,12 +32,13 @@ from dtool.slurm import generate_slurm_script
 
 from fluent import sender
 
+logger = sender.FluentSender('arctool', host='v0679', port=24224)
 
 @click.group()
 @click.version_option(version=__version__)
 @click.option('--fluentd-host', envvar='FLUENTD_HOST', default='v0679')
 def cli(fluentd_host):
-    global logger
+
     logger = sender.FluentSender('arctool', host=fluentd_host, port=24224)
     message = {'api-version': __version__,
                'command_line': sys.argv,
