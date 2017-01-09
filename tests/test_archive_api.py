@@ -222,6 +222,6 @@ def test_icreate_raises_valueerror_when_run_on_existing_dir_with_no_collection_f
     os.mkdir(empty_path)
 
     with pytest.raises(ValueError) as excinfo:
-        collection_path = icreate_collection(tmp_dir, 'test_collection')
+        icreate_collection(tmp_dir, 'test_collection')
 
     assert 'Path exists but is not a collection' in str(excinfo.value)
