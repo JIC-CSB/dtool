@@ -16,6 +16,7 @@ Added
 Changed
 ^^^^^^^
 
+- Change location of CLI script to use entry point.
 - Change new_archive to new_archive_dataset in arctool API
 
 Deprecated
