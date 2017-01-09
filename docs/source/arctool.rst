@@ -1,6 +1,9 @@
 arctool
 -------
 
+Overview
+~~~~~~~~
+
 The ``arctool`` command line tool does several things.
 
 1. Provides templates for meta data associated with a project in the plain
@@ -16,10 +19,15 @@ Below is a high level overview of the workflow.
 
 .. image:: images/arctool_workflow.png
 
-Warning: this section of the documentation assumes functionality that will be
-added in a future release.
+
+
+Walkthrough
+~~~~~~~~~~~
 
 ``arctool`` is a tool for archiving data.
+
+Creating a staging area
+^^^^^^^^^^^^^^^^^^^^^^^
 
 First you will need to create an archiving staging area.
 
@@ -27,6 +35,13 @@ First you will need to create an archiving staging area.
 
     $ mkdir archive_staging_area
     $ cd archive_staging_area
+
+Making a new archive
+^^^^^^^^^^^^^^^^^^^^
+
+Warning: this section of the documentation assumes functionality that will be
+added in a future release. Specifically, the creation of project part of the 
+directory structure is not yet implemented.
 
 To start building an archive use ``arctool new``, this will create a directory structure
 in the working directory (``archive_staging_area``) and prompt you to specify some meta
@@ -46,6 +61,9 @@ This results in the directory structure below.
 
     # Add output here
 
+Editing dataset meta data
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Inspect and extend the ``some_project/data_set_1/README.yml`` as necessary.
 This file is meant to provide overall meta data of the data set.
 
@@ -55,12 +73,18 @@ This file is meant to provide overall meta data of the data set.
 
     # Add output here
 
+Moving data into the dataset in the staging area
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Move your data to be archived into the ``some_project/data_set_1/archive``
 directory.
 
 ::
 
     $ mv ~/my_old_project/data_set_1/* some_project/data_set_1/archive/
+
+Generating file meta data
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Generate meta data for the files that you just moved into the
 ``some_project/data_set_1/archive`` directory.
@@ -77,6 +101,9 @@ This will generate a ``some_project/data_set_1/manifest.json`` file.
 
     # Add output here
 
+Creating the archive file
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Create a tar ball of the data set.
 
 ::
@@ -84,6 +111,9 @@ Create a tar ball of the data set.
     $ arctool archive create some_project/data_set_1
 
     # Add output here
+
+Compressing the archive
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Compress the archive using gzip compression.
 
@@ -93,7 +123,15 @@ Compress the archive using gzip compression.
 
     # Add output here
 
+Moving the archive into long term storage
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Finally move the gzipped tarball archive into your long term storage.
+
+Deleting original data
+^^^^^^^^^^^^^^^^^^^^^^
+
+Now you can delete the original data.
 
 Logging with fluentd
 ~~~~~~~~~~~~~~~~~~~~
