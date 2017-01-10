@@ -24,6 +24,7 @@ from dtool.archive import (
     append_to_tar_archive,
     compress_archive,
     verify_all,
+    icreate_collection,
 )
 from dtool.slurm import generate_slurm_script
 
@@ -44,13 +45,42 @@ def cli(fluentd_host):
     logger.emit('cli_command', message)
 
 
-@cli.command()
+@cli.group(invoke_without_command=True)
+@click.pass_context
+@click.option('--staging_path',
+              help='Path to staging area where new project will be created',
+              default='.',
+              type=click.Path(exists=True))
+def new(ctx, staging_path):
+
+    # ctx is passed in via @click.pass_context
+
+    # Makes default behaviour for 'arctool new' be create dataset
+    if ctx.invoked_subcommand is None:
+        cli_new_dataset(staging_path)
+
+
+@new.command()
+@click.option('--staging_path',
+              help='Path to staging area where new project will be created',
+              default='.',
+              type=click.Path(exists=True))
+def project(staging_path):
+
+    pass
+
+
+@new.command()
 @click.option('--staging_path',
               help='Path to staging area where new archive will be created',
               default='.',
               type=click.Path(exists=True))
-def new(staging_path):
+def dataset(staging_path):
 
+    cli_new_dataset(staging_path)
+
+
+def cli_new_dataset(staging_path):
     staging_path = os.path.abspath(staging_path)
 
     click.secho('Starting new archive in: ', nl=False)
