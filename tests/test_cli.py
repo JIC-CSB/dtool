@@ -89,6 +89,7 @@ def test_new(chdir):
 
     from click.testing import CliRunner
     from dtool.arctool.cli import new
+    from dtool.arctool import DataSet
 
     runner = CliRunner()
 
@@ -109,6 +110,10 @@ def test_new(chdir):
     assert os.path.isfile('my_test_project/.dtool-collection')
     assert os.path.isdir('my_test_project/my_dataset')
     assert os.path.isfile('my_test_project/my_dataset/.dtool-dataset')
+
+    dataset = DataSet.from_path('my_test_project/my_dataset')
+
+    assert dataset.metadata['project_name'] == 'my_test_project'
 
 
 def test_new_dataset(chdir):
@@ -150,3 +155,4 @@ def test_new_project(chdir):
 
     assert os.path.isdir('my_test_project')
     assert os.path.isfile('my_test_project/.dtool-collection')
+    assert os.path.isfile('my_test_project/README.yml')

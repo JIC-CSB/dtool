@@ -12,6 +12,7 @@ import dtool
 from dtool import __version__
 from dtool.arctool import (
     DataSet,
+    Project,
     create_manifest,
     extract_manifest,
     extract_readme,
@@ -24,7 +25,7 @@ from dtool.archive import (
     append_to_tar_archive,
     compress_archive,
     verify_all,
-    icreate_collection,
+    is_collection
 )
 from dtool.slurm import generate_slurm_script
 
@@ -57,7 +58,23 @@ def new(ctx, staging_path):
 
     # Makes default behaviour for 'arctool new' be create dataset
     if ctx.invoked_subcommand is None:
-        cli_new_dataset(staging_path)
+        if not is_collection(staging_path):
+            project = create_project(staging_path)
+        
+        cli_new_dataset(project.path, extra_context=project.metadata)
+
+
+def create_project(staging_path):
+
+    project_name = click.prompt('project_name', 
+                                default='my_project')
+
+    project = Project(staging_path, project_name)
+
+    click.secho('Created new project in: ', nl=False)
+    click.secho(project.path, fg='green')
+
+    return project
 
 
 @new.command()
@@ -67,7 +84,7 @@ def new(ctx, staging_path):
               type=click.Path(exists=True))
 def project(staging_path):
 
-    pass
+    create_project(staging_path)
 
 
 @new.command()
@@ -80,7 +97,7 @@ def dataset(staging_path):
     cli_new_dataset(staging_path)
 
 
-def cli_new_dataset(staging_path):
+def cli_new_dataset(staging_path, extra_context=dict()):
     staging_path = os.path.abspath(staging_path)
 
     click.secho('Starting new archive in: ', nl=False)
@@ -88,20 +105,10 @@ def cli_new_dataset(staging_path):
 
     logger.emit('pre_new_archive', {'staging_path': staging_path})
 
-    archive_path = new_archive_dataset(staging_path)
+    archive_path = new_archive_dataset(staging_path, extra_context)
 
     click.secho('Created new archive in: ', nl=False)
     click.secho(archive_path, fg='green')
-
-    # readme_file = os.path.join(archive_path, 'README.yml')
-
-    # with open(readme_file) as fh:
-    #     metadata = yaml.load(fh)
-
-    # dataset_file = os.path.join(archive_path, '.dtool-dataset')
-
-    # with open(dataset_file) as fh:
-    #     dataset_info = json.load(fh)
 
     dataset = DataSet.from_path(archive_path)
 
