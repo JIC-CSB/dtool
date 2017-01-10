@@ -34,7 +34,8 @@ class Project(object):
         self.path = icreate_collection(staging_path, project_name)
         self.readme_file = os.path.join(self.path, 'README.yml')
 
-        env = Environment(loader=PackageLoader('dtool', 'templates'))
+        env = Environment(loader=PackageLoader('dtool', 'templates'),
+                          keep_trailing_newline=True)
 
         readme_template = env.get_template('arctool_project_README.yml')
 
