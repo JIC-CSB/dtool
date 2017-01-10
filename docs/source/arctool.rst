@@ -133,6 +133,21 @@ Deleting original data
 
 Now you can delete the original data.
 
+Tab completion
+~~~~~~~~~~~~~~
+
+arctool supports tab completion for bash. To enable it, enter the following in your shell:
+
+::
+
+    $ eval "$(_ARCTOOL_COMPLETE=source arctool)"
+
+or add it to your .bashrc to enable permanently. You can also generate a sourceable bash shell with:
+
+::
+
+    $ _ARCTOOL_COMPLETE=source arctool > arctool-complete.sh
+
 Logging with fluentd
 ~~~~~~~~~~~~~~~~~~~~
 
