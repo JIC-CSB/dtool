@@ -85,7 +85,7 @@ def test_everything_except_new_archive_dataset(tmp_dir):
     subprocess.call(cmd)
 
 
-def test_new_archive_dataset(chdir):
+def test_new(chdir):
 
     from click.testing import CliRunner
     from dtool.arctool.cli import new
@@ -102,6 +102,30 @@ def test_new_archive_dataset(chdir):
     input_string += '\n'  # Date
 
     result = runner.invoke(new, input=input_string)
+
+    assert not result.exception
+
+    assert os.path.isdir('my_dataset')
+    assert os.path.isfile('my_dataset/.dtool-dataset')
+
+
+def test_new_dataset(chdir):
+
+    from click.testing import CliRunner
+    from dtool.arctool.cli import dataset
+
+    runner = CliRunner()
+
+    input_string = 'my_project\n'
+    input_string += 'my_dataset\n'
+    input_string += '\n'  # confidential
+    input_string += '\n'  # personally identifiable information
+    input_string += 'Test User\n'
+    input_string += 'test.user@example.com\n'
+    input_string += 'usert\n'
+    input_string += '\n'  # Date
+
+    result = runner.invoke(dataset, input=input_string)
 
     assert not result.exception
 
