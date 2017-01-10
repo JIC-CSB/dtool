@@ -67,7 +67,6 @@ class Project(object):
         with open(self.readme_file, 'w') as fh:
             fh.write(readme_template.render(project_metadata))
 
-
     @property
     def metadata(self):
 

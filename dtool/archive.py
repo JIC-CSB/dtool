@@ -229,6 +229,7 @@ def icreate_collection(staging_path, collection_name):
 
     return collection_path
 
+
 def is_collection(path):
     """Return True if path is a collection.
 

@@ -62,13 +62,13 @@ def new(ctx, staging_path):
             project = create_project(staging_path)
         else:
             project = Project.from_path(staging_path)
-        
+
         cli_new_dataset(project.path, extra_context=project.metadata)
 
 
 def create_project(staging_path):
 
-    project_name = click.prompt('project_name', 
+    project_name = click.prompt('project_name',
                                 default='my_project')
 
     project = Project(staging_path, project_name)

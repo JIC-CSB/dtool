@@ -4,6 +4,7 @@ import os
 import tempfile
 import shutil
 import subprocess
+import contextlib
 from distutils.dir_util import copy_tree
 
 import pytest
@@ -11,6 +12,15 @@ import pytest
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
 TEST_OUTPUT_DATA = os.path.join(HERE, "data", "basic", "output")
+
+
+@contextlib.contextmanager
+def remember_cwd():
+    cwd = os.getcwd()
+    try:
+        yield
+    finally:
+        os.chdir(cwd)
 
 
 @pytest.fixture
@@ -162,7 +172,6 @@ def test_create_new_datasets_within_existing_project(chdir):
 
     from click.testing import CliRunner
     from dtool.arctool.cli import new
-    from dtool.arctool import DataSet
 
     runner = CliRunner()
 
@@ -178,17 +187,17 @@ def test_create_new_datasets_within_existing_project(chdir):
 
     result = runner.invoke(new, input=input_string)
 
-    os.chdir('my_test_project')
+    with remember_cwd():
+        os.chdir('my_test_project')
 
-    input_string = '\n'  # prompting for project
-    input_string += 'my_second_dataset\n'
-    input_string += '\n'  # confidential
-    input_string += '\n'  # personally identifiable information
-    input_string += 'Test User\n'
-    input_string += 'test.user@example.com\n'
-    input_string += 'usert\n'
-    input_string += '\n'  # Date
-    result = runner.invoke(new, input=input_string)
+        input_string = '\n'  # prompting for project
+        input_string += 'my_second_dataset\n'
+        input_string += '\n'  # confidential
+        input_string += '\n'  # personally identifiable information
+        input_string += 'Test User\n'
+        input_string += 'test.user@example.com\n'
+        input_string += 'usert\n'
+        input_string += '\n'  # Date
+        result = runner.invoke(new, input=input_string)
 
-    assert not result.exception
-
+        assert not result.exception

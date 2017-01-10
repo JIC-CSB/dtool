@@ -238,9 +238,8 @@ def test_icreate_raises_valueerror_when_run_on_existing_dir_with_no_collection_f
 def test_is_collection(tmp_dir):
     from dtool.archive import is_collection, icreate_collection
 
-    assert is_collection(tmp_dir) == False
+    assert is_collection(tmp_dir) is False
 
     icreate_collection(tmp_dir, 'my_collection')
 
     assert is_collection(os.path.join(tmp_dir, 'my_collection'))
-

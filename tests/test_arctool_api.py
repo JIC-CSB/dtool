@@ -429,6 +429,7 @@ def test_dataset_from_path(tmp_dir):
     assert 'project_name' in dataset.metadata
     assert 'archive_date' in dataset.metadata
 
+
 def test_create_project(tmp_dir):
 
     from dtool.arctool import Project
@@ -486,5 +487,3 @@ def test_project_from_path(chdir):
     test_project = Project.from_path('my_test_project')
 
     assert test_project.name == 'my_test_project'
-
-
