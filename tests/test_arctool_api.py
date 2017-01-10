@@ -444,3 +444,20 @@ def test_create_project(tmp_dir):
 
     assert test_project.metadata['project_name'] == 'my_test_project'
 
+def test_create_project_does_not_overwrite_readme(tmp_dir):
+
+    from dtool.arctool import Project
+
+    test_project = Project(tmp_dir, 'my_test_project')
+
+    readme_path = test_project.readme_file
+
+    with open(readme_path, 'w') as fh:
+        fh.write('test')
+
+    test_project = Project(tmp_dir, 'my_test_project')
+
+    with open(readme_path) as fh:
+        readme_contents = fh.read()
+
+    assert readme_contents == 'test'

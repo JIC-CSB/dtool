@@ -33,16 +33,25 @@ class Project(object):
     def __init__(self, staging_path, project_name):
         self.path = icreate_collection(staging_path, project_name)
         self.readme_file = os.path.join(self.path, 'README.yml')
+        self.name = project_name
+
+        self._safe_create_readme()
+
+    def _safe_create_readme(self):
+
+        if os.path.isfile(self.readme_file):
+            return
 
         env = Environment(loader=PackageLoader('dtool', 'templates'),
                           keep_trailing_newline=True)
 
         readme_template = env.get_template('arctool_project_README.yml')
 
-        project_metadata = {'project_name': project_name}
+        project_metadata = {'project_name': self.name}
 
         with open(self.readme_file, 'w') as fh:
             fh.write(readme_template.render(project_metadata))
+
 
     @property
     def metadata(self):
