@@ -60,6 +60,8 @@ def new(ctx, staging_path):
     if ctx.invoked_subcommand is None:
         if not is_collection(staging_path):
             project = create_project(staging_path)
+        else:
+            project = Project.from_path(staging_path)
         
         cli_new_dataset(project.path, extra_context=project.metadata)
 
