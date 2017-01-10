@@ -236,6 +236,8 @@ def is_collection(path):
     :returns: True if path is a collection, False othewise
     """
 
+    path = os.path.abspath(path)
+
     collection_file_path = os.path.join(path, '.dtool-collection')
 
     return os.path.isfile(collection_file_path)

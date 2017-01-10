@@ -11,6 +11,7 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- Add Project class to arctool
 - Add API call is_collection to test if path is collection
 - Document tab completion (now enabled due to using entry point for CLI)
 - Add API call icreate_collection for idempotently creating new collection.

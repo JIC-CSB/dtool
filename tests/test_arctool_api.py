@@ -415,3 +415,32 @@ def test_dataset_from_path(tmp_dir):
     assert 'dataset_name' in dataset.metadata
     assert 'project_name' in dataset.metadata
     assert 'archive_date' in dataset.metadata
+
+def test_create_project(tmp_dir):
+
+    from dtool.arctool import Project
+    from dtool.archive import is_collection
+
+    expected_project_path = os.path.join(tmp_dir, 'my_test_project')
+
+    assert not os.path.isdir(expected_project_path)
+
+    test_project = Project(tmp_dir, 'my_test_project')
+
+    assert test_project.path == os.path.abspath(expected_project_path)
+    assert os.path.isdir(expected_project_path)
+    assert is_collection(expected_project_path)
+
+    expected_readme_path = os.path.join(expected_project_path, 'README.yml')
+    assert test_project.readme_file == expected_readme_path
+    assert os.path.isfile(test_project.readme_file)
+
+    import yaml
+
+    with open(test_project.readme_file) as fh:
+        project_metadata = yaml.load(fh)
+
+    assert project_metadata['project_name'] == 'my_test_project'
+
+    assert test_project.metadata['project_name'] == 'my_test_project'
+

@@ -8,6 +8,7 @@ import getpass
 import datetime
 
 import yaml
+from jinja2 import Environment, PackageLoader
 
 from cookiecutter.main import cookiecutter
 
@@ -19,10 +20,34 @@ from dtool.archive import (
     initialise_tar_archive,
     append_to_tar_archive,
     extract_file,
+    icreate_collection,
 )
 
 HERE = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(HERE, '..', 'templates')
+
+
+class Project(object):
+    """Arctool project as a collection of datasets."""
+
+    def __init__(self, staging_path, project_name):
+        self.path = icreate_collection(staging_path, project_name)
+        self.readme_file = os.path.join(self.path, 'README.yml')
+
+        env = Environment(loader=PackageLoader('dtool', 'templates'))
+
+        readme_template = env.get_template('arctool_project_README.yml')
+
+        project_metadata = {'project_name': project_name}
+
+        with open(self.readme_file, 'w') as fh:
+            fh.write(readme_template.render(project_metadata))
+
+    @property
+    def metadata(self):
+
+        with open(self.readme_file) as fh:
+            return yaml.load(fh)
 
 
 class DataSet(object):

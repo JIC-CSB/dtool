@@ -92,7 +92,8 @@ def test_new(chdir):
 
     runner = CliRunner()
 
-    input_string = 'my_project\n'
+    input_string = 'my_test_project\n'
+    input_string += '\n'  # prompting for project with create dataset
     input_string += 'my_dataset\n'
     input_string += '\n'  # confidential
     input_string += '\n'  # personally identifiable information
@@ -105,8 +106,9 @@ def test_new(chdir):
 
     assert not result.exception
 
-    assert os.path.isdir('my_dataset')
-    assert os.path.isfile('my_dataset/.dtool-dataset')
+    assert os.path.isfile('my_test_project/.dtool-collection')
+    assert os.path.isdir('my_test_project/my_dataset')
+    assert os.path.isfile('my_test_project/my_dataset/.dtool-dataset')
 
 
 def test_new_dataset(chdir):
@@ -131,3 +133,20 @@ def test_new_dataset(chdir):
 
     assert os.path.isdir('my_dataset')
     assert os.path.isfile('my_dataset/.dtool-dataset')
+
+
+def test_new_project(chdir):
+
+    from click.testing import CliRunner
+    from dtool.arctool.cli import project
+
+    runner = CliRunner()
+
+    input_string = 'my_test_project\n'
+
+    result = runner.invoke(project, input=input_string)
+
+    assert not result.exception
+
+    assert os.path.isdir('my_test_project')
+    assert os.path.isfile('my_test_project/.dtool-collection')
