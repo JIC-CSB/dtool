@@ -21,6 +21,7 @@ from dtool.archive import (
     append_to_tar_archive,
     extract_file,
     icreate_collection,
+    is_collection,
 )
 
 HERE = os.path.dirname(__file__)
@@ -36,6 +37,20 @@ class Project(object):
         self.name = project_name
 
         self._safe_create_readme()
+
+    @classmethod
+    def from_path(cls, project_path):
+
+        if not is_collection(project_path):
+            raise ValueError('Not a project: {}'.format(project_path))
+
+        readme_file = os.path.join(project_path, 'README.yml')
+
+        with open(readme_file) as fh:
+            project_name = yaml.load(fh)['project_name']
+
+        staging_path = os.path.join(project_path, '..')
+        return cls(staging_path, project_name)
 
     def _safe_create_readme(self):
 

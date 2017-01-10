@@ -16,6 +16,19 @@ HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
 
 
+@pytest.fixture
+def chdir(request):
+    d = tempfile.mkdtemp()
+
+    cwd = os.getcwd()
+    os.chdir(d)
+
+    @request.addfinalizer
+    def teardown():
+        os.chdir(cwd)
+        shutil.rmtree(d)
+
+
 @contextlib.contextmanager
 def remember_cwd():
     cwd = os.getcwd()
@@ -444,6 +457,7 @@ def test_create_project(tmp_dir):
 
     assert test_project.metadata['project_name'] == 'my_test_project'
 
+
 def test_create_project_does_not_overwrite_readme(tmp_dir):
 
     from dtool.arctool import Project
@@ -461,3 +475,16 @@ def test_create_project_does_not_overwrite_readme(tmp_dir):
         readme_contents = fh.read()
 
     assert readme_contents == 'test'
+
+
+def test_project_from_path(chdir):
+
+    from dtool.arctool import Project
+
+    Project('.', 'my_test_project')
+
+    test_project = Project.from_path('my_test_project')
+
+    assert test_project.name == 'my_test_project'
+
+
