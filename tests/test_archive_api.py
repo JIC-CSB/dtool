@@ -26,7 +26,11 @@ def tmp_dir(request):
 @pytest.fixture
 def tmp_archive(request):
 
-    from dtool.arctool import new_archive_dataset, create_manifest, create_archive
+    from dtool.arctool import (
+        new_archive_dataset,
+        create_manifest,
+        create_archive,
+    )
     from dtool.archive import compress_archive
 
     d = tempfile.mkdtemp()
@@ -76,7 +80,11 @@ def test_compress_archive(tmp_dir):
 
     from dtool.archive import compress_archive
 
-    from dtool.arctool import new_archive_dataset, create_manifest, create_archive
+    from dtool.arctool import (
+        new_archive_dataset,
+        create_manifest,
+        create_archive,
+    )
 
     new_archive_dataset(tmp_dir, no_input=True)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")

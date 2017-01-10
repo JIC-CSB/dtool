@@ -6,7 +6,6 @@ import os
 import json
 import getpass
 
-import yaml
 import click
 
 import dtool
@@ -17,13 +16,11 @@ from dtool.arctool import (
     extract_manifest,
     extract_readme,
     new_archive_dataset,
-    rel_paths_for_archiving,
     summarise_archive,
     readme_yml_is_valid,
 )
 from dtool.archive import (
     Archive,
-    initialise_tar_archive,
     append_to_tar_archive,
     compress_archive,
     verify_all,
@@ -33,6 +30,7 @@ from dtool.slurm import generate_slurm_script
 from fluent import sender
 
 logger = sender.FluentSender('arctool', host='v0679', port=24224)
+
 
 @click.group()
 @click.version_option(version=__version__)
@@ -139,7 +137,7 @@ def create(path):
     path = os.path.abspath(path)
 
     dataset = DataSet.from_path(path)
-    log_data = {'path' : path,
+    log_data = {'path': path,
                 'dataset_uuid': dataset.uuid}
     logger.emit('pre_create_archive', log_data)
 
@@ -165,7 +163,7 @@ def create(path):
 
     def show_func(item):
         if item is None:
-          return ''
+            return ''
         return str(item['path'])
 
     with click.progressbar(manifest_filedict,

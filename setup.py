@@ -19,7 +19,7 @@ setup(name="dtool",
                         "jinja2",
                         "pyyaml",
                         "python-magic"],
-      entry_points = {
+      entry_points={
             'console_scripts': ['arctool=dtool.arctool.cli:cli']
       },
       license="MIT")
