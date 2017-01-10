@@ -228,3 +228,14 @@ def icreate_collection(staging_path, collection_name):
         json.dump(collection_info, fh)
 
     return collection_path
+
+def is_collection(path):
+    """Return True if path is a collection.
+
+    :param path: path to test
+    :returns: True if path is a collection, False othewise
+    """
+
+    collection_file_path = os.path.join(path, '.dtool-collection')
+
+    return os.path.isfile(collection_file_path)
