@@ -8,6 +8,13 @@ Manage scientific data sets
    :target: https://codecov.io/github/JIC-CSB/dtool?branch=master
    :alt: Code Coverage
 
+.. image:: https://readthedocs.org/projects/dtool/badge/?version=latest
+   :target: https://readthedocs.org/projects/dtool?badge=latest
+   :alt: Documentation Status
+
+- Documentation: http://dtool.readthedocs.io
+- GitHub: https://github.com/JIC-CSB/dtool
+- Free software: MIT License
 
 Overview
 --------
