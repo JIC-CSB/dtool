@@ -11,16 +11,10 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
-- Add Project class to arctool
-- Add API call is_collection to test if path is collection
-- Document tab completion (now enabled due to using entry point for CLI)
-- Add API call icreate_collection for idempotently creating new collection.
 
 Changed
 ^^^^^^^
 
-- Change location of CLI script to use entry point.
-- Change new_archive to new_archive_dataset in arctool API
 
 Deprecated
 ^^^^^^^^^^
@@ -33,6 +27,24 @@ Fixed
 
 Security
 ^^^^^^^^
+
+
+[0.6.0] - 2017-01-11
+~~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+- Add Project class to arctool
+- Add API call is_collection to test if path is collection
+- Document tab completion (now enabled due to using entry point for CLI)
+- Add API call icreate_collection for idempotently creating new collection.
+
+Changed
+^^^^^^^
+
+- Change location of CLI script to use entry point.
+- Change new_archive to new_archive_dataset in arctool API
 
 
 [0.5.0] - 2017-01-09
