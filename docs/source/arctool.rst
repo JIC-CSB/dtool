@@ -26,6 +26,19 @@ Walkthrough
 
 ``arctool`` is a tool for archiving data.
 
+Install or load the tool
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+JIC users can load the ``arctool`` program on the cluster using the command below.
+
+.. code-block:: none
+
+    source /common/software/linuxbrew/Cellar/lmod/5.9.3/lmod/5.9.3/init/bash
+    module use /common/modulefiles/Core
+    module load arctool
+
+To install the tool manually see :doc:`installation_notes`.
+
 Creating a staging area
 ^^^^^^^^^^^^^^^^^^^^^^^
 
