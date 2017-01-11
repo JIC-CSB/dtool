@@ -25,6 +25,8 @@ Removed
 Fixed
 ^^^^^
 
+- Add libmagic1 to packages installed in Docker image
+
 Security
 ^^^^^^^^
 
