@@ -11,6 +11,7 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- Datatool command line tool initial implementation
 
 Changed
 ^^^^^^^
