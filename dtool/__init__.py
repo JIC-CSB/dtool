@@ -79,6 +79,7 @@ class DataSet(object):
 
         return self.dataset_path
 
+
 def log(message):
     """Log a message.
 

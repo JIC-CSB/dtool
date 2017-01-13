@@ -54,6 +54,7 @@ def test_new_dataset(tmp_dir):
     assert os.path.isdir('my_dataset')
     assert os.path.isfile('my_dataset/.dtool-dataset')
 
+
 def test_manifest_create(tmp_dir):
 
     data_dir = os.path.join(tmp_dir, "data")

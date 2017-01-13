@@ -25,9 +25,11 @@ def cli(fluentd_host):
                'unix_username': getpass.getuser()}
     logger.emit('cli_command', message)
 
+
 @cli.group()
 def new():
     pass
+
 
 @new.command()
 def dataset():
@@ -53,7 +55,6 @@ def dataset():
     ds = DataSet(descriptive_metadata["dataset_name"])
     ds.descriptive_metadata = descriptive_metadata
     ds.persist_to_path(".", readme_template=readme_template)
-
 
 
 @cli.group()

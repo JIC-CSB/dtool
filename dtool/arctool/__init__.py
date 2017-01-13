@@ -15,7 +15,6 @@ from cookiecutter.main import cookiecutter
 from dtool import (
     __version__,
     log,
-#    DataSet,
 )
 from dtool.manifest import (
     generate_manifest,
