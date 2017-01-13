@@ -6,7 +6,7 @@ readme = open("README.rst").read()
 url = "https://github.com/JIC-CSB/dtool"
 
 setup(name="dtool",
-      packages=["dtool", "dtool.arctool"],
+      packages=["dtool", "dtool.arctool", "dtool.datatool"],
       version=version,
       description="Tools for managing scientific data",
       include_package_data=True,
