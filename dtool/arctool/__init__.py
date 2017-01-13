@@ -12,7 +12,11 @@ from jinja2 import Environment, PackageLoader
 
 from cookiecutter.main import cookiecutter
 
-from dtool import __version__, log
+from dtool import (
+    __version__,
+    log,
+#    DataSet,
+)
 from dtool.manifest import (
     generate_manifest,
 )
@@ -74,30 +78,6 @@ class Project(object):
             return yaml.load(fh)
 
 
-class DataSet(object):
-
-    @classmethod
-    def from_path(cls, path):
-        dataset_info_file = os.path.join(path, '.dtool-dataset')
-
-        with open(dataset_info_file) as fh:
-            dataset_info = json.load(fh)
-
-        dataset = cls()
-
-        dataset.name = dataset_info['dataset_name']
-        dataset.uuid = dataset_info['uuid']
-        dataset.readme_file = os.path.join(path, 'README.yml')
-
-        return dataset
-
-    @property
-    def metadata(self):
-
-        with open(self.readme_file) as fh:
-            return yaml.load(fh)
-
-
 def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
     """Create new archive in the staging path.
 
@@ -140,7 +120,8 @@ def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
     dataset_info = {'dtool_version': __version__,
                     'dataset_name': dataset_name,
                     'uuid': dataset_uuid,
-                    'unix_username': unix_username}
+                    'unix_username': unix_username,
+                    'manifest_root': 'archive'}
 
     with open(dataset_file_path, 'w') as f:
         json.dump(dataset_info, f)

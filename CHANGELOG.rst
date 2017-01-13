@@ -11,7 +11,9 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
-- Datatool command line tool initial implementation
+- Datatool command line tool implementation
+- DataSet initialisation and persistance
+- manifest_root in .dtool-dataset
 
 Changed
 ^^^^^^^
