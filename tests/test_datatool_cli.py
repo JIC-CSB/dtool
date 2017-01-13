@@ -1,6 +1,25 @@
 """Tests for the dtool cli."""
 
+import os
 import subprocess
+import shutil
+import tempfile
+import json
+
+import pytest
+
+HERE = os.path.dirname(__file__)
+TEST_INPUT_DATA = os.path.join(HERE, "data", "mimetype", "input", "archive")
+
+
+@pytest.fixture
+def tmp_dir(request):
+    d = tempfile.mkdtemp()
+
+    @request.addfinalizer
+    def teardown():
+        shutil.rmtree(d)
+    return d
 
 
 def test_version():
@@ -10,3 +29,35 @@ def test_version():
     output = output.decode('utf8')
 
     assert output.startswith('datatool, version')
+
+
+def test_manifest_create(tmp_dir):
+
+    data_dir = os.path.join(tmp_dir, "data")
+    shutil.copytree(TEST_INPUT_DATA, data_dir)
+
+    cmd = ["datatool", "manifest", "create", data_dir]
+    subprocess.call(cmd)
+    manifest_path = os.path.join(tmp_dir, "manifest.json")
+    assert os.path.isfile(manifest_path)
+
+    # Ensure manifest is valid json.
+    with open(manifest_path, "r") as fh:
+        manifest = json.load(fh)
+
+    file_list = manifest["file_list"]
+
+    expected_mimetypes = {
+        'actually_a_png.txt': 'image/png',
+        'actually_a_text_file.jpg': 'text/plain',
+        'empty_file': 'inode/x-empty',
+        'random_bytes': 'application/octet-stream',
+        'real_text_file.txt': 'text/plain',
+        'tiny.png': 'image/png'
+    }
+
+    for file in file_list:
+        file_path = file['path']
+        actual = file['mimetype']
+        expected = expected_mimetypes[file_path]
+        assert expected == actual
