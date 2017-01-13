@@ -4,8 +4,10 @@
 import os
 import json
 import uuid
+import getpass
 
 import yaml
+from jinja2 import Environment, PackageLoader
 
 __version__ = "0.6.1"
 
@@ -45,6 +47,36 @@ class DataSet(object):
         with open(self.readme_file) as fh:
             return yaml.load(fh)
 
+    def persist_to_path(self, path):
+
+        path = os.path.abspath(path)
+
+        self.dataset_path = os.path.join(path, self.name)
+        os.mkdir(self.dataset_path)
+
+        data_path = os.path.join(self.dataset_path, self.manifest_root)
+        os.mkdir(data_path)
+
+        env = Environment(loader=PackageLoader('dtool', 'templates'),
+                          keep_trailing_newline=True)
+
+        readme_template = env.get_template('dtool_dataset_README.yml')
+
+        unix_username = getpass.getuser()
+        self._info_path = os.path.join(self.dataset_path, '.dtool-dataset')
+        dataset_info = {'dtool_version': __version__,
+                        'dataset_name': self.name,
+                        'uuid': self.uuid,
+                        'unix_username': unix_username,
+                        'manifest_root': self.manifest_root}
+        with open(self._info_path, 'w') as fh:
+            json.dump(dataset_info, fh)
+
+        self.readme_path = os.path.join(self.dataset_path, 'README.yml')
+        with open(self.readme_path, 'w') as fh:
+            fh.write(readme_template.render(self.descriptive_metadata))
+
+        return self.dataset_path
 
 def log(message):
     """Log a message.

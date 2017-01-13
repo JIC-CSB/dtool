@@ -42,6 +42,44 @@ def test_dataset_initialisation():
     assert test_dataset.manifest_root == 'archive'
 
 
+def test_dataset_persist_to_path(tmp_dir):
+
+    from dtool import DataSet
+
+    test_dataset = DataSet('my_dataset')
+
+    with pytest.raises(AttributeError):
+        test_dataset.readme_path
+
+    with pytest.raises(AttributeError):
+        test_dataset.dataset_path
+
+    dataset_path = test_dataset.persist_to_path(tmp_dir)
+    assert os.path.isdir(dataset_path)
+
+    expected_dataset_path = os.path.join(tmp_dir, 'my_dataset')
+    assert dataset_path == expected_dataset_path
+
+    expected_dataset_info_path = os.path.join(dataset_path, '.dtool-dataset')
+    assert os.path.isfile(expected_dataset_info_path)
+
+    expected_readme_path = os.path.join(dataset_path, 'README.yml')
+    assert os.path.isfile(expected_readme_path)
+    assert test_dataset.readme_path == expected_readme_path
+
+
+def test_dataset_persist_to_path_raises_runtimeerror_if_path_exists(tmp_dir):
+
+    from dtool import DataSet
+
+    dataset_clash_path = os.path.join(tmp_dir, 'my_dataset')
+    os.mkdir(dataset_clash_path)
+
+    test_dataset = DataSet('my_dataset')
+    with pytest.raises(OSError):
+        test_dataset.persist_to_path(tmp_dir)
+
+
 def test_dataset_from_path(tmp_dir):
 
     from dtool.arctool import (
