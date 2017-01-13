@@ -20,7 +20,7 @@ setup(name="dtool",
                         "pyyaml",
                         "python-magic"],
       entry_points={
-            'console_scripts': ['arctool=dtool.arctool.cli:cli',
-                                'datatool=dtool.datatool.cli:cli']
+          'console_scripts': ['arctool=dtool.arctool.cli:cli',
+                              'datatool=dtool.datatool.cli:cli']
       },
       license="MIT")
