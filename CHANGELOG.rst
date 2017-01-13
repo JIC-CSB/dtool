@@ -11,6 +11,7 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- manifest_root in .dtool-dataset
 
 Changed
 ^^^^^^^
