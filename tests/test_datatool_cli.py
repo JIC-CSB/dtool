@@ -13,6 +13,19 @@ TEST_INPUT_DATA = os.path.join(HERE, "data", "mimetype", "input", "archive")
 
 
 @pytest.fixture
+def chdir(request):
+    d = tempfile.mkdtemp()
+
+    cwd = os.getcwd()
+    os.chdir(d)
+
+    @request.addfinalizer
+    def teardown():
+        os.chdir(cwd)
+        shutil.rmtree(d)
+
+
+@pytest.fixture
 def tmp_dir(request):
     d = tempfile.mkdtemp()
 
@@ -31,7 +44,7 @@ def test_version():
     assert output.startswith('datatool, version')
 
 
-def test_new_dataset(tmp_dir):
+def test_new_dataset(chdir):
 
     from click.testing import CliRunner
     from dtool.datatool.cli import dataset
