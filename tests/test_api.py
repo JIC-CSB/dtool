@@ -26,6 +26,22 @@ def test_version_is_str():
     assert isinstance(__version__, str)
 
 
+def test_dataset_initialisation():
+
+    from dtool import DataSet
+
+    test_dataset = DataSet('my_dataset')
+
+    assert len(test_dataset.uuid) == 36
+    assert test_dataset.name == 'my_dataset'
+    assert test_dataset.manifest_root == 'data'
+    assert test_dataset.descriptive_metadata == {'dataset_name': 'my_dataset'}
+
+    test_dataset = DataSet('my_dataset', manifest_root='archive')
+
+    assert test_dataset.manifest_root == 'archive'
+
+
 def test_dataset_from_path(tmp_dir):
 
     from dtool.arctool import (

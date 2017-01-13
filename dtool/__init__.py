@@ -3,6 +3,7 @@
 
 import os
 import json
+import uuid
 
 import yaml
 
@@ -13,6 +14,12 @@ VERBOSE = True
 
 class DataSet(object):
 
+    def __init__(self, name, manifest_root='data'):
+
+        self.uuid = str(uuid.uuid4())
+        self.manifest_root = manifest_root
+        self.descriptive_metadata = {'dataset_name': name}
+
     @classmethod
     def from_path(cls, path):
         dataset_info_file = os.path.join(path, '.dtool-dataset')
@@ -20,13 +27,17 @@ class DataSet(object):
         with open(dataset_info_file) as fh:
             dataset_info = json.load(fh)
 
-        dataset = cls()
+        dataset = cls(dataset_info['dataset_name'])
 
-        dataset.name = dataset_info['dataset_name']
         dataset.uuid = dataset_info['uuid']
         dataset.readme_file = os.path.join(path, 'README.yml')
 
         return dataset
+
+    @property
+    def name(self):
+
+        return self.descriptive_metadata['dataset_name']
 
     @property
     def metadata(self):
