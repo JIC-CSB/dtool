@@ -140,7 +140,8 @@ def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
     dataset_info = {'dtool_version': __version__,
                     'dataset_name': dataset_name,
                     'uuid': dataset_uuid,
-                    'unix_username': unix_username}
+                    'unix_username': unix_username,
+                    'manifest_root': 'archive'}
 
     with open(dataset_file_path, 'w') as f:
         json.dump(dataset_info, f)
