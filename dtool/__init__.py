@@ -47,7 +47,7 @@ class DataSet(object):
         with open(self.readme_file) as fh:
             return yaml.load(fh)
 
-    def persist_to_path(self, path):
+    def persist_to_path(self, path, readme_template=None):
 
         path = os.path.abspath(path)
 
@@ -57,10 +57,11 @@ class DataSet(object):
         data_path = os.path.join(self.dataset_path, self.manifest_root)
         os.mkdir(data_path)
 
-        env = Environment(loader=PackageLoader('dtool', 'templates'),
-                          keep_trailing_newline=True)
+        if readme_template is None:
+            env = Environment(loader=PackageLoader('dtool', 'templates'),
+                              keep_trailing_newline=True)
 
-        readme_template = env.get_template('dtool_dataset_README.yml')
+            readme_template = env.get_template('dtool_dataset_README.yml')
 
         unix_username = getpass.getuser()
         self._info_path = os.path.join(self.dataset_path, '.dtool-dataset')
