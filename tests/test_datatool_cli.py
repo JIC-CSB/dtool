@@ -31,6 +31,29 @@ def test_version():
     assert output.startswith('datatool, version')
 
 
+def test_new_dataset(tmp_dir):
+
+    from click.testing import CliRunner
+    from dtool.datatool.cli import dataset
+
+    runner = CliRunner()
+
+    input_string = 'my_project\n'
+    input_string += 'my_dataset\n'
+    input_string += '\n'  # confidential
+    input_string += '\n'  # personally identifiable information
+    input_string += 'Test User\n'
+    input_string += 'test.user@example.com\n'
+    input_string += 'usert\n'
+    input_string += '\n'  # Date
+
+    result = runner.invoke(dataset, input=input_string)
+
+    assert not result.exception
+
+    assert os.path.isdir('my_dataset')
+    assert os.path.isfile('my_dataset/.dtool-dataset')
+
 def test_manifest_create(tmp_dir):
 
     data_dir = os.path.join(tmp_dir, "data")

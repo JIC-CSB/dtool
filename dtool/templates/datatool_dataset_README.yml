@@ -1,0 +1,15 @@
+---
+project_name: {{ project_name }}
+dataset_name: {{ dataset_name }}
+confidential: {{ confidential }}
+personally_identifiable_information: {{ personally_identifiable_information }}
+owners:
+  - name: {{ owner_name }}
+    email: {{ owner_email }}
+    unix_username: {{ owner_unix_username }}
+date: {{ archive_date }}
+# links:
+#  - http://doi.dx.org/your_doi
+#  - http://github.com/your_code_repository
+# budget_codes:
+#  - E.g. CCBS1H10S

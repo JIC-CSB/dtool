@@ -5,10 +5,11 @@ import json
 import getpass
 
 import click
+from jinja2 import Environment, PackageLoader
 
 from fluent import sender
 
-from dtool import __version__
+from dtool import __version__, DataSet
 from dtool.arctool import create_manifest
 
 logger = sender.FluentSender('arctool', host='v0679', port=24224)
@@ -23,6 +24,36 @@ def cli(fluentd_host):
                'command_line': sys.argv,
                'unix_username': getpass.getuser()}
     logger.emit('cli_command', message)
+
+@cli.group()
+def new():
+    pass
+
+@new.command()
+def dataset():
+    readme_info = [
+        ("project_name", "project_name"),
+        ("dataset_name", "dataset_name"),
+        ("confidential", False),
+        ("personally_identifiable_information", False),
+        ("owner_name", "Your Name"),
+        ("owner_email", "your.email@example.com"),
+        ("unix_username", "namey"),
+        ("creation_date", "today"),
+    ]
+    descriptive_metadata = {}
+    for name, default in readme_info:
+        descriptive_metadata[name] = click.prompt(name,
+                                                  default=default)
+
+    env = Environment(loader=PackageLoader('dtool', 'templates'),
+                      keep_trailing_newline=True)
+    readme_template = env.get_template('datatool_dataset_README.yml')
+
+    ds = DataSet(descriptive_metadata["dataset_name"])
+    ds.descriptive_metadata = descriptive_metadata
+    ds.persist_to_path(".", readme_template=readme_template)
+
 
 
 @cli.group()
