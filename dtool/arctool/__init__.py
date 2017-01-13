@@ -12,7 +12,11 @@ from jinja2 import Environment, PackageLoader
 
 from cookiecutter.main import cookiecutter
 
-from dtool import __version__, log
+from dtool import (
+    __version__,
+    log,
+#    DataSet,
+)
 from dtool.manifest import (
     generate_manifest,
 )
@@ -66,30 +70,6 @@ class Project(object):
 
         with open(self.readme_file, 'w') as fh:
             fh.write(readme_template.render(project_metadata))
-
-    @property
-    def metadata(self):
-
-        with open(self.readme_file) as fh:
-            return yaml.load(fh)
-
-
-class DataSet(object):
-
-    @classmethod
-    def from_path(cls, path):
-        dataset_info_file = os.path.join(path, '.dtool-dataset')
-
-        with open(dataset_info_file) as fh:
-            dataset_info = json.load(fh)
-
-        dataset = cls()
-
-        dataset.name = dataset_info['dataset_name']
-        dataset.uuid = dataset_info['uuid']
-        dataset.readme_file = os.path.join(path, 'README.yml')
-
-        return dataset
 
     @property
     def metadata(self):

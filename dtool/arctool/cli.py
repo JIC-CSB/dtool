@@ -9,9 +9,11 @@ import getpass
 import click
 
 import dtool
-from dtool import __version__
-from dtool.arctool import (
+from dtool import (
+    __version__,
     DataSet,
+)
+from dtool.arctool import (
     Project,
     create_manifest,
     extract_manifest,

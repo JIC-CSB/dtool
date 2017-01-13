@@ -99,7 +99,7 @@ def test_new(chdir):
 
     from click.testing import CliRunner
     from dtool.arctool.cli import new
-    from dtool.arctool import DataSet
+    from dtool import DataSet
 
     runner = CliRunner()
 
