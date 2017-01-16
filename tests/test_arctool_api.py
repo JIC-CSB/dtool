@@ -120,6 +120,7 @@ def test_new_archive_dataset(tmp_dir):
     assert "dtool_version" in dataset_info
     assert "uuid" in dataset_info
     assert "unix_username" in dataset_info
+    assert dataset_info["manifest_root"] == "archive"
     assert dataset_info['dataset_name'] == 'brassica_rnaseq_reads'
 
     # Test that yaml is valid.
