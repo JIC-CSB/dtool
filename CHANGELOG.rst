@@ -11,9 +11,6 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
-- Datatool command line tool implementation
-- DataSet initialisation and persistance
-- manifest_root in .dtool-dataset
 
 Changed
 ^^^^^^^
@@ -28,10 +25,26 @@ Removed
 Fixed
 ^^^^^
 
-- Add libmagic1 to packages installed in Docker image
 
 Security
 ^^^^^^^^
+
+
+
+[0.7.0] - 2017-01-16
+~~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+- Datatool command line tool implementation
+- DataSet initialisation and persistence
+- manifest_root in .dtool-dataset
+
+Fixed
+^^^^^
+
+- Add libmagic1 to packages installed in Docker image
 
 
 [0.6.1] - 2017-01-11
