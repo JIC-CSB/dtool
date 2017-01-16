@@ -18,6 +18,7 @@ Manage scientific data sets
 
 - Documentation: http://dtool.readthedocs.io
 - GitHub: https://github.com/JIC-CSB/dtool
+- PyPI: https://pypi.python.org/pypi/dtool
 - Free software: MIT License
 
 Overview
