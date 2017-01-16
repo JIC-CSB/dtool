@@ -15,6 +15,7 @@ from cookiecutter.main import cookiecutter
 from dtool import (
     __version__,
     log,
+    DataSet,
 )
 from dtool.manifest import (
     generate_manifest,
@@ -96,34 +97,56 @@ def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
     :returns: path to newly created data set archive in the staging area
     """
     unix_username = getpass.getuser()
-    email = "{}@nbi.ac.uk".format(unix_username)
-    archive_template = os.path.join(TEMPLATE_DIR, 'archive')
-    if "owner_unix_username" not in extra_context:
-        extra_context["owner_unix_username"] = unix_username
-    if "owner_email" not in extra_context:
-        extra_context["owner_email"] = email
-    extra_context["version"] = __version__
-    archive_path = cookiecutter(archive_template,
-                                output_dir=staging_path,
-                                no_input=no_input,
-                                extra_context=extra_context)
+    dataset_name = "brassica_rnaseq_reads"
 
-    readme_path = os.path.join(archive_path, 'README.yml')
-    with open(readme_path) as fh:
-        readme = yaml.load(fh)
-    dataset_name = readme['dataset_name']
+    descriptive_metadata = {
+        "project_name": "improve_crop_yields",
+        "dataset_name": dataset_name,
+        "confidential": False,
+        "personally_identifiable_information": False,
+        "owner_name": "Your Name",
+        "unix_username": unix_username,
+        "owner_email": "{}@nbi.ac.uk".format(unix_username),
+        "archive_date": "today",
+    }
 
-    dataset_file_path = os.path.join(archive_path, '.dtool-dataset')
+    # unix_username = getpass.getuser()
+    # email = "{}@nbi.ac.uk".format(unix_username)
+    # archive_template = os.path.join(TEMPLATE_DIR, 'archive')
+    # if "owner_unix_username" not in extra_context:
+    #     extra_context["owner_unix_username"] = unix_username
+    # if "owner_email" not in extra_context:
+    #     extra_context["owner_email"] = email
+    # extra_context["version"] = __version__
+    # archive_path = cookiecutter(archive_template,
+    #                             output_dir=staging_path,
+    #                             no_input=no_input,
+    #                             extra_context=extra_context)
 
-    dataset_uuid = str(uuid.uuid4())
-    dataset_info = {'dtool_version': __version__,
-                    'dataset_name': dataset_name,
-                    'uuid': dataset_uuid,
-                    'unix_username': unix_username,
-                    'manifest_root': 'archive'}
+    # readme_path = os.path.join(archive_path, 'README.yml')
+    # with open(readme_path) as fh:
+    #     readme = yaml.load(fh)
+    # dataset_name = readme['dataset_name']
 
-    with open(dataset_file_path, 'w') as f:
-        json.dump(dataset_info, f)
+    env = Environment(loader=PackageLoader('dtool', 'templates'),
+                      keep_trailing_newline=True)
+    readme_template = env.get_template('arctool_dataset_README.yml')
+    dataset = DataSet(dataset_name)
+    dataset.descriptive_metadata = descriptive_metadata
+    archive_path = dataset.persist_to_path(staging_path,
+                                           readme_template=readme_template)
+
+    # dataset_file_path = os.path.join(archive_path, '.dtool-dataset')
+
+    # dataset_uuid = str(uuid.uuid4())
+    # dataset_info = {'dtool_version': __version__,
+    #                 'dataset_name': dataset_name,
+    #                 'uuid': dataset_uuid,
+    #                 'unix_username': unix_username,
+    #                 'manifest_root': 'archive'}
+
+    # with open(dataset_file_path, 'w') as f:
+    #     json.dump(dataset_info, f)
 
     return archive_path
 

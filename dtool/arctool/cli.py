@@ -117,7 +117,7 @@ def cli_new_dataset(staging_path, extra_context=dict()):
     dataset = DataSet.from_path(archive_path)
 
     # Fix problem serializing datetime objects
-    metadata = dataset.metadata
+    metadata = dataset.descriptive_metadata
     metadata['archive_date'] = str(metadata['archive_date'])
 
     log_data = {'metadata': metadata,

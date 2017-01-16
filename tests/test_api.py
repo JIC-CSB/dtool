@@ -21,6 +21,19 @@ def tmp_dir(request):
     return d
 
 
+@pytest.fixture
+def chdir(request):
+    d = tempfile.mkdtemp()
+
+    cwd = os.getcwd()
+    os.chdir(d)
+
+    @request.addfinalizer
+    def teardown():
+        os.chdir(cwd)
+        shutil.rmtree(d)
+
+
 def test_version_is_str():
     from dtool import __version__
     assert isinstance(__version__, str)
@@ -35,11 +48,26 @@ def test_dataset_initialisation():
     assert len(test_dataset.uuid) == 36
     assert test_dataset.name == 'my_dataset'
     assert test_dataset.manifest_root == 'data'
+    assert test_dataset.admin_metadata == {'dataset_name': 'my_dataset',
+                                           'type': 'dataset'}
     assert test_dataset.descriptive_metadata == {'dataset_name': 'my_dataset'}
 
     test_dataset = DataSet('my_dataset', manifest_root='archive')
 
     assert test_dataset.manifest_root == 'archive'
+
+
+def test_dataset_admin_metadata(chdir):
+
+    from dtool import DataSet
+
+    setup_dataset = DataSet('my_dataset')
+    setup_dataset.persist_to_path('.')
+
+    test_dataset = DataSet.from_path('my_dataset')
+
+    expected_readme_path = 'README.yml'
+    assert test_dataset.admin_metadata['readme_path'] == expected_readme_path
 
 
 def test_dataset_persist_to_path(tmp_dir):
@@ -101,6 +129,8 @@ def test_dataset_from_path(tmp_dir):
     assert len(dataset.uuid) == 36
     assert dataset.readme_file == os.path.join(tmp_dataset, 'README.yml')
 
-    assert 'dataset_name' in dataset.metadata
-    assert 'project_name' in dataset.metadata
-    assert 'archive_date' in dataset.metadata
+    assert dataset.admin_metadata['type'] == 'dataset'
+
+    assert 'dataset_name' in dataset.descriptive_metadata
+    assert 'project_name' in dataset.descriptive_metadata
+    assert 'archive_date' in dataset.descriptive_metadata

@@ -13,6 +13,9 @@ __version__ = "0.7.0"
 
 VERBOSE = True
 
+# admin/administrative metadata - .dtool/dtool
+# descriptive metadata - README.yml
+# structural metadata - manifest.json
 
 class DataSet(object):
 
@@ -20,7 +23,12 @@ class DataSet(object):
 
         self.uuid = str(uuid.uuid4())
         self.manifest_root = manifest_root
+        # .dtool/dtool
+        self.admin_metadata = {'dataset_name': name,
+                               'type': 'dataset'}
+        # README.yml
         self.descriptive_metadata = {'dataset_name': name}
+
 
     @classmethod
     def from_path(cls, path):
@@ -30,22 +38,22 @@ class DataSet(object):
             dataset_info = json.load(fh)
 
         dataset = cls(dataset_info['dataset_name'])
+        dataset.admin_metadata = dataset_info
 
         dataset.uuid = dataset_info['uuid']
         dataset.readme_file = os.path.join(path, 'README.yml')
+        dataset._replace_descriptive_metadata()
 
         return dataset
 
     @property
     def name(self):
+        return self.admin_metadata['dataset_name']
 
-        return self.descriptive_metadata['dataset_name']
-
-    @property
-    def metadata(self):
+    def _replace_descriptive_metadata(self):
 
         with open(self.readme_file) as fh:
-            return yaml.load(fh)
+            self.descriptive_metadata = yaml.load(fh)
 
     def persist_to_path(self, path, readme_template=None):
 
@@ -63,19 +71,23 @@ class DataSet(object):
 
             readme_template = env.get_template('dtool_dataset_README.yml')
 
+        self.readme_path = os.path.join(self.dataset_path, 'README.yml')
+        with open(self.readme_path, 'w') as fh:
+            fh.write(readme_template.render(self.descriptive_metadata))
+
         unix_username = getpass.getuser()
         self._info_path = os.path.join(self.dataset_path, '.dtool-dataset')
         dataset_info = {'dtool_version': __version__,
+                        'type': 'dataset',
                         'dataset_name': self.name,
                         'uuid': self.uuid,
                         'unix_username': unix_username,
+                        'readme_path': os.path.relpath(self.readme_path,
+                                                       self.dataset_path),
                         'manifest_root': self.manifest_root}
         with open(self._info_path, 'w') as fh:
             json.dump(dataset_info, fh)
 
-        self.readme_path = os.path.join(self.dataset_path, 'README.yml')
-        with open(self.readme_path, 'w') as fh:
-            fh.write(readme_template.render(self.descriptive_metadata))
 
         return self.dataset_path
 
