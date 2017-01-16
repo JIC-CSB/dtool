@@ -1,6 +1,10 @@
 Manage scientific data sets
 ===========================
 
+.. image:: https://badge.fury.io/py/dtool.svg
+   :target: http://badge.fury.io/py/dtool
+   :alt: PyPi package
+
 .. image:: https://travis-ci.org/JIC-CSB/dtool.svg?branch=master
     :target: https://travis-ci.org/JIC-CSB/dtool
 
