@@ -97,11 +97,14 @@ def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
     :returns: path to newly created data set archive in the staging area
     """
     unix_username = getpass.getuser()
-    dataset_name = "brassica_rnaseq_reads"
+    # if 'dataset_name' not in extra_context:
+    #     dataset_name = "brassica_rnaseq_reads"
+    # else:
+    #     dataset_name = extra_context['dataset_name']
 
     descriptive_metadata = {
         "project_name": "improve_crop_yields",
-        "dataset_name": dataset_name,
+        "dataset_name": "brassica_rnaseq_reads",
         "confidential": False,
         "personally_identifiable_information": False,
         "owner_name": "Your Name",
@@ -109,6 +112,10 @@ def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
         "owner_email": "{}@nbi.ac.uk".format(unix_username),
         "archive_date": "today",
     }
+
+    descriptive_metadata.update(extra_context)
+
+    dataset_name = descriptive_metadata['dataset_name']
 
     # unix_username = getpass.getuser()
     # email = "{}@nbi.ac.uk".format(unix_username)
@@ -131,10 +138,17 @@ def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
     env = Environment(loader=PackageLoader('dtool', 'templates'),
                       keep_trailing_newline=True)
     readme_template = env.get_template('arctool_dataset_README.yml')
-    dataset = DataSet(dataset_name)
+    dataset = DataSet(dataset_name, manifest_root='archive')
     dataset.descriptive_metadata = descriptive_metadata
     archive_path = dataset.persist_to_path(staging_path,
                                            readme_template=readme_template)
+    archive_readme_file_path = os.path.join(archive_path,
+                                            dataset.manifest_root,
+                                            'README.txt')
+    archive_readme_template = env.get_template(
+                                'arctool_archive_dir_README.txt')
+    with open(archive_readme_file_path, 'w') as fh:
+        fh.write(archive_readme_template.render())
 
     # dataset_file_path = os.path.join(archive_path, '.dtool-dataset')
 
