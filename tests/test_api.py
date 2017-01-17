@@ -95,6 +95,9 @@ def test_dataset_persist_to_path(tmp_dir):
     assert os.path.isfile(expected_readme_path)
     assert test_dataset.readme_path == expected_readme_path
 
+    manifest_root = os.path.join(dataset_path, test_dataset.manifest_root)
+    assert os.path.isdir(manifest_root)
+
 
 def test_dataset_persist_to_path_raises_runtimeerror_if_path_exists(tmp_dir):
 
