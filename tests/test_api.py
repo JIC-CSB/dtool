@@ -118,7 +118,7 @@ def test_dataset_from_path(tmp_dir):
         create_manifest,
     )
 
-    tmp_dataset = new_archive_dataset(tmp_dir, no_input=True)
+    tmp_dataset = new_archive_dataset(tmp_dir)
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_dataset, 'archive')
     copy_tree(archive_input_path, archive_output_path)

@@ -49,11 +49,10 @@ def tmp_dir(request):
 def test_everything_except_new_archive_dataset(tmp_dir):
     from dtool.arctool import new_archive_dataset
 
-    extra_context = dict(project_name="some_project",
-                         dataset_name="data_set_1")
+    metadata = dict(project_name="some_project",
+                    dataset_name="data_set_1")
     dataset_path = new_archive_dataset(tmp_dir,
-                                       extra_context=extra_context,
-                                       no_input=True)
+                                       input_descriptive_metadata=metadata)
     assert os.path.isdir(dataset_path)
 
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')

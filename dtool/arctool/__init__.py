@@ -10,8 +10,6 @@ import datetime
 import yaml
 from jinja2 import Environment, PackageLoader
 
-from cookiecutter.main import cookiecutter
-
 from dtool import (
     __version__,
     log,
@@ -78,29 +76,18 @@ class Project(object):
             return yaml.load(fh)
 
 
-def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
+def new_archive_dataset(staging_path, input_descriptive_metadata=dict()):
     """Create new archive in the staging path.
 
     This creates an initial skeleton directory structure that includes
     a top level README.yml file.
 
-    The extra_context parameter can be used to provide values for the
-    cookiecutter template. See the
-    dtool/templates/archive/cookicutter.json file for keys and
-    default values.
-
-    The no_input parameter exists for automated testing purposes.
-    If it is set to True it disables prompting of user input.
-
     :param staging_path: path to archiving staging area
-    :param extra_context: dictionary with context for cookiecutter template
+    :param input_descriptive_metadata: dictionary with information which will
+                                       populate README.yml
     :returns: path to newly created data set archive in the staging area
     """
     unix_username = getpass.getuser()
-    # if 'dataset_name' not in extra_context:
-    #     dataset_name = "brassica_rnaseq_reads"
-    # else:
-    #     dataset_name = extra_context['dataset_name']
 
     descriptive_metadata = {
         "project_name": "improve_crop_yields",
@@ -113,35 +100,21 @@ def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
         "archive_date": "today",
     }
 
-    descriptive_metadata.update(extra_context)
+    descriptive_metadata.update(input_descriptive_metadata)
 
     dataset_name = descriptive_metadata['dataset_name']
 
-    # unix_username = getpass.getuser()
-    # email = "{}@nbi.ac.uk".format(unix_username)
-    # archive_template = os.path.join(TEMPLATE_DIR, 'archive')
-    # if "owner_unix_username" not in extra_context:
-    #     extra_context["owner_unix_username"] = unix_username
-    # if "owner_email" not in extra_context:
-    #     extra_context["owner_email"] = email
-    # extra_context["version"] = __version__
-    # archive_path = cookiecutter(archive_template,
-    #                             output_dir=staging_path,
-    #                             no_input=no_input,
-    #                             extra_context=extra_context)
 
-    # readme_path = os.path.join(archive_path, 'README.yml')
-    # with open(readme_path) as fh:
-    #     readme = yaml.load(fh)
-    # dataset_name = readme['dataset_name']
+    dataset = DataSet(dataset_name, manifest_root='archive')
+    dataset.descriptive_metadata = descriptive_metadata
 
     env = Environment(loader=PackageLoader('dtool', 'templates'),
                       keep_trailing_newline=True)
     readme_template = env.get_template('arctool_dataset_README.yml')
-    dataset = DataSet(dataset_name, manifest_root='archive')
-    dataset.descriptive_metadata = descriptive_metadata
     archive_path = dataset.persist_to_path(staging_path,
                                            readme_template=readme_template)
+
+    # Create a readme file in the archive subdirectory of the dataset
     archive_readme_file_path = os.path.join(archive_path,
                                             dataset.manifest_root,
                                             'README.txt')
@@ -150,17 +123,6 @@ def new_archive_dataset(staging_path, extra_context=dict(), no_input=False):
     with open(archive_readme_file_path, 'w') as fh:
         fh.write(archive_readme_template.render())
 
-    # dataset_file_path = os.path.join(archive_path, '.dtool-dataset')
-
-    # dataset_uuid = str(uuid.uuid4())
-    # dataset_info = {'dtool_version': __version__,
-    #                 'dataset_name': dataset_name,
-    #                 'uuid': dataset_uuid,
-    #                 'unix_username': unix_username,
-    #                 'manifest_root': 'archive'}
-
-    # with open(dataset_file_path, 'w') as f:
-    #     json.dump(dataset_info, f)
 
     return archive_path
 

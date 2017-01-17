@@ -39,7 +39,7 @@ def tmp_archive(request):
     def teardown():
         shutil.rmtree(d)
 
-    new_archive_dataset(d, no_input=True)
+    new_archive_dataset(d)
     tmp_project = os.path.join(d, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -86,7 +86,7 @@ def test_compress_archive(tmp_dir):
         create_archive,
     )
 
-    new_archive_dataset(tmp_dir, no_input=True)
+    new_archive_dataset(tmp_dir)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')

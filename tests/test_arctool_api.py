@@ -64,7 +64,7 @@ def tmp_archive(request):
     def teardown():
         shutil.rmtree(d)
 
-    new_archive_dataset(d, no_input=True)
+    new_archive_dataset(d)
     tmp_project = os.path.join(d, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -91,7 +91,7 @@ def test_archive_fixture(tmp_archive):
 def test_new_archive_dataset(tmp_dir):
     from dtool.arctool import new_archive_dataset
 
-    dataset_path = new_archive_dataset(tmp_dir, no_input=True)
+    dataset_path = new_archive_dataset(tmp_dir)
 
     expected_path = os.path.join(tmp_dir,
                                  "brassica_rnaseq_reads")
@@ -222,12 +222,12 @@ archive_date: 2016-01-12
         "README.yml invalid: owner is missing an email")
 
 
-def test_new_archive_dataset_extra_content(tmp_dir):
+def test_new_archive_dataset_input_descriptive_metadata(tmp_dir):
     from dtool.arctool import new_archive_dataset
 
-    extra_context = dict(project_name="some_project",
-                         dataset_name="data_set_1")
-    new_archive_dataset(tmp_dir, no_input=True, extra_context=extra_context)
+    metadata = dict(project_name="some_project",
+                    dataset_name="data_set_1")
+    new_archive_dataset(tmp_dir, input_descriptive_metadata=metadata)
 
     # Test file creation.
     readme_yml_path = os.path.join(tmp_dir,
@@ -246,7 +246,7 @@ def test_rel_paths_for_archiving(tmp_dir):
     from dtool.arctool import rel_paths_for_archiving
 
     from dtool.arctool import new_archive_dataset, create_manifest
-    new_archive_dataset(tmp_dir, no_input=True)
+    new_archive_dataset(tmp_dir)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -281,7 +281,7 @@ def test_create_archive(tmp_dir):
 
     from dtool.arctool import new_archive_dataset, create_manifest
 
-    new_archive_dataset(tmp_dir, no_input=True)
+    new_archive_dataset(tmp_dir)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -331,7 +331,7 @@ def test_create_archive_with_trailing_slash(tmp_dir):
 
     from dtool.arctool import new_archive_dataset, create_manifest
 
-    new_archive_dataset(tmp_dir, no_input=True)
+    new_archive_dataset(tmp_dir)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -350,7 +350,7 @@ def test_issue_with_log_create_archive_in_different_dir(tmp_dir):
 
     from dtool.arctool import new_archive_dataset, create_manifest
 
-    new_archive_dataset(tmp_dir, no_input=True)
+    new_archive_dataset(tmp_dir)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
