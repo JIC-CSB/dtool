@@ -15,6 +15,7 @@ Added
 Changed
 ^^^^^^^
 
+- dtool.arctool.new_archive_dataset now uses DataSet class, always takes descriptive metadata as a parameter and returns both the dataset and the path to which it is persisted
 
 Deprecated
 ^^^^^^^^^^
