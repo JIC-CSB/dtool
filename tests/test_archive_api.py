@@ -22,6 +22,7 @@ TEST_DESCRIPTIVE_METADATA = dict([
         ("archive_date", u"2017-01-01"),
     ])
 
+
 @pytest.fixture
 def tmp_dir(request):
     d = tempfile.mkdtemp()

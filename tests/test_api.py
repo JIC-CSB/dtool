@@ -51,7 +51,8 @@ def create_persisted_archive_dataset(path):
 
     descriptive_metadata = dict(readme_info)
 
-    dataset = DataSet(descriptive_metadata['dataset_name'], manifest_root='archive')
+    dataset = DataSet(descriptive_metadata['dataset_name'],
+                      manifest_root='archive')
     dataset.descriptive_metadata = descriptive_metadata
     env = Environment(loader=PackageLoader('dtool', 'templates'),
                       keep_trailing_newline=True)

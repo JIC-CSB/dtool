@@ -8,7 +8,6 @@ import getpass
 import datetime
 
 import click
-from jinja2 import Environment, PackageLoader
 
 import dtool
 from dtool import (
@@ -129,7 +128,7 @@ def cli_new_dataset(staging_path, project_metadata=dict()):
     descriptive_metadata.update(project_metadata)
 
     dataset, dataset_path = new_archive_dataset(staging_path,
-                                                     descriptive_metadata)
+                                                descriptive_metadata)
 
     click.secho('Created new archive in: ', nl=False)
     click.secho(dataset_path, fg='green')

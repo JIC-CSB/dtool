@@ -2,16 +2,13 @@
 
 import os
 import json
-import uuid
 import tarfile
-import getpass
 import datetime
 
 import yaml
 from jinja2 import Environment, PackageLoader
 
 from dtool import (
-    __version__,
     log,
     DataSet,
 )

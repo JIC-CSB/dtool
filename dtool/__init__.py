@@ -17,6 +17,7 @@ VERBOSE = True
 # descriptive metadata - README.yml
 # structural metadata - manifest.json
 
+
 class DataSet(object):
 
     def __init__(self, name, manifest_root='data'):
@@ -28,7 +29,6 @@ class DataSet(object):
                                'type': 'dataset'}
         # README.yml
         self.descriptive_metadata = {'dataset_name': name}
-
 
     @classmethod
     def from_path(cls, path):
@@ -87,7 +87,6 @@ class DataSet(object):
                         'manifest_root': self.manifest_root}
         with open(self._info_path, 'w') as fh:
             json.dump(dataset_info, fh)
-
 
         return self.dataset_path
 
