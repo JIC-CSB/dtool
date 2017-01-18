@@ -20,9 +20,9 @@ from dtool.arctool import (
     create_manifest,
     extract_manifest,
     extract_readme,
-    new_archive_dataset,
     summarise_archive,
     readme_yml_is_valid,
+    new_archive_dataset,
 )
 from dtool.archive import (
     Archive,
@@ -128,17 +128,8 @@ def cli_new_dataset(staging_path, project_metadata=dict()):
 
     descriptive_metadata.update(project_metadata)
 
-    dataset = DataSet(descriptive_metadata['dataset_name'],
-                      manifest_root='archive')
-
-    env = Environment(loader=PackageLoader('dtool', 'templates'),
-                      keep_trailing_newline=True)
-    readme_template = env.get_template('arctool_dataset_README.yml')
-
-    dataset.descriptive_metadata = descriptive_metadata
-    dataset_path = dataset.persist_to_path(staging_path,
-                                           readme_template=readme_template)
-    archive_data_path = os.path.join(dataset_path, dataset.manifest_root)
+    dataset, dataset_path = new_archive_dataset(staging_path,
+                                                     descriptive_metadata)
 
     click.secho('Created new archive in: ', nl=False)
     click.secho(dataset_path, fg='green')
@@ -152,7 +143,7 @@ def cli_new_dataset(staging_path, project_metadata=dict()):
                 'dataset_uuid': dataset.uuid}
     logger.emit('new', log_data)
 
-
+    archive_data_path = os.path.join(dataset_path, dataset.manifest_root)
     click.secho('Now:')
     click.secho('  1. Edit {}'.format(dataset.readme_path), fg='yellow')
     click.secho('  2. Move archive data into {}'.format(archive_data_path),

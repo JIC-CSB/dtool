@@ -76,34 +76,20 @@ class Project(object):
             return yaml.load(fh)
 
 
-def new_archive_dataset(staging_path, input_descriptive_metadata=dict()):
+def new_archive_dataset(staging_path, descriptive_metadata):
     """Create new archive in the staging path.
 
     This creates an initial skeleton directory structure that includes
     a top level README.yml file.
 
     :param staging_path: path to archiving staging area
-    :param input_descriptive_metadata: dictionary with information which will
-                                       populate README.yml
-    :returns: path to newly created data set archive in the staging area
+    :param descriptive_metadata: dictionary with information which will
+                                 populate README.yml
+    :returns: (dataset, path to newly created data set archive in
+              the staging area)
     """
-    unix_username = getpass.getuser()
-
-    descriptive_metadata = {
-        "project_name": "improve_crop_yields",
-        "dataset_name": "brassica_rnaseq_reads",
-        "confidential": False,
-        "personally_identifiable_information": False,
-        "owner_name": "Your Name",
-        "unix_username": unix_username,
-        "owner_email": "{}@nbi.ac.uk".format(unix_username),
-        "archive_date": "today",
-    }
-
-    descriptive_metadata.update(input_descriptive_metadata)
 
     dataset_name = descriptive_metadata['dataset_name']
-
 
     dataset = DataSet(dataset_name, manifest_root='archive')
     dataset.descriptive_metadata = descriptive_metadata
@@ -111,11 +97,11 @@ def new_archive_dataset(staging_path, input_descriptive_metadata=dict()):
     env = Environment(loader=PackageLoader('dtool', 'templates'),
                       keep_trailing_newline=True)
     readme_template = env.get_template('arctool_dataset_README.yml')
-    archive_path = dataset.persist_to_path(staging_path,
+    dataset_path = dataset.persist_to_path(staging_path,
                                            readme_template=readme_template)
 
     # Create a readme file in the archive subdirectory of the dataset
-    archive_readme_file_path = os.path.join(archive_path,
+    archive_readme_file_path = os.path.join(dataset_path,
                                             dataset.manifest_root,
                                             'README.txt')
     archive_readme_template = env.get_template(
@@ -123,8 +109,7 @@ def new_archive_dataset(staging_path, input_descriptive_metadata=dict()):
     with open(archive_readme_file_path, 'w') as fh:
         fh.write(archive_readme_template.render())
 
-
-    return archive_path
+    return dataset, dataset_path
 
 
 def create_manifest(path):

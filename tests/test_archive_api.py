@@ -11,7 +11,16 @@ import pytest
 
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
-
+TEST_DESCRIPTIVE_METADATA = dict([
+        ("project_name", u"my_project"),
+        ("dataset_name", u"brassica_rnaseq_reads"),
+        ("confidential", False),
+        ("personally_identifiable_information", False),
+        ("owner_name", u"Your Name"),
+        ("owner_email", u"your.email@example.com"),
+        ("unix_username", u"namey"),
+        ("archive_date", u"2017-01-01"),
+    ])
 
 @pytest.fixture
 def tmp_dir(request):
@@ -39,7 +48,7 @@ def tmp_archive(request):
     def teardown():
         shutil.rmtree(d)
 
-    new_archive_dataset(d)
+    new_archive_dataset(d, TEST_DESCRIPTIVE_METADATA)
     tmp_project = os.path.join(d, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
@@ -86,7 +95,7 @@ def test_compress_archive(tmp_dir):
         create_archive,
     )
 
-    new_archive_dataset(tmp_dir)
+    new_archive_dataset(tmp_dir, TEST_DESCRIPTIVE_METADATA)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')

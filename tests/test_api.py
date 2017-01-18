@@ -34,6 +34,34 @@ def chdir(request):
         shutil.rmtree(d)
 
 
+def create_persisted_archive_dataset(path):
+    from dtool import DataSet
+    from jinja2 import Environment, PackageLoader
+
+    readme_info = [
+        ("project_name", u"my_project"),
+        ("dataset_name", u"brassica_rnaseq_reads"),
+        ("confidential", False),
+        ("personally_identifiable_information", False),
+        ("owner_name", u"Your Name"),
+        ("owner_email", u"your.email@example.com"),
+        ("unix_username", u"namey"),
+        ("archive_date", u"2017-01-01"),
+    ]
+
+    descriptive_metadata = dict(readme_info)
+
+    dataset = DataSet(descriptive_metadata['dataset_name'], manifest_root='archive')
+    dataset.descriptive_metadata = descriptive_metadata
+    env = Environment(loader=PackageLoader('dtool', 'templates'),
+                      keep_trailing_newline=True)
+    readme_template = env.get_template('arctool_dataset_README.yml')
+    dataset_path = dataset.persist_to_path(path,
+                                           readme_template=readme_template)
+
+    return dataset, dataset_path
+
+
 def test_version_is_str():
     from dtool import __version__
     assert isinstance(__version__, str)
@@ -114,11 +142,10 @@ def test_dataset_persist_to_path_raises_runtimeerror_if_path_exists(tmp_dir):
 def test_dataset_from_path(tmp_dir):
 
     from dtool.arctool import (
-        new_archive_dataset,
         create_manifest,
     )
 
-    tmp_dataset = new_archive_dataset(tmp_dir)
+    dataset, tmp_dataset = create_persisted_archive_dataset(tmp_dir)
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_dataset, 'archive')
     copy_tree(archive_input_path, archive_output_path)
