@@ -5,8 +5,10 @@ import sys
 import os
 import json
 import getpass
+import datetime
 
 import click
+from jinja2 import Environment, PackageLoader
 
 import dtool
 from dtool import (
@@ -65,7 +67,7 @@ def new(ctx, staging_path):
         else:
             project = Project.from_path(staging_path)
 
-        cli_new_dataset(project.path, extra_context=project.metadata)
+        cli_new_dataset(project.path, project.metadata)
 
 
 def create_project(staging_path):
@@ -101,7 +103,7 @@ def dataset(staging_path):
     cli_new_dataset(staging_path)
 
 
-def cli_new_dataset(staging_path, extra_context=dict()):
+def cli_new_dataset(staging_path, project_metadata=dict()):
     staging_path = os.path.abspath(staging_path)
 
     click.secho('Starting new archive in: ', nl=False)
@@ -109,26 +111,50 @@ def cli_new_dataset(staging_path, extra_context=dict()):
 
     logger.emit('pre_new_archive', {'staging_path': staging_path})
 
-    archive_path = new_archive_dataset(staging_path, extra_context)
+    readme_info = [
+        ("project_name", u"project_name"),
+        ("dataset_name", u"dataset_name"),
+        ("confidential", False),
+        ("personally_identifiable_information", False),
+        ("owner_name", u"Your Name"),
+        ("owner_email", u"your.email@example.com"),
+        ("unix_username", u"namey"),
+        ("archive_date", unicode(datetime.date.today())),
+    ]
+    descriptive_metadata = {}
+    for name, default in readme_info:
+        descriptive_metadata[name] = click.prompt(name,
+                                                  default=default)
+
+    descriptive_metadata.update(project_metadata)
+
+    dataset = DataSet(descriptive_metadata['dataset_name'],
+                      manifest_root='archive')
+
+    env = Environment(loader=PackageLoader('dtool', 'templates'),
+                      keep_trailing_newline=True)
+    readme_template = env.get_template('arctool_dataset_README.yml')
+
+    dataset.descriptive_metadata = descriptive_metadata
+    dataset_path = dataset.persist_to_path(staging_path,
+                                           readme_template=readme_template)
+    archive_data_path = os.path.join(dataset_path, dataset.manifest_root)
 
     click.secho('Created new archive in: ', nl=False)
-    click.secho(archive_path, fg='green')
-
-    dataset = DataSet.from_path(archive_path)
+    click.secho(dataset_path, fg='green')
 
     # Fix problem serializing datetime objects
     metadata = dataset.descriptive_metadata
     metadata['archive_date'] = str(metadata['archive_date'])
 
     log_data = {'metadata': metadata,
-                'archive_path': archive_path,
+                'archive_path': dataset_path,
                 'dataset_uuid': dataset.uuid}
     logger.emit('new', log_data)
 
-    archive_data_path = os.path.join(archive_path, 'archive')
 
     click.secho('Now:')
-    click.secho('  1. Edit {}'.format(dataset.readme_file), fg='yellow')
+    click.secho('  1. Edit {}'.format(dataset.readme_path), fg='yellow')
     click.secho('  2. Move archive data into {}'.format(archive_data_path),
                 fg='yellow')
     click.secho('Then: ', nl=False)
@@ -182,7 +208,7 @@ def create(path):
                 'dataset_uuid': dataset.uuid}
     logger.emit('pre_create_archive', log_data)
 
-    readme_path = dataset.readme_file
+    readme_path = dataset.readme_path
     click.secho('Validating readme at: ', nl=False)
     click.secho(readme_path, fg='green')
     readme_str = open(readme_path, "r").read()

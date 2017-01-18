@@ -46,14 +46,30 @@ def tmp_dir(request):
     return d
 
 
-def test_everything_except_new_archive_dataset(tmp_dir):
-    from dtool.arctool import new_archive_dataset
+def test_full_archiving_workflow(chdir):
 
-    metadata = dict(project_name="some_project",
-                    dataset_name="data_set_1")
-    dataset_path = new_archive_dataset(tmp_dir,
-                                       input_descriptive_metadata=metadata)
-    assert os.path.isdir(dataset_path)
+    from click.testing import CliRunner
+    from dtool.arctool.cli import dataset
+
+    runner = CliRunner()
+
+    input_string = 'some_project\n'
+    input_string += 'data_set_1\n'
+    input_string += '\n'  # confidential
+    input_string += '\n'  # personally identifiable information
+    input_string += 'Test User\n'
+    input_string += 'test.user@example.com\n'
+    input_string += 'usert\n'
+    input_string += '\n'  # Date
+
+    result = runner.invoke(dataset, input=input_string)
+
+    assert not result.exception
+
+    assert os.path.isdir('data_set_1')
+    assert os.path.isfile('data_set_1/.dtool-dataset')
+
+    dataset_path = 'data_set_1'
 
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(dataset_path, 'archive')
@@ -69,12 +85,12 @@ def test_everything_except_new_archive_dataset(tmp_dir):
 
     cmd = ["arctool", "archive", "create", dataset_path]
     subprocess.call(cmd)
-    tar_path = os.path.join(tmp_dir, "data_set_1.tar")
+    tar_path = "data_set_1.tar"
     assert os.path.isfile(tar_path)
 
     cmd = ["arctool", "archive", "compress", tar_path]
     subprocess.call(cmd)
-    gzip_path = os.path.join(tmp_dir, "data_set_1.tar.gz")
+    gzip_path = "data_set_1.tar.gz"
     assert os.path.isfile(gzip_path)
 
     # Remove the dataset path to ensure that files are actually extracted.
@@ -122,7 +138,7 @@ def test_new(chdir):
 
     dataset = DataSet.from_path('my_test_project/my_dataset')
 
-    assert dataset.metadata['project_name'] == 'my_test_project'
+    assert dataset.descriptive_metadata['project_name'] == 'my_test_project'
 
 
 def test_new_dataset(chdir):

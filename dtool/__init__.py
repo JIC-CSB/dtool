@@ -41,7 +41,7 @@ class DataSet(object):
         dataset.admin_metadata = dataset_info
 
         dataset.uuid = dataset_info['uuid']
-        dataset.readme_file = os.path.join(path, 'README.yml')
+        dataset.readme_path = os.path.join(path, 'README.yml')
         dataset._replace_descriptive_metadata()
 
         return dataset
@@ -52,7 +52,7 @@ class DataSet(object):
 
     def _replace_descriptive_metadata(self):
 
-        with open(self.readme_file) as fh:
+        with open(self.readme_path) as fh:
             self.descriptive_metadata = yaml.load(fh)
 
     def persist_to_path(self, path, readme_template=None):
