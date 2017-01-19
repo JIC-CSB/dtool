@@ -60,12 +60,18 @@ class DataSet(object):
         if not os.path.isdir(data_directory):
             os.mkdir(data_directory)
 
+        self._admin_metadata['readme_path'] = os.path.join(path, "README.yml")
+        with open(self.readme_path, 'w') as fh:
+            fh.write("")
+
         dtool_dir_path = os.path.join(path, '.dtool')
         os.mkdir(dtool_dir_path)
 
         dtool_file_path = os.path.join(dtool_dir_path, 'dtool')
         with open(dtool_file_path, 'w') as fh:
             json.dump(self._admin_metadata, fh)
+
+
 
 
 class oldDataSet(object):

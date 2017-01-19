@@ -82,6 +82,22 @@ def test_dataset_persist_to_path(tmp_dir):
     assert admin_metadata['type'] == 'dataset'
     assert dataset._admin_metadata == admin_metadata
 
+    expected_readme_path = os.path.join(tmp_dir, 'README.yml')
+    assert os.path.isfile(expected_readme_path)
+
+
+def test_persist_to_path_updates_readme_path(tmp_dir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset')
+
+    assert dataset.readme_path is None
+
+    dataset.persist_to_path(tmp_dir)
+
+    expected_readme_path = os.path.join(tmp_dir, 'README.yml')
+    assert dataset.readme_path == expected_readme_path
+
 
 def test_creation_of_data_dir(tmp_dir):
     from dtool import DataSet
