@@ -19,6 +19,28 @@ VERBOSE = True
 
 
 class DataSet(object):
+    """Class for representing datasets."""
+
+    def __init__(self, name):
+        self._admin_metadata = {'uuid': str(uuid.uuid4()),
+                                'name': name,
+                                'type': 'dataset',
+                                'dtool_version': __version__}
+
+    @property
+    def uuid(self):
+        return self._admin_metadata['uuid']
+
+    @property
+    def name(self):
+        return self._admin_metadata['name']
+
+    @property
+    def dtool_version(self):
+        return self._admin_metadata['dtool_version']
+
+
+class oldDataSet(object):
 
     def __init__(self, name, manifest_root='data'):
 
