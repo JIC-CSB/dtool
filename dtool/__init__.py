@@ -97,6 +97,16 @@ class Collection(object):
     def __init__(self):
         self.uuid = str(uuid.uuid4())
         self.admin_metadata = {"type": "collection", "uuid": self.uuid}
+        self.readme_path = None
+
+    @property
+    def descriptive_metadata(self):
+        if self.readme_path is not None:
+            with open(self.readme_path) as fh:
+                contents = yaml.load(fh)
+                if contents:
+                    return contents
+        return {}
 
     def persist_to_path(self, path):
         """Mark up a directory as a collection."""
@@ -106,6 +116,10 @@ class Collection(object):
         os.mkdir(dtool_dir_path)
         with open(dtool_file_path, "w") as fh:
             json.dump(self.admin_metadata, fh)
+        self.readme_path = os.path.join(path, "README.yml")
+        with open(self.readme_path, "w") as fh:
+            fh.write("")
+
 
 
 def log(message):

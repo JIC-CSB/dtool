@@ -50,3 +50,17 @@ def test_multiple_persist_to_path_raises(tmp_dir):
     collection.persist_to_path(tmp_dir)
     with pytest.raises(OSError):
         collection.persist_to_path(tmp_dir)
+
+
+def test_decriptive_metadata_property(tmp_dir):
+    from dtool import Collection
+    collection = Collection()
+    assert collection.descriptive_metadata == {}
+
+    collection.persist_to_path(tmp_dir)
+    assert collection.descriptive_metadata == {}
+
+    with open(collection.readme_path, "w") as fh:
+        fh.write("---\n")
+        fh.write("project: my_project\n")
+    assert collection.descriptive_metadata == {"project": "my_project"}
