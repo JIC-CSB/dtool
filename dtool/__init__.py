@@ -153,8 +153,9 @@ class Collection(object):
     def __init__(self):
         self._admin_metadata = {"type": "collection",
                                 "uuid": str(uuid.uuid4()),
-                                "readme_path": None,
+                                "readme_path": "README.yml",
                                 "dtool_version": __version__}
+        self._abs_path = None
 
     def __eq__(self, other):
         return self._admin_metadata == other._admin_metadata
@@ -164,12 +165,15 @@ class Collection(object):
         return self._admin_metadata['uuid']
 
     @property
-    def readme_path(self):
-        return self._admin_metadata['readme_path']
-
-    @property
     def dtool_version(self):
         return self._admin_metadata['dtool_version']
+
+    @property
+    def abs_readme_path(self):
+        if self._abs_path is None:
+            return None
+        return os.path.join(self._abs_path,
+            self._admin_metadata['readme_path'])
 
     @property
     def descriptive_metadata(self):
@@ -181,8 +185,8 @@ class Collection(object):
         Current implementation will return list if README.yml contains
         list as top level data structure.
         """
-        if self.readme_path is not None:
-            with open(self.readme_path) as fh:
+        if self.abs_readme_path is not None:
+            with open(self.abs_readme_path) as fh:
                 contents = yaml.load(fh)
                 if contents:
                     return contents
@@ -214,11 +218,11 @@ class Collection(object):
     def persist_to_path(self, path):
         """Mark up a directory as a collection."""
         path = os.path.abspath(path)
+        self._abs_path = path
         dtool_dir_path = os.path.join(path, ".dtool")
         dtool_file_path = os.path.join(dtool_dir_path, "dtool")
         os.mkdir(dtool_dir_path)
-        self._admin_metadata['readme_path'] = os.path.join(path, "README.yml")
-        with open(self.readme_path, "w") as fh:
+        with open(self.abs_readme_path, "w") as fh:
             fh.write("")
         with open(dtool_file_path, "w") as fh:
             json.dump(self._admin_metadata, fh)

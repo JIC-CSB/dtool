@@ -35,7 +35,7 @@ def test_Collection_initialisation():
     from dtool import Collection
     collection = Collection()
     assert len(collection.uuid) == 36
-    assert collection.readme_path is None
+    assert collection.abs_readme_path is None
     assert collection._admin_metadata["type"] == "collection"
     assert isinstance(collection.dtool_version, str)
 
@@ -77,7 +77,7 @@ def test_decriptive_metadata_property(tmp_dir):
     collection.persist_to_path(tmp_dir)
     assert collection.descriptive_metadata == {}
 
-    with open(collection.readme_path, "w") as fh:
+    with open(collection.abs_readme_path, "w") as fh:
         fh.write("---\n")
         fh.write("project: my_project\n")
     assert collection.descriptive_metadata == {"project": "my_project"}
@@ -152,3 +152,17 @@ def test_no_dtool_dir_raises_valueerror(tmp_dir):
 
     with pytest.raises(ValueError):
         Collection.from_path(tmp_dir)
+
+
+def test_persist_to_path_sets_abs_readme_path(tmp_dir):
+    from dtool import Collection
+
+    collection = Collection()
+
+    expected_abs_readme_path = os.path.join(tmp_dir, 'README.yml')
+
+    assert collection.abs_readme_path is None
+
+    collection.persist_to_path(tmp_dir)
+
+    assert collection.abs_readme_path == expected_abs_readme_path
