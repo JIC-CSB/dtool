@@ -97,14 +97,13 @@ def test_cannot_change_uuid():
         collection.uuid = "not_a_uuid"
 
 
-
 def test_from_path(tmp_dir):
-   from dtool import Collection
-   collection = Collection()
-   collection.persist_to_path(tmp_dir)
+    from dtool import Collection
+    collection = Collection()
+    collection.persist_to_path(tmp_dir)
 
-   collection_again = Collection.from_path(tmp_dir)
-   assert collection == collection_again
+    collection_again = Collection.from_path(tmp_dir)
+    assert collection == collection_again
 
 
 def test_check_type_on_from_path(chdir):
@@ -122,7 +121,7 @@ def test_check_type_on_from_path(chdir):
         Collection.from_path('.')
 
 
-def test_check_type_on_from_path_raises_valuerror_if_type_does_not_exist(chdir):
+def test_from_path_raises_valuerror_if_type_does_not_exist(chdir):
     from dtool import Collection
 
     admin_metadata = {}
@@ -137,7 +136,7 @@ def test_check_type_on_from_path_raises_valuerror_if_type_does_not_exist(chdir):
         Collection.from_path('.')
 
 
-def test_check_no_dtool_file(chdir):
+def test_no_dtool_file_raises_valueerror(chdir):
     from dtool import Collection
 
     dtool_dir = '.dtool'
@@ -146,7 +145,8 @@ def test_check_no_dtool_file(chdir):
     with pytest.raises(ValueError):
         Collection.from_path('.')
 
-def test_check_no_dtool_directory(tmp_dir):
+
+def test_no_dtool_dir_raises_valueerror(tmp_dir):
     from dtool import Collection
 
     with pytest.raises(ValueError):

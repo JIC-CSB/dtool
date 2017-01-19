@@ -141,10 +141,12 @@ class Collection(object):
             collection._admin_metadata = json.load(fh)
 
         if 'type' not in collection._admin_metadata:
-            raise ValueError('Not a collection; no type definition in .dtool/dtool')
+            raise ValueError(
+                'Not a collection; no type definition in .dtool/dtool')
 
         if collection._admin_metadata['type'] != 'collection':
-            raise ValueError('Not a collection; wrong type definition in .dtool/dtool')
+            raise ValueError(
+                'Not a collection; wrong type definition in .dtool/dtool')
 
         return collection
 
