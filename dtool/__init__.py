@@ -108,7 +108,9 @@ class Collection(object):
     @property
     def admin_metadata(self):
         """Return administrative metadata as a dictionary."""
-        return {"type": "collection", "uuid": self.uuid}
+        return {"type": "collection",
+                "uuid": self.uuid,
+                "readme_path": self.readme_path}
 
     @property
     def descriptive_metadata(self):
@@ -133,11 +135,11 @@ class Collection(object):
         dtool_dir_path = os.path.join(path, ".dtool")
         dtool_file_path = os.path.join(dtool_dir_path, "dtool")
         os.mkdir(dtool_dir_path)
-        with open(dtool_file_path, "w") as fh:
-            json.dump(self.admin_metadata, fh)
         self.readme_path = os.path.join(path, "README.yml")
         with open(self.readme_path, "w") as fh:
             fh.write("")
+        with open(dtool_file_path, "w") as fh:
+            json.dump(self.admin_metadata, fh)
 
 
 

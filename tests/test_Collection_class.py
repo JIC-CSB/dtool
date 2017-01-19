@@ -21,6 +21,10 @@ def test_Collection_initialisation():
     from dtool import Collection
     collection = Collection()
     assert len(collection.uuid) == 36
+    assert collection.readme_path is None
+    assert collection.admin_metadata["type"] == "collection"
+    assert collection.admin_metadata["uuid"] == collection.uuid
+    assert collection.admin_metadata["readme_path"] is None
 
 
 def test_persist_to_path(tmp_dir):
