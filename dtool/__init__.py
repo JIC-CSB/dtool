@@ -27,6 +27,8 @@ class DataSet(object):
                                 'type': 'dataset',
                                 'dtool_version': __version__,
                                 'readme_path': 'README.yml',
+                                'manifest_path': os.path.join(
+                                    '.dtool', 'manifest.json'),
                                 'unix_username': getpass.getuser(),
                                 'manifest_root': data_directory}
         self._abs_path = None
@@ -54,6 +56,13 @@ class DataSet(object):
         return os.path.join(self._abs_path,
             self._admin_metadata['readme_path'])
 
+    @property
+    def _abs_manifest_path(self):
+        if self._abs_path is None:
+            return None
+        return os.path.join(self._abs_path,
+            self._admin_metadata['manifest_path'])
+
     def persist_to_path(self, path):
         """Mark up a directory as a DataSet"""
 
@@ -65,17 +74,18 @@ class DataSet(object):
         if not os.path.isdir(data_directory):
             os.mkdir(data_directory)
 
+        dtool_dir_path = os.path.join(path, '.dtool')
+        os.mkdir(dtool_dir_path)
+
         with open(self.abs_readme_path, 'w') as fh:
             fh.write("")
 
-        dtool_dir_path = os.path.join(path, '.dtool')
-        os.mkdir(dtool_dir_path)
+        with open(self._abs_manifest_path, 'w') as fh:
+            fh.write("")
 
         dtool_file_path = os.path.join(dtool_dir_path, 'dtool')
         with open(dtool_file_path, 'w') as fh:
             json.dump(self._admin_metadata, fh)
-
-
 
 
 class oldDataSet(object):

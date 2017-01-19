@@ -38,6 +38,9 @@ def test_dataset_initialisation():
     assert len(dataset.uuid) == 36
     assert dataset._admin_metadata['type'] == 'dataset'
     assert dataset._admin_metadata['manifest_root'] == '.'
+    expected_manifest_path = os.path.join('.dtool', 'manifest.json')
+    assert dataset._admin_metadata['manifest_path'] == expected_manifest_path
+    assert dataset._abs_manifest_path is None
     assert isinstance(dataset.dtool_version, str)
     assert isinstance(dataset.unix_username, str)
     assert dataset.abs_readme_path is None
@@ -85,6 +88,9 @@ def test_dataset_persist_to_path(tmp_dir):
     expected_readme_path = os.path.join(tmp_dir, 'README.yml')
     assert os.path.isfile(expected_readme_path)
 
+    expected_manifest_path = os.path.join(tmp_dir, '.dtool', 'manifest.json')
+    assert os.path.isfile(expected_manifest_path)
+
 
 def test_persist_to_path_updates_abs_readme_path(tmp_dir):
     from dtool import DataSet
@@ -121,15 +127,19 @@ def test_multiple_persist_to_path_raises(tmp_dir):
         dataset.persist_to_path(tmp_dir)
 
 
-def test_persist_to_path_sets_abs_readme_path(tmp_dir):
+def test_persist_to_path_sets_abs_paths(tmp_dir):
     from dtool import DataSet
 
     dataset = DataSet('my_dataset')
 
     expected_abs_readme_path = os.path.join(tmp_dir, 'README.yml')
+    expected_abs_manifest_path = os.path.join(tmp_dir,
+        '.dtool', 'manifest.json')
 
     assert dataset.abs_readme_path is None
+    assert dataset._abs_manifest_path is None
 
     dataset.persist_to_path(tmp_dir)
 
     assert dataset.abs_readme_path == expected_abs_readme_path
+    assert dataset._abs_manifest_path == expected_abs_manifest_path
