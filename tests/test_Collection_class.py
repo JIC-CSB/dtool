@@ -1,6 +1,7 @@
 """Test the dtool.Collection class."""
 
 import os
+import json
 import shutil
 import tempfile
 
@@ -15,6 +16,19 @@ def tmp_dir(request):
     def teardown():
         shutil.rmtree(d)
     return d
+
+
+@pytest.fixture
+def chdir(request):
+    d = tempfile.mkdtemp()
+
+    cwd = os.getcwd()
+    os.chdir(d)
+
+    @request.addfinalizer
+    def teardown():
+        os.chdir(cwd)
+        shutil.rmtree(d)
 
 
 def test_Collection_initialisation():
@@ -91,3 +105,49 @@ def test_from_path(tmp_dir):
 
    collection_again = Collection.from_path(tmp_dir)
    assert collection == collection_again
+
+
+def test_check_type_on_from_path(chdir):
+    from dtool import Collection
+
+    admin_metadata = {'type': 'dataset'}
+    dtool_dir = '.dtool'
+    os.mkdir(dtool_dir)
+    dtool_file = os.path.join(dtool_dir, 'dtool')
+
+    with open(dtool_file, 'w') as fh:
+        json.dump(admin_metadata, fh)
+
+    with pytest.raises(ValueError):
+        Collection.from_path('.')
+
+
+def test_check_type_on_from_path_raises_valuerror_if_type_does_not_exist(chdir):
+    from dtool import Collection
+
+    admin_metadata = {}
+    dtool_dir = '.dtool'
+    os.mkdir(dtool_dir)
+    dtool_file = os.path.join(dtool_dir, 'dtool')
+
+    with open(dtool_file, 'w') as fh:
+        json.dump(admin_metadata, fh)
+
+    with pytest.raises(ValueError):
+        Collection.from_path('.')
+
+
+def test_check_no_dtool_file(chdir):
+    from dtool import Collection
+
+    dtool_dir = '.dtool'
+    os.mkdir(dtool_dir)
+
+    with pytest.raises(ValueError):
+        Collection.from_path('.')
+
+def test_check_no_dtool_directory(tmp_dir):
+    from dtool import Collection
+
+    with pytest.raises(ValueError):
+        Collection.from_path(tmp_dir)

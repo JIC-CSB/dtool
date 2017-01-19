@@ -134,8 +134,17 @@ class Collection(object):
         collection = Collection()
 
         dtool_file_path = os.path.join(path, '.dtool', 'dtool')
+        if not os.path.isfile(dtool_file_path):
+            raise ValueError('Not a collection; .dtool/dtool does not exist')
+
         with open(dtool_file_path) as fh:
             collection._admin_metadata = json.load(fh)
+
+        if 'type' not in collection._admin_metadata:
+            raise ValueError('Not a collection; no type definition in .dtool/dtool')
+
+        if collection._admin_metadata['type'] != 'collection':
+            raise ValueError('Not a collection; wrong type definition in .dtool/dtool')
 
         return collection
 
