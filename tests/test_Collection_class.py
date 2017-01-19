@@ -22,9 +22,7 @@ def test_Collection_initialisation():
     collection = Collection()
     assert len(collection.uuid) == 36
     assert collection.readme_path is None
-    assert collection.admin_metadata["type"] == "collection"
-    assert collection.admin_metadata["uuid"] == collection.uuid
-    assert collection.admin_metadata["readme_path"] is None
+    assert collection._admin_metadata["type"] == "collection"
 
 
 def test_persist_to_path(tmp_dir):
@@ -44,7 +42,7 @@ def test_persist_to_path(tmp_dir):
     with open(expected_dtool_file) as fh:
         admin_metadata = json.load(fh)
     assert admin_metadata["type"] == "collection"
-    assert collection.admin_metadata == admin_metadata
+    assert collection._admin_metadata == admin_metadata
 
 
 def test_multiple_persist_to_path_raises(tmp_dir):
@@ -77,11 +75,6 @@ def test_equality():
     collection_again = deepcopy(collection)
     assert collection_again == collection
 
-    # This is bonkers, don't do this!
-    collection_again._uuid = "not_a_uuid"
-    assert collection_again != collection
-    assert collection_again.uuid == collection_again.admin_metadata["uuid"]
-
 
 def test_cannot_change_uuid():
     from dtool import Collection
@@ -91,10 +84,10 @@ def test_cannot_change_uuid():
 
 
 
-#def test_from_path(tmp_dir):
-#    from dtool import Collection
-#    collection = Collection()
-#    collection.persist_to_path(tmp_dir)
-#
-#    collection_again = Collection.from_path(tmp_dir)
-#    assert collection == collection_again
+def test_from_path(tmp_dir):
+   from dtool import Collection
+   collection = Collection()
+   collection.persist_to_path(tmp_dir)
+
+   collection_again = Collection.from_path(tmp_dir)
+   assert collection == collection_again

@@ -95,22 +95,20 @@ class Collection(object):
     """Class for representing collections of data sets."""
 
     def __init__(self):
-        self._uuid = str(uuid.uuid4())
-        self.readme_path = None
+        self._admin_metadata = {"type": "collection",
+                                "uuid": str(uuid.uuid4()),
+                                "readme_path": None}
 
     def __eq__(self, other):
-        return self.admin_metadata == other.admin_metadata
+        return self._admin_metadata == other._admin_metadata
 
     @property
     def uuid(self):
-        return self._uuid
+        return self._admin_metadata['uuid']
 
     @property
-    def admin_metadata(self):
-        """Return administrative metadata as a dictionary."""
-        return {"type": "collection",
-                "uuid": self.uuid,
-                "readme_path": self.readme_path}
+    def readme_path(self):
+        return self._admin_metadata['readme_path']
 
     @property
     def descriptive_metadata(self):
@@ -129,18 +127,29 @@ class Collection(object):
                     return contents
         return {}
 
+    @classmethod
+    def from_path(cls, path):
+        """Return instance of Collection instantiated from path."""
+
+        collection = Collection()
+
+        dtool_file_path = os.path.join(path, '.dtool', 'dtool')
+        with open(dtool_file_path) as fh:
+            collection._admin_metadata = json.load(fh)
+
+        return collection
+
     def persist_to_path(self, path):
         """Mark up a directory as a collection."""
         path = os.path.abspath(path)
         dtool_dir_path = os.path.join(path, ".dtool")
         dtool_file_path = os.path.join(dtool_dir_path, "dtool")
         os.mkdir(dtool_dir_path)
-        self.readme_path = os.path.join(path, "README.yml")
+        self._admin_metadata['readme_path'] = os.path.join(path, "README.yml")
         with open(self.readme_path, "w") as fh:
             fh.write("")
         with open(dtool_file_path, "w") as fh:
-            json.dump(self.admin_metadata, fh)
-
+            json.dump(self._admin_metadata, fh)
 
 
 def log(message):
