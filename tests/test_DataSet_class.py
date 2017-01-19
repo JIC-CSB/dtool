@@ -1,6 +1,7 @@
 """Test the dtool.DataSet class."""
 
 import os
+import json
 import shutil
 import tempfile
 
@@ -143,3 +144,50 @@ def test_persist_to_path_sets_abs_paths(tmp_dir):
 
     assert dataset.abs_readme_path == expected_abs_readme_path
     assert dataset._abs_manifest_path == expected_abs_manifest_path
+
+
+def test_do_not_overwrite_existing_readme(chdir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset')
+
+    readme_contents = "---\nproject_name: test_project\n"
+
+    with open('README.yml', 'w') as fh:
+        fh.write(readme_contents)
+
+    dataset.persist_to_path('.')
+
+    with open('README.yml') as fh:
+        actual_contents = fh.read()
+
+    assert actual_contents == readme_contents
+
+
+def test_manifest_generation(chdir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset')
+
+    with open('README.yml', 'w') as fh:
+        fh.write('---')
+        fh.write('project_name: test_project')
+
+    with open('test_file.txt', 'w') as fh:
+        fh.write('Hello world')
+
+    dataset.persist_to_path('.')
+
+    expected_manifest_path = os.path.join('.dtool', 'manifest.json')
+
+    with open(expected_manifest_path) as fh:
+        manifest = json.load(fh)
+
+    file_list = manifest['file_list']
+    keyed_by_path = {entry['path']: entry for entry in file_list}
+
+    assert 'file_list' in manifest
+    assert len(manifest['file_list']) == 2
+    assert 'test_file.txt' in keyed_by_path
+    assert keyed_by_path['test_file.txt']['size'] == 11
+    assert keyed_by_path['README.yml']['size'] == 29

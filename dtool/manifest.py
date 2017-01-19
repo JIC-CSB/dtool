@@ -7,6 +7,7 @@ import magic
 from dtool import log, __version__
 from dtool.filehasher import generate_file_hash
 
+from dtool import generate_manifest
 
 def generate_relative_paths(path):
     """Return list of relative paths to all files in tree under path.
