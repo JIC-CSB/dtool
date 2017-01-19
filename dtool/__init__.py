@@ -95,12 +95,31 @@ class Collection(object):
     """Class for representing collections of data sets."""
 
     def __init__(self):
-        self.uuid = str(uuid.uuid4())
-        self.admin_metadata = {"type": "collection", "uuid": self.uuid}
+        self._uuid = str(uuid.uuid4())
         self.readme_path = None
+
+    def __eq__(self, other):
+        return self.admin_metadata == other.admin_metadata
+
+    @property
+    def uuid(self):
+        return self._uuid
+
+    @property
+    def admin_metadata(self):
+        """Return administrative metadata as a dictionary."""
+        return {"type": "collection", "uuid": self.uuid}
 
     @property
     def descriptive_metadata(self):
+        """Return descriptive metadata as a dictionary.
+
+        Read in from README.yml dynamically. Returns empty dictionary
+        if file does not exist or is empty.
+
+        Current implementation will return list if README.yml contains
+        list as top level data structure.
+        """
         if self.readme_path is not None:
             with open(self.readme_path) as fh:
                 contents = yaml.load(fh)

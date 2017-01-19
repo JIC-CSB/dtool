@@ -64,3 +64,33 @@ def test_decriptive_metadata_property(tmp_dir):
         fh.write("---\n")
         fh.write("project: my_project\n")
     assert collection.descriptive_metadata == {"project": "my_project"}
+
+
+def test_equality():
+    from copy import deepcopy
+    from dtool import Collection
+    collection = Collection()
+    collection_again = deepcopy(collection)
+    assert collection_again == collection
+
+    # This is bonkers, don't do this!
+    collection_again._uuid = "not_a_uuid"
+    assert collection_again != collection
+    assert collection_again.uuid == collection_again.admin_metadata["uuid"]
+
+
+def test_cannot_change_uuid():
+    from dtool import Collection
+    collection = Collection()
+    with pytest.raises(AttributeError):
+        collection.uuid = "not_a_uuid"
+
+
+
+#def test_from_path(tmp_dir):
+#    from dtool import Collection
+#    collection = Collection()
+#    collection.persist_to_path(tmp_dir)
+#
+#    collection_again = Collection.from_path(tmp_dir)
+#    assert collection == collection_again
