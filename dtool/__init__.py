@@ -243,8 +243,9 @@ class Collection(object):
         dtool_dir_path = os.path.join(path, ".dtool")
         dtool_file_path = os.path.join(dtool_dir_path, "dtool")
         os.mkdir(dtool_dir_path)
-        with open(self.abs_readme_path, "w") as fh:
-            fh.write("")
+        if not os.path.isfile(self.abs_readme_path):
+            with open(self.abs_readme_path, "w") as fh:
+                fh.write("")
         with open(dtool_file_path, "w") as fh:
             json.dump(self._admin_metadata, fh)
 

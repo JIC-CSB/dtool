@@ -166,3 +166,22 @@ def test_persist_to_path_sets_abs_readme_path(tmp_dir):
     collection.persist_to_path(tmp_dir)
 
     assert collection.abs_readme_path == expected_abs_readme_path
+
+
+def test_do_not_overwrite_existing_readme(chdir):
+    from dtool import Collection
+
+    collection = Collection()
+
+    readme_contents = "---\nproject_name: test_project\n"
+
+    with open('README.yml', 'w') as fh:
+        fh.write(readme_contents)
+
+    collection.persist_to_path('.')
+
+    with open('README.yml') as fh:
+        actual_contents = fh.read()
+
+    assert actual_contents == readme_contents
+
