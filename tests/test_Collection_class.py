@@ -28,8 +28,19 @@ def test_persist_to_path(tmp_dir):
     collection = Collection()
 
     expected_dtool_dir = os.path.join(tmp_dir, ".dtool")
+    expected_dtool_file = os.path.join(expected_dtool_dir, "dtool")
     assert not os.path.isdir(expected_dtool_dir)
+    assert not os.path.isfile(expected_dtool_file)
 
     collection.persist_to_path(tmp_dir)
-
     assert os.path.isdir(expected_dtool_dir)
+    assert os.path.isfile(expected_dtool_file)
+
+
+def test_multiple_persist_to_path_raises(tmp_dir):
+    from dtool import Collection
+    collection = Collection()
+
+    collection.persist_to_path(tmp_dir)
+    with pytest.raises(OSError):
+        collection.persist_to_path(tmp_dir)

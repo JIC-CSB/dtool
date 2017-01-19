@@ -101,7 +101,10 @@ class Collection(object):
         """Mark up a directory as a collection."""
         path = os.path.abspath(path)
         dtool_dir_path = os.path.join(path, ".dtool")
+        dtool_file_path = os.path.join(dtool_dir_path, "dtool")
         os.mkdir(dtool_dir_path)
+        with open(dtool_file_path, "w") as fh:
+            fh.write("")
 
 
 def log(message):
