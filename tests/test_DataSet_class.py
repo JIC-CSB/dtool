@@ -37,8 +37,17 @@ def test_dataset_initialisation():
     assert dataset.name == 'my_dataset'
     assert len(dataset.uuid) == 36
     assert dataset._admin_metadata['type'] == 'dataset'
+    assert dataset._admin_metadata['manifest_root'] == '.'
     assert isinstance(dataset.dtool_version, str)
+    assert isinstance(dataset.unix_username, str)
 
+
+def test_initialise_alternative_manifest_root():
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset', data_directory='archive')
+
+    assert dataset._admin_metadata['manifest_root'] == 'archive'
 
 def test_cannot_change_uuid_or_name():
     from dtool import DataSet
