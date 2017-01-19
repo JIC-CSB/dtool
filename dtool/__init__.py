@@ -53,6 +53,13 @@ class DataSet(object):
     def persist_to_path(self, path):
         """Mark up a directory as a DataSet"""
 
+        path = os.path.abspath(path)
+        data_directory = os.path.join(path,
+            self._admin_metadata['manifest_root'])
+
+        if not os.path.isdir(data_directory):
+            os.mkdir(data_directory)
+
         dtool_dir_path = os.path.join(path, '.dtool')
         os.mkdir(dtool_dir_path)
 

@@ -83,6 +83,17 @@ def test_dataset_persist_to_path(tmp_dir):
     assert dataset._admin_metadata == admin_metadata
 
 
+def test_creation_of_data_dir(tmp_dir):
+    from dtool import DataSet
+    dataset = DataSet('my_dataset', data_directory='data')
+
+    expected_data_directory = os.path.join(tmp_dir, 'data')
+    assert not os.path.isdir(expected_data_directory)
+
+    dataset.persist_to_path(tmp_dir)
+    assert os.path.isdir(expected_data_directory)
+
+
 def test_multiple_persist_to_path_raises(tmp_dir):
     from dtool import DataSet
 
