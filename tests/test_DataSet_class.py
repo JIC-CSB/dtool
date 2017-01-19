@@ -146,6 +146,18 @@ def test_persist_to_path_sets_abs_paths(tmp_dir):
     assert dataset._abs_manifest_path == expected_abs_manifest_path
 
 
+def test_equality():
+    from copy import deepcopy
+    from dtool import DataSet
+    dataset = DataSet('my_dataset')
+    dataset_again = deepcopy(dataset)
+    assert dataset_again == dataset
+
+    # We should never do this!
+    dataset_again._admin_metadata['name'] = 'nonsense'
+    assert dataset_again != dataset
+
+
 def test_do_not_overwrite_existing_readme(chdir):
     from dtool import DataSet
 
@@ -191,3 +203,7 @@ def test_manifest_generation(chdir):
     assert 'test_file.txt' in keyed_by_path
     assert keyed_by_path['test_file.txt']['size'] == 11
     assert keyed_by_path['README.yml']['size'] == 29
+
+
+def test_dataset_from_path(tmp_dir):
+    pass

@@ -36,6 +36,9 @@ class DataSet(object):
                                 'manifest_root': data_directory}
         self._abs_path = None
 
+    def __eq__(self, other):
+        return self._admin_metadata == other._admin_metadata
+
     @property
     def uuid(self):
         return self._admin_metadata['uuid']
