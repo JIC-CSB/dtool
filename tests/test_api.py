@@ -34,6 +34,16 @@ def chdir(request):
         shutil.rmtree(d)
 
 
+# TODO:
+# To be able to test DataSet.from_path class method.
+# To fix this we need to move functionality that reads info
+# from README.yml.
+# In an ideal world the code snippet below should work:
+#
+# >>> ds = DataSet('my_data_set')
+# >>> ds.persist_to_path('/tmp/')
+# >>> ds_again = DataSet.from_path('/tmp/my_data_set')
+#
 def create_persisted_archive_dataset(path):
     from dtool import DataSet
     from jinja2 import Environment, PackageLoader
@@ -162,6 +172,8 @@ def test_dataset_from_path(tmp_dir):
 
     assert dataset.admin_metadata['type'] == 'dataset'
 
+    # TODO:
+    # In the future these tests should live in arctool.
     assert 'dataset_name' in dataset.descriptive_metadata
     assert 'project_name' in dataset.descriptive_metadata
     assert 'archive_date' in dataset.descriptive_metadata
