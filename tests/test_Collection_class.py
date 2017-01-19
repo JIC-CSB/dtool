@@ -36,6 +36,12 @@ def test_persist_to_path(tmp_dir):
     assert os.path.isdir(expected_dtool_dir)
     assert os.path.isfile(expected_dtool_file)
 
+    import json
+    with open(expected_dtool_file) as fh:
+        admin_metadata = json.load(fh)
+    assert admin_metadata["type"] == "collection"
+    assert collection.admin_metadata == admin_metadata
+
 
 def test_multiple_persist_to_path_raises(tmp_dir):
     from dtool import Collection
