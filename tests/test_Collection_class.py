@@ -37,6 +37,7 @@ def test_Collection_initialisation():
     assert len(collection.uuid) == 36
     assert collection.readme_path is None
     assert collection._admin_metadata["type"] == "collection"
+    assert isinstance(collection.dtool_version, str)
 
 
 def test_persist_to_path(tmp_dir):

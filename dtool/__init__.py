@@ -97,7 +97,8 @@ class Collection(object):
     def __init__(self):
         self._admin_metadata = {"type": "collection",
                                 "uuid": str(uuid.uuid4()),
-                                "readme_path": None}
+                                "readme_path": None,
+                                "dtool_version": __version__}
 
     def __eq__(self, other):
         return self._admin_metadata == other._admin_metadata
@@ -109,6 +110,10 @@ class Collection(object):
     @property
     def readme_path(self):
         return self._admin_metadata['readme_path']
+
+    @property
+    def dtool_version(self):
+        return self._admin_metadata['dtool_version']
 
     @property
     def descriptive_metadata(self):
