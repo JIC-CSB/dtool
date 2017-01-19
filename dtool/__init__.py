@@ -26,9 +26,10 @@ class DataSet(object):
                                 'name': name,
                                 'type': 'dataset',
                                 'dtool_version': __version__,
-                                'readme_path': None,
+                                'readme_path': 'README.yml',
                                 'unix_username': getpass.getuser(),
                                 'manifest_root': data_directory}
+        self._abs_path = None
 
     @property
     def uuid(self):
@@ -47,21 +48,24 @@ class DataSet(object):
         return self._admin_metadata['unix_username']
 
     @property
-    def readme_path(self):
-        return self._admin_metadata['readme_path']
+    def abs_readme_path(self):
+        if self._abs_path is None:
+            return None
+        return os.path.join(self._abs_path,
+            self._admin_metadata['readme_path'])
 
     def persist_to_path(self, path):
         """Mark up a directory as a DataSet"""
 
         path = os.path.abspath(path)
+        self._abs_path = path
         data_directory = os.path.join(path,
             self._admin_metadata['manifest_root'])
 
         if not os.path.isdir(data_directory):
             os.mkdir(data_directory)
 
-        self._admin_metadata['readme_path'] = os.path.join(path, "README.yml")
-        with open(self.readme_path, 'w') as fh:
+        with open(self.abs_readme_path, 'w') as fh:
             fh.write("")
 
         dtool_dir_path = os.path.join(path, '.dtool')

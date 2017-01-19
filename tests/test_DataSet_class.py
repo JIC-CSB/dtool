@@ -40,7 +40,7 @@ def test_dataset_initialisation():
     assert dataset._admin_metadata['manifest_root'] == '.'
     assert isinstance(dataset.dtool_version, str)
     assert isinstance(dataset.unix_username, str)
-    assert dataset.readme_path == None
+    assert dataset.abs_readme_path is None
 
 
 def test_initialise_alternative_manifest_root():
@@ -86,17 +86,17 @@ def test_dataset_persist_to_path(tmp_dir):
     assert os.path.isfile(expected_readme_path)
 
 
-def test_persist_to_path_updates_readme_path(tmp_dir):
+def test_persist_to_path_updates_abs_readme_path(tmp_dir):
     from dtool import DataSet
 
     dataset = DataSet('my_dataset')
 
-    assert dataset.readme_path is None
+    assert dataset.abs_readme_path is None
 
     dataset.persist_to_path(tmp_dir)
 
-    expected_readme_path = os.path.join(tmp_dir, 'README.yml')
-    assert dataset.readme_path == expected_readme_path
+    expected_abs_readme_path = os.path.join(tmp_dir, 'README.yml')
+    assert dataset.abs_readme_path == expected_abs_readme_path
 
 
 def test_creation_of_data_dir(tmp_dir):
@@ -119,3 +119,17 @@ def test_multiple_persist_to_path_raises(tmp_dir):
 
     with pytest.raises(OSError):
         dataset.persist_to_path(tmp_dir)
+
+
+def test_persist_to_path_sets_abs_readme_path(tmp_dir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset')
+
+    expected_abs_readme_path = os.path.join(tmp_dir, 'README.yml')
+
+    assert dataset.abs_readme_path is None
+
+    dataset.persist_to_path(tmp_dir)
+
+    assert dataset.abs_readme_path == expected_abs_readme_path
