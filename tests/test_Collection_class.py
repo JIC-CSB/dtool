@@ -90,6 +90,10 @@ def test_equality():
     collection_again = deepcopy(collection)
     assert collection_again == collection
 
+    # We should never do this!
+    collection_again._admin_metadata['uuid'] = 'nonsense'
+    assert collection_again != collection
+
 
 def test_cannot_change_uuid():
     from dtool import Collection
