@@ -40,6 +40,7 @@ def test_dataset_initialisation():
     assert dataset._admin_metadata['manifest_root'] == '.'
     assert isinstance(dataset.dtool_version, str)
     assert isinstance(dataset.unix_username, str)
+    assert dataset.readme_path == None
 
 
 def test_initialise_alternative_manifest_root():
@@ -48,6 +49,7 @@ def test_initialise_alternative_manifest_root():
     dataset = DataSet('my_dataset', data_directory='archive')
 
     assert dataset._admin_metadata['manifest_root'] == 'archive'
+
 
 def test_cannot_change_uuid_or_name():
     from dtool import DataSet
@@ -59,3 +61,34 @@ def test_cannot_change_uuid_or_name():
 
     with pytest.raises(AttributeError):
         dataset.name = None
+
+
+def test_dataset_persist_to_path(tmp_dir):
+    from dtool import DataSet
+    dataset = DataSet('my_dataset')
+
+    expected_dtool_dir = os.path.join(tmp_dir, '.dtool')
+    expected_dtool_file = os.path.join(expected_dtool_dir, 'dtool')
+    assert not os.path.isdir(expected_dtool_dir)
+    assert not os.path.isfile(expected_dtool_file)
+
+    dataset.persist_to_path(tmp_dir)
+    assert os.path.isdir(expected_dtool_dir)
+    assert os.path.isfile(expected_dtool_file)
+
+    import json
+    with open(expected_dtool_file) as fh:
+        admin_metadata = json.load(fh)
+    assert admin_metadata['type'] == 'dataset'
+    assert dataset._admin_metadata == admin_metadata
+
+
+def test_multiple_persist_to_path_raises(tmp_dir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset')
+
+    dataset.persist_to_path(tmp_dir)
+
+    with pytest.raises(OSError):
+        dataset.persist_to_path(tmp_dir)

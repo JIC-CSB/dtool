@@ -26,6 +26,7 @@ class DataSet(object):
                                 'name': name,
                                 'type': 'dataset',
                                 'dtool_version': __version__,
+                                'readme_path': None,
                                 'unix_username': getpass.getuser(),
                                 'manifest_root': data_directory}
 
@@ -44,6 +45,20 @@ class DataSet(object):
     @property
     def unix_username(self):
         return self._admin_metadata['unix_username']
+
+    @property
+    def readme_path(self):
+        return self._admin_metadata['readme_path']
+
+    def persist_to_path(self, path):
+        """Mark up a directory as a DataSet"""
+
+        dtool_dir_path = os.path.join(path, '.dtool')
+        os.mkdir(dtool_dir_path)
+
+        dtool_file_path = os.path.join(dtool_dir_path, 'dtool')
+        with open(dtool_file_path, 'w') as fh:
+            json.dump(self._admin_metadata, fh)
 
 
 class oldDataSet(object):
