@@ -91,6 +91,19 @@ class DataSet(object):
         return self.dataset_path
 
 
+class Collection(object):
+    """Class for representing collections of data sets."""
+
+    def __init__(self):
+        self.uuid = str(uuid.uuid4())
+
+    def persist_to_path(self, path):
+        """Mark up a directory as a collection."""
+        path = os.path.abspath(path)
+        dtool_dir_path = os.path.join(path, ".dtool")
+        os.mkdir(dtool_dir_path)
+
+
 def log(message):
     """Log a message.
 
