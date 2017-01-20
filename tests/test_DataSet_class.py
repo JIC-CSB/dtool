@@ -206,4 +206,35 @@ def test_manifest_generation(chdir):
 
 
 def test_dataset_from_path(tmp_dir):
-    pass
+    from dtool import DataSet
+    dataset = DataSet("my_data_set")
+    dataset.persist_to_path(tmp_dir)
+
+    dataset_again = DataSet.from_path(tmp_dir)
+    assert dataset_again == dataset
+
+def test_dataset_from_path_raises_if_no_dtool_file(tmp_dir):
+    from dtool import DataSet
+    with pytest.raises(ValueError):
+        DataSet.from_path(tmp_dir)
+
+def test_dataset_from_path_if_called_on_collection(tmp_dir):
+    from dtool import DataSet, Collection
+    collection = Collection()
+    collection.persist_to_path(tmp_dir)
+    with pytest.raises(ValueError):
+        dataset = DataSet.from_path(tmp_dir)
+
+def test_from_path_raises_valuerror_if_type_does_not_exist(chdir):
+    from dtool import DataSet
+
+    admin_metadata = {}
+    dtool_dir = '.dtool'
+    os.mkdir(dtool_dir)
+    dtool_file = os.path.join(dtool_dir, 'dtool')
+
+    with open(dtool_file, 'w') as fh:
+        json.dump(admin_metadata, fh)
+
+    with pytest.raises(ValueError):
+        DataSet.from_path('.')

@@ -145,6 +145,35 @@ class DataSet(object):
         with open(dtool_file_path, 'w') as fh:
             json.dump(self._admin_metadata, fh)
 
+    @classmethod
+    def from_path(cls, path):
+        """Return instance of :class:`dtool.DataSet` instantiated from path.
+
+        :param path: path to collection directory
+        :raises: ValueError if the path has not been marked up
+                 as a collection in the .dtool/dtool file.
+        :returns: :class:`dtool.Collection`
+        """
+        dtool_file_path = os.path.join(path, '.dtool', 'dtool')
+        if not os.path.isfile(dtool_file_path):
+            raise ValueError('Not a dataset; .dtool/dtool does not exist')
+
+        dataset = DataSet("")
+        with open(dtool_file_path) as fh:
+            dataset._admin_metadata = json.load(fh)
+
+        if 'type' not in dataset._admin_metadata:
+            raise ValueError(
+                'Not a dataset; no type definition in .dtool/dtool')
+
+        if dataset._admin_metadata['type'] != 'dataset':
+            raise ValueError(
+                'Not a dataset; wrong type definition in .dtool/dtool')
+
+        return dataset
+
+
+
 
 class oldDataSet(object):
 
@@ -272,7 +301,7 @@ class Collection(object):
 
     @classmethod
     def from_path(cls, path):
-        """Return instance of Collection instantiated from path.
+        """Return instance of :class:`dtool.Collection` instantiated from path.
 
         :param path: path to collection directory
         :raises: ValueError if the path has not been marked up
