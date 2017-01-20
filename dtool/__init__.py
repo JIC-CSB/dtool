@@ -81,6 +81,13 @@ class DataSet(object):
         return self._admin_metadata['unix_username']
 
     @property
+    def data_directory(self):
+        """Return the directory in which data reside (this is equivalent to
+        the manifest root)."""
+
+        return self._admin_metadata['manifest_root']
+
+    @property
     def abs_readme_path(self):
         """Return the absolute path of the dataset or None.
 

@@ -46,6 +46,8 @@ def test_dataset_initialisation():
     assert isinstance(dataset.unix_username, str)
     assert dataset.abs_readme_path is None
 
+    assert dataset.data_directory == '.'
+
 
 def test_initialise_alternative_manifest_root():
     from dtool import DataSet
