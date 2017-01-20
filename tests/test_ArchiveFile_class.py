@@ -74,5 +74,20 @@ def test_create_archive(tmp_dir):
 
     assert os.path.isdir(reference_data_path)
 
+    cmd = ["tar", "-tf", expected_tar_path]
+    output = subprocess.check_output(cmd)
+
+    split_output = output.split()
+
+    expected_first_header_file = os.path.join(
+        'input',
+        ArchiveFile.header_file_order[0])
+
+    assert split_output[0] == expected_first_header_file
+
+    for n, filename in enumerate(ArchiveFile.header_file_order):
+        expected_filename = os.path.join('input', filename)
+        assert split_output[n] == expected_filename
+
 #    from filecmp import dircmp
 #    dcmp = dircmp(e

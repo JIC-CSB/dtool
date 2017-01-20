@@ -41,21 +41,37 @@ class ArchiveFile(object):
         self._tar_path = None
         self.archive_dataset = archive_dataset
 
-#   def initilise_tar():
+    def initialise_tar(self, path):
+        path = os.path.abspath(path)
+        self._tar_path = os.path.join(path, self.archive_dataset.name + ".tar")
+        working_dir, dataset_dir = os.path.split(self.archive_dataset._abs_path)
 
-#   def append_to_tar():
+        first_header_file = os.path.join(
+            dataset_dir,
+            ArchiveFile.header_file_order[0])
+        cmd = ["tar", "-cf", self._tar_path, first_header_file]
+        subprocess.call(cmd, cwd=working_dir)
+
+        for header_file in self.header_file_order[1:]:
+            header_file_path = os.path.join(dataset_dir, header_file)
+            cmd = ["tar", "-rf", self._tar_path, header_file_path]
+            subprocess.call(cmd, cwd=working_dir)
 
     def persist_to_tar(self, path):
         """Write archive dataset to tarball."""
-        path = os.path.abspath(path)
-        self._tar_path = os.path.join(path, self.archive_dataset.name + ".tar")
 
-        working_dir, dataset_dir = os.path.split(self.archive_dataset._abs_path)
-
-        cmd = ["tar", "-cf", self._tar_path, dataset_dir]
-        subprocess.call(cmd, cwd=working_dir)
+        self.initialise_tar(path)
 
         return self._tar_path
+        # path = os.path.abspath(path)
+        # self._tar_path = os.path.join(path, self.archive_dataset.name + ".tar")
+
+        # working_dir, dataset_dir = os.path.split(self.archive_dataset._abs_path)
+
+        # cmd = ["tar", "-cf", self._tar_path, dataset_dir]
+        # subprocess.call(cmd, cwd=working_dir)
+
+        # return self._tar_path
 #       self.initilise_tar()
 #       self.append_to_tar()
 
