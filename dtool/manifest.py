@@ -1,6 +1,6 @@
 """Module for generating manifests of data directories."""
 
-from dtool import (
+from dtool import (  # NOQA
     file_metadata,
     generate_manifest,
     generate_filedict_list,
