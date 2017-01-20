@@ -20,6 +20,15 @@ def shasum_from_file_object(f):
     return hasher.hexdigest()
 
 
+class ArchiveFile(object):
+    """Class for working with tarred/gzipped archive datasets."""
+
+    # Don't touch this!
+    header_file_order = (".dtool/dtool",
+                         ".dtool/manifest.json",
+                         "README.yml")
+
+
 class Archive(object):
 
     @classmethod

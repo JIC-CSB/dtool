@@ -3,8 +3,8 @@
 
 def test_archive_header_file_order():
 
-    from dtool.archive import FileArchive
+    from dtool.archive import ArchiveFile
 
-    assert Archive.header_file_order == ('.dtool/dtool',
-                                         '.dtool/manifest.json',
-                                         'README.yml')
+    assert ArchiveFile.header_file_order == ('.dtool/dtool',
+                                             '.dtool/manifest.json',
+                                             'README.yml')
