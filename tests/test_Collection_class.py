@@ -189,3 +189,12 @@ def test_do_not_overwrite_existing_readme(chdir):
 
     assert actual_contents == readme_contents
 
+
+def test_from_path_sets_abspath(tmp_dir):
+    from dtool import Collection
+    collection = Collection()
+    collection.persist_to_path(tmp_dir)
+    assert collection._abs_path == tmp_dir
+
+    collection_again = Collection.from_path(tmp_dir)
+    assert collection_again._abs_path == tmp_dir

@@ -152,8 +152,9 @@ class DataSet(object):
         :param path: path to collection directory
         :raises: ValueError if the path has not been marked up
                  as a collection in the .dtool/dtool file.
-        :returns: :class:`dtool.Collection`
+        :returns: :class:`dtool.DataSet`
         """
+#       path = os.path.abspath(path)
         dtool_file_path = os.path.join(path, '.dtool', 'dtool')
         if not os.path.isfile(dtool_file_path):
             raise ValueError('Not a dataset; .dtool/dtool does not exist')
@@ -169,6 +170,8 @@ class DataSet(object):
         if dataset._admin_metadata['type'] != 'dataset':
             raise ValueError(
                 'Not a dataset; wrong type definition in .dtool/dtool')
+
+#       dataset._abs_path = path
 
         return dataset
 
@@ -308,6 +311,7 @@ class Collection(object):
                  as a collection in the .dtool/dtool file.
         :returns: :class:`dtool.Collection`
         """
+        path = os.path.abspath(path)
 
         collection = Collection()
 
@@ -325,6 +329,8 @@ class Collection(object):
         if collection._admin_metadata['type'] != 'collection':
             raise ValueError(
                 'Not a collection; wrong type definition in .dtool/dtool')
+
+        collection._abs_path = path
 
         return collection
 
