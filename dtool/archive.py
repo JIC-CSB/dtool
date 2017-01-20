@@ -37,19 +37,16 @@ class ArchiveFile(object):
                          ".dtool/manifest.json",
                          "README.yml")
 
-    def __init__(self):
+    def __init__(self, archive_dataset=None):
         self._tar_path = None
-
-#   @classmethod
-#   def from_path(path):
-#       """Initialise archive dataset from a (gzipped) tarball."""
+        self.archive_dataset = archive_dataset
 
 #   def initilise_tar():
 
 #   def append_to_tar():
 
-#   def persist_to_tar(path):
-#       """Write archive dataset to tarball."""
+    def persist_to_tar(self, path):
+        """Write archive dataset to tarball."""
 #       self._tar_path = "set_me_here"
 #       self.initilise_tar()
 #       self.append_to_tar()
