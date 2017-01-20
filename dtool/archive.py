@@ -7,6 +7,8 @@ import hashlib
 import subprocess
 import tarfile
 
+from dtool import DataSet
+
 
 def shasum_from_file_object(f):
 
@@ -18,6 +20,13 @@ def shasum_from_file_object(f):
         buf = f.read(BUF_SIZE)
 
     return hasher.hexdigest()
+
+
+class ArchiveDataSet(DataSet):
+    """Class for creating specific archive datasets."""
+
+    def __init__(self, name):
+        super(ArchiveDataSet, self).__init__(name=name, data_directory="archive")
 
 
 class ArchiveFile(object):
