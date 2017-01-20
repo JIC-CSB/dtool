@@ -6,6 +6,7 @@ import tarfile
 import datetime
 
 import yaml
+
 from jinja2 import Environment, PackageLoader
 
 from dtool import (
@@ -22,6 +23,7 @@ from dtool.archive import (
     icreate_collection,
     is_collection,
 )
+from dtool.utils import write_templated_file
 
 HERE = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(HERE, '..', 'templates')
@@ -87,24 +89,26 @@ def new_archive_dataset(staging_path, descriptive_metadata):
     """
 
     dataset_name = descriptive_metadata['dataset_name']
+    dataset = DataSet(dataset_name, 'archive')
+    dataset_path = os.path.join(staging_path, dataset_name)
+    if os.path.isdir(dataset_path):
+        raise OSError('Directory already exists: {}'.format(dataset_path))
+    os.mkdir(dataset_path)
+    dataset.persist_to_path(dataset_path)
 
-    dataset = DataSet(dataset_name, manifest_root='archive')
-    dataset.descriptive_metadata = descriptive_metadata
-
-    env = Environment(loader=PackageLoader('dtool', 'templates'),
-                      keep_trailing_newline=True)
-    readme_template = env.get_template('arctool_dataset_README.yml')
-    dataset_path = dataset.persist_to_path(staging_path,
-                                           readme_template=readme_template)
+    write_templated_file(
+        dataset.abs_readme_path,
+        'arctool_dataset_README.yml',
+        descriptive_metadata)
 
     # Create a readme file in the archive subdirectory of the dataset
     archive_readme_file_path = os.path.join(dataset_path,
-                                            dataset.manifest_root,
+                                            dataset.data_directory,
                                             'README.txt')
-    archive_readme_template = env.get_template(
-                                'arctool_archive_dir_README.txt')
-    with open(archive_readme_file_path, 'w') as fh:
-        fh.write(archive_readme_template.render())
+    write_templated_file(
+        archive_readme_file_path,
+        'arctool_archive_dir_README.txt',
+        {})
 
     return dataset, dataset_path
 
