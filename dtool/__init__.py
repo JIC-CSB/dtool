@@ -89,7 +89,7 @@ class DataSet(object):
         if self._abs_path is None:
             return None
         return os.path.join(self._abs_path,
-            self._admin_metadata['readme_path'])
+                            self._admin_metadata['readme_path'])
 
     @property
     def _abs_manifest_path(self):
@@ -100,7 +100,7 @@ class DataSet(object):
         if self._abs_path is None:
             return None
         return os.path.join(self._abs_path,
-            self._admin_metadata['manifest_path'])
+                            self._admin_metadata['manifest_path'])
 
     def persist_to_path(self, path):
         """Mark up a directory as a dataset.
@@ -123,7 +123,7 @@ class DataSet(object):
         path = os.path.abspath(path)
         self._abs_path = path
         data_directory = os.path.join(path,
-            self._admin_metadata['manifest_root'])
+                                      self._admin_metadata['manifest_root'])
 
         if not os.path.isdir(data_directory):
             os.mkdir(data_directory)
@@ -136,7 +136,7 @@ class DataSet(object):
                 fh.write("")
 
         abs_manifest_root = os.path.join(path,
-            self._admin_metadata['manifest_root'])
+                                         self._admin_metadata['manifest_root'])
         manifest = generate_manifest(abs_manifest_root)
         with open(self._abs_manifest_path, 'w') as fh:
             json.dump(manifest, fh)
@@ -174,8 +174,6 @@ class DataSet(object):
         dataset._abs_path = path
 
         return dataset
-
-
 
 
 class oldDataSet(object):
@@ -283,7 +281,7 @@ class Collection(object):
         if self._abs_path is None:
             return None
         return os.path.join(self._abs_path,
-            self._admin_metadata['readme_path'])
+                            self._admin_metadata['readme_path'])
 
     @property
     def descriptive_metadata(self):
@@ -368,6 +366,7 @@ def log(message):
 ###################################################
 # STOLEN FROM MANIFEST. PUT IT BACK LATER. MAYBE. #
 ###################################################
+
 
 def generate_relative_paths(path):
     """Return list of relative paths to all files in tree under path.

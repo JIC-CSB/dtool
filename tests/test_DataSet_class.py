@@ -135,7 +135,8 @@ def test_persist_to_path_sets_abs_paths(tmp_dir):
 
     expected_abs_readme_path = os.path.join(tmp_dir, 'README.yml')
     expected_abs_manifest_path = os.path.join(tmp_dir,
-        '.dtool', 'manifest.json')
+                                              '.dtool',
+                                              'manifest.json')
 
     assert dataset.abs_readme_path is None
     assert dataset._abs_manifest_path is None
@@ -213,17 +214,20 @@ def test_dataset_from_path(tmp_dir):
     dataset_again = DataSet.from_path(tmp_dir)
     assert dataset_again == dataset
 
+
 def test_dataset_from_path_raises_if_no_dtool_file(tmp_dir):
     from dtool import DataSet
     with pytest.raises(ValueError):
         DataSet.from_path(tmp_dir)
+
 
 def test_dataset_from_path_if_called_on_collection(tmp_dir):
     from dtool import DataSet, Collection
     collection = Collection()
     collection.persist_to_path(tmp_dir)
     with pytest.raises(ValueError):
-        dataset = DataSet.from_path(tmp_dir)
+        DataSet.from_path(tmp_dir)
+
 
 def test_from_path_raises_valuerror_if_type_does_not_exist(chdir):
     from dtool import DataSet
