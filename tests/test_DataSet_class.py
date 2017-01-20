@@ -238,3 +238,14 @@ def test_from_path_raises_valuerror_if_type_does_not_exist(chdir):
 
     with pytest.raises(ValueError):
         DataSet.from_path('.')
+
+
+def test_from_path_sets_abspath(tmp_dir):
+    from dtool import DataSet
+    dataset = DataSet("my_data_set")
+    assert dataset._abs_path is None
+    dataset.persist_to_path(tmp_dir)
+    assert dataset._abs_path == tmp_dir
+
+    dataset_again = DataSet.from_path(tmp_dir)
+    assert dataset_again._abs_path == tmp_dir

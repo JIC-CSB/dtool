@@ -154,7 +154,7 @@ class DataSet(object):
                  as a collection in the .dtool/dtool file.
         :returns: :class:`dtool.DataSet`
         """
-#       path = os.path.abspath(path)
+        path = os.path.abspath(path)
         dtool_file_path = os.path.join(path, '.dtool', 'dtool')
         if not os.path.isfile(dtool_file_path):
             raise ValueError('Not a dataset; .dtool/dtool does not exist')
@@ -171,7 +171,7 @@ class DataSet(object):
             raise ValueError(
                 'Not a dataset; wrong type definition in .dtool/dtool')
 
-#       dataset._abs_path = path
+        dataset._abs_path = path
 
         return dataset
 
