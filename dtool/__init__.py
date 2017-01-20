@@ -1,5 +1,26 @@
 #!/usr/bin/env python2
-"""Tool for managing JIC archive data."""
+"""Tool for managing JIC archive data.
+
+The central philosophy is that this project should produce outputs that can be
+understood without access to these tools. This is important as it is likely
+that the outputs of from these tools may outlive these tools.
+
+This API has two main classes :class:`dtool.DataSet` and
+:class:`dtool.Collection`. These allow the consumer of the API to annotate
+new or existing directories as datasets or collections of datasets.
+
+The dtool annotation takes the form of a ``.dtool`` directory inside the
+directory of interest and a ``README.yml`` file with optional content.
+
+The dtool annotation creates three types of metadata:
+
+1. Administrative metadata (.dtool/dtool) managed by the API
+2. Descriptive metadata (README.yml) mostly managed by the consumer of the API
+   and/or the end user
+3. Structural metadata (default path: .dtool/manifest.json) managed by the API
+   and the consumer of the API
+
+"""
 
 import os
 import json
@@ -41,22 +62,30 @@ class DataSet(object):
 
     @property
     def uuid(self):
+        """Return the dataset's UUID."""
         return self._admin_metadata['uuid']
 
     @property
     def name(self):
+        """Return the name of the dataset."""
         return self._admin_metadata['name']
 
     @property
     def dtool_version(self):
+        """Return the version of the dtool API."""
         return self._admin_metadata['dtool_version']
 
     @property
     def unix_username(self):
+        """Return the unix username of the creator of the dataset."""
         return self._admin_metadata['unix_username']
 
     @property
     def abs_readme_path(self):
+        """Return the absolute path of the dataset or None.
+
+        Returns None if not persisted to path.
+        """
         if self._abs_path is None:
             return None
         return os.path.join(self._abs_path,
@@ -64,13 +93,32 @@ class DataSet(object):
 
     @property
     def _abs_manifest_path(self):
+        """Return the absolute path of the manifest.json file or None.
+
+        Returns None if not persisted to path.
+        """
         if self._abs_path is None:
             return None
         return os.path.join(self._abs_path,
             self._admin_metadata['manifest_path'])
 
     def persist_to_path(self, path):
-        """Mark up a directory as a DataSet"""
+        """Mark up a directory as a dataset.
+
+        Creates:
+            - .dtool directory
+            - .dtool/dtool file (admin metadata)
+            - manifest.json (structural metadata)
+            - README.yml if it does not exist (descriptive metadata)
+            - manifest_root directory if it does not exist (default ".")
+
+        The location of the manifest.json file is determined by the
+        ``manifest_path`` value in the admin metadata, and defaults to
+        .dtool/manifest.json.
+
+        :param path: path to where the dataset should be persisted
+        :raises: OSError if .dtool directory already exists
+        """
 
         path = os.path.abspath(path)
         self._abs_path = path
@@ -186,14 +234,20 @@ class Collection(object):
 
     @property
     def uuid(self):
+        """Return the collection's UUID."""
         return self._admin_metadata['uuid']
 
     @property
     def dtool_version(self):
+        """Return the version of the dtool API."""
         return self._admin_metadata['dtool_version']
 
     @property
     def abs_readme_path(self):
+        """Return the absolute path of the dataset or None.
+
+        Returns None if not persisted to path.
+        """
         if self._abs_path is None:
             return None
         return os.path.join(self._abs_path,
@@ -218,7 +272,13 @@ class Collection(object):
 
     @classmethod
     def from_path(cls, path):
-        """Return instance of Collection instantiated from path."""
+        """Return instance of Collection instantiated from path.
+
+        :param path: path to collection directory
+        :raises: ValueError if the path has not been marked up
+                 as a collection in the .dtool/dtool file.
+        :returns: :class:`dtool.Collection`
+        """
 
         collection = Collection()
 
@@ -240,7 +300,16 @@ class Collection(object):
         return collection
 
     def persist_to_path(self, path):
-        """Mark up a directory as a collection."""
+        """Mark up a directory as a collection.
+
+        Creates:
+            - .dtool directory
+            - .dtool/dtool file (admin metadata)
+            - README.yml if it does not exist (descriptive metadata)
+
+        :param path: path to where the collection should be persisted
+        :raises: OSError if .dtool directory already exists
+        """
         path = os.path.abspath(path)
         self._abs_path = path
         dtool_dir_path = os.path.join(path, ".dtool")
