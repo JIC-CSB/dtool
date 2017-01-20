@@ -1,3 +1,9 @@
 """Module for generating manifests of data directories."""
 
-from dtool import generate_manifest
+from dtool import (
+    file_metadata,
+    generate_manifest,
+    generate_filedict_list,
+    generate_relative_paths,
+    create_filedict_manifest,
+)
