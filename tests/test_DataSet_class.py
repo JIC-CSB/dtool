@@ -177,6 +177,20 @@ def test_do_not_overwrite_existing_readme(chdir):
     assert actual_contents == readme_contents
 
 
+def test_persist_to_path_raises_if_path_does_not_exist(tmp_dir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset')
+
+    attempted_path = os.path.join(tmp_dir, 'my_project')
+
+    with pytest.raises(OSError) as excinfo:
+        dataset.persist_to_path(attempted_path)
+
+    expected_error = 'No such directory: {}'.format(attempted_path)
+    assert expected_error in str(excinfo.value)
+
+
 def test_manifest_generation(chdir):
     from dtool import DataSet
 

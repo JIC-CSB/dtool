@@ -105,6 +105,8 @@ class DataSet(object):
     def persist_to_path(self, path):
         """Mark up a directory as a dataset.
 
+        Assumes that path exists.
+
         Creates:
             - .dtool directory
             - .dtool/dtool file (admin metadata)
@@ -121,6 +123,11 @@ class DataSet(object):
         """
 
         path = os.path.abspath(path)
+
+        if not os.path.isdir(path):
+            error_message = 'No such directory: {}'.format(path)
+            raise OSError(error_message)
+
         self._abs_path = path
         data_directory = os.path.join(path,
                                       self._admin_metadata['manifest_root'])
