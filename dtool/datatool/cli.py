@@ -1,16 +1,17 @@
 """Manage datasets."""
 
+import os
 import sys
 import json
 import getpass
 
 import click
-from jinja2 import Environment, PackageLoader
 
 from fluent import sender
 
 from dtool import __version__, DataSet
 from dtool.arctool import create_manifest
+from dtool.utils import write_templated_file
 
 logger = sender.FluentSender('arctool', host='v0679', port=24224)
 
@@ -47,14 +48,20 @@ def dataset():
     for name, default in readme_info:
         descriptive_metadata[name] = click.prompt(name,
                                                   default=default)
+    dataset_name = descriptive_metadata["dataset_name"]
 
-    env = Environment(loader=PackageLoader('dtool', 'templates'),
-                      keep_trailing_newline=True)
-    readme_template = env.get_template('datatool_dataset_README.yml')
+    if os.path.isdir(dataset_name):
+        raise OSError('Directory already exists: {}'.format(dataset_name))
 
-    ds = DataSet(descriptive_metadata["dataset_name"])
+    os.mkdir(dataset_name)
+
+    ds = DataSet(dataset_name, 'data')
     ds.descriptive_metadata = descriptive_metadata
-    ds.persist_to_path(".", readme_template=readme_template)
+    ds.persist_to_path(descriptive_metadata["dataset_name"])
+
+    write_templated_file(ds.abs_readme_path,
+                         'datatool_dataset_README.yml',
+                         descriptive_metadata)
 
 
 @cli.group()

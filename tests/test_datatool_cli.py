@@ -48,6 +48,7 @@ def test_new_dataset(chdir):
 
     from click.testing import CliRunner
     from dtool.datatool.cli import dataset
+    from dtool import DataSet
 
     runner = CliRunner()
 
@@ -65,7 +66,11 @@ def test_new_dataset(chdir):
     assert not result.exception
 
     assert os.path.isdir('my_dataset')
-    assert os.path.isfile('my_dataset/.dtool-dataset')
+    expected_dtool_file = os.path.join('my_dataset', '.dtool', 'dtool')
+    assert os.path.isfile(expected_dtool_file)
+
+    dataset = DataSet.from_path('my_dataset')
+    assert dataset.name == 'my_dataset'
 
 
 def test_manifest_create(tmp_dir):
