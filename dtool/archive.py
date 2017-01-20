@@ -47,6 +47,9 @@ class ArchiveFile(object):
 
     def persist_to_tar(self, path):
         """Write archive dataset to tarball."""
+        path = os.path.abspath(path)
+        self._tar_path = os.path.join(path, self.archive_dataset.name + ".tar")
+        return self._tar_path
 #       self._tar_path = "set_me_here"
 #       self.initilise_tar()
 #       self.append_to_tar()

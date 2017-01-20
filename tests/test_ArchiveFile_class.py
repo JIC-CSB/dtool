@@ -54,4 +54,8 @@ def test_create_archive(tmp_dir):
     archive_ds.persist_to_path(archive_directory_path)
 
     archive_file = ArchiveFile(archive_ds)
-    archive_file.persist_to_tar(tmp_dir)
+    tar_path = archive_file.persist_to_tar(tmp_dir)
+
+    expected_tar_path = os.path.join(tmp_dir, "my_archive.tar")
+    assert expected_tar_path == archive_file._tar_path
+    assert expected_tar_path == tar_path
