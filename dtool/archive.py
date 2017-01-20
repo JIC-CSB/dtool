@@ -49,8 +49,13 @@ class ArchiveFile(object):
         """Write archive dataset to tarball."""
         path = os.path.abspath(path)
         self._tar_path = os.path.join(path, self.archive_dataset.name + ".tar")
+
+        working_dir, dataset_dir = os.path.split(self.archive_dataset._abs_path)
+
+        cmd = ["tar", "-cf", self._tar_path, dataset_dir]
+        subprocess.call(cmd, cwd=working_dir)
+
         return self._tar_path
-#       self._tar_path = "set_me_here"
 #       self.initilise_tar()
 #       self.append_to_tar()
 

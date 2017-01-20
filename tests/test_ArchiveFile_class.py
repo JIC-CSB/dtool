@@ -3,6 +3,7 @@
 import os
 import shutil
 import tempfile
+import subprocess
 
 import pytest
 
@@ -59,3 +60,19 @@ def test_create_archive(tmp_dir):
     expected_tar_path = os.path.join(tmp_dir, "my_archive.tar")
     assert expected_tar_path == archive_file._tar_path
     assert expected_tar_path == tar_path
+
+    assert os.path.isfile(expected_tar_path)
+
+    # Move the original input data into a new directory.
+    reference_data_path = os.path.join(tmp_dir, "expected")
+    os.rename(archive_directory_path, reference_data_path)
+    assert not os.path.isdir(expected_tar_path)
+
+    # Untar the tarball just created.
+    cmd = ["tar", "-xf", expected_tar_path]
+    subprocess.check_call(cmd)
+
+    assert os.path.isdir(reference_data_path)
+
+#    from filecmp import dircmp
+#    dcmp = dircmp(e
