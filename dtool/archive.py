@@ -46,16 +46,11 @@ class ArchiveFile(object):
         self._tar_path = os.path.join(path, self.archive_dataset.name + ".tar")
         working_dir, dataset_dir = os.path.split(self.archive_dataset._abs_path)
 
-        first_header_file = os.path.join(
-            dataset_dir,
-            ArchiveFile.header_file_order[0])
-        cmd = ["tar", "-cf", self._tar_path, first_header_file]
-        subprocess.call(cmd, cwd=working_dir)
+        headers_with_path = [os.path.join(dataset_dir, hf)
+            for hf in ArchiveFile.header_file_order]
 
-        for header_file in self.header_file_order[1:]:
-            header_file_path = os.path.join(dataset_dir, header_file)
-            cmd = ["tar", "-rf", self._tar_path, header_file_path]
-            subprocess.call(cmd, cwd=working_dir)
+        cmd = ["tar", "-cf", self._tar_path] + headers_with_path
+        subprocess.call(cmd, cwd=working_dir)
 
     def persist_to_tar(self, path):
         """Write archive dataset to tarball."""
