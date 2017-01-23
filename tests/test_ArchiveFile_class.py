@@ -57,24 +57,28 @@ def test_create_archive(tmp_dir):
     archive_file = ArchiveFile(archive_ds)
     tar_path = archive_file.persist_to_tar(tmp_dir)
 
-    expected_tar_path = os.path.join(tmp_dir, "my_archive.tar")
-    assert expected_tar_path == archive_file._tar_path
-    assert expected_tar_path == tar_path
+    expected_tar_file_path = os.path.join(tmp_dir, "my_archive.tar")
+    assert expected_tar_file_path == archive_file._tar_path
+    assert expected_tar_file_path == tar_path
 
-    assert os.path.isfile(expected_tar_path)
+    assert os.path.isfile(expected_tar_file_path)
 
     # Move the original input data into a new directory.
     reference_data_path = os.path.join(tmp_dir, "expected")
     os.rename(archive_directory_path, reference_data_path)
-    assert not os.path.isdir(expected_tar_path)
+    assert not os.path.isdir(expected_tar_file_path)
 
     # Untar the tarball just created.
-    cmd = ["tar", "-xf", expected_tar_path]
-    subprocess.check_call(cmd)
+    cmd = ["tar", "-xf", expected_tar_file_path]
+    subprocess.check_call(cmd, cwd=tmp_dir)
 
-    assert os.path.isdir(reference_data_path)
+    # Test that the archive has been re-instated by untaring.
+    assert os.path.isdir(archive_directory_path)
 
-    cmd = ["tar", "-tf", expected_tar_path]
+
+    # Test order of files in tarball.
+
+    cmd = ["tar", "-tf", expected_tar_file_path]
     output = subprocess.check_output(cmd)
 
     split_output = output.split()
