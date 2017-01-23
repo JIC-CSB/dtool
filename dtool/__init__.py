@@ -109,6 +109,30 @@ class DataSet(object):
         return os.path.join(self._abs_path,
                             self._admin_metadata['manifest_path'])
 
+    @property
+    def manifest(self):
+        """Return the manifest as a dictionary."""
+
+        if self._abs_manifest_path is None:
+            return {}
+        else:
+            with open(self._abs_manifest_path) as fh:
+                return json.load(fh)
+
+    def update_manifest(self):
+        """Update the manifest by full regeneration.
+
+        Does nothing if dataset is not persisted."""
+
+        if not self._abs_path:
+            return
+
+        abs_manifest_root = os.path.join(self._abs_path,
+                                         self._admin_metadata['manifest_root'])
+        manifest = generate_manifest(abs_manifest_root)
+        with open(self._abs_manifest_path, 'w') as fh:
+            json.dump(manifest, fh)
+
     def persist_to_path(self, path):
         """Mark up a directory as a dataset.
 
@@ -149,11 +173,7 @@ class DataSet(object):
             with open(self.abs_readme_path, 'w') as fh:
                 fh.write("")
 
-        abs_manifest_root = os.path.join(path,
-                                         self._admin_metadata['manifest_root'])
-        manifest = generate_manifest(abs_manifest_root)
-        with open(self._abs_manifest_path, 'w') as fh:
-            json.dump(manifest, fh)
+        self.update_manifest()
 
         dtool_file_path = os.path.join(dtool_dir_path, 'dtool')
         with open(dtool_file_path, 'w') as fh:

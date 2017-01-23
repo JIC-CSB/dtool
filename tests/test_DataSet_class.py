@@ -269,3 +269,39 @@ def test_from_path_sets_abspath(tmp_dir):
 
     dataset_again = DataSet.from_path(tmp_dir)
     assert dataset_again._abs_path == tmp_dir
+
+
+def test_manifest_property(tmp_dir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset', 'data')
+    assert dataset.manifest == {}
+
+    dataset.persist_to_path(tmp_dir)
+    assert 'file_list' in dataset.manifest
+    assert dataset.manifest['file_list'] == []
+
+
+def test_update_manifest(tmp_dir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset', 'data')
+    dataset.persist_to_path(tmp_dir)
+
+    new_file_path = os.path.join(tmp_dir, dataset.data_directory, 'test.txt')
+    with open(new_file_path, 'w') as fh:
+        fh.write('Hello world')
+
+    dataset.update_manifest()
+
+    assert len(dataset.manifest['file_list']) == 1
+
+
+def test_update_manifest_does_nothing_if_not_persisted():
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset')
+
+    dataset.update_manifest()
+
+    assert dataset.manifest == {}
