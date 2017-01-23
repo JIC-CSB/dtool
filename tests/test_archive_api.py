@@ -36,11 +36,10 @@ def tmp_dir(request):
 @pytest.fixture
 def tmp_archive(request):
 
-    from dtool.arctool import (
-        new_archive_dataset,
-        create_manifest,
-        create_archive,
-    )
+    from dtool.archive import (
+        ArchiveDataSet,
+        ArchiveFile)
+
     from dtool.archive import compress_archive
 
     d = tempfile.mkdtemp()
@@ -49,21 +48,21 @@ def tmp_archive(request):
     def teardown():
         shutil.rmtree(d)
 
-    new_archive_dataset(d, TEST_DESCRIPTIVE_METADATA)
-    tmp_project = os.path.join(d, "brassica_rnaseq_reads")
+    archive_directory_path = os.path.join(d, "brassica_rnaseq_reads")
+    os.mkdir(archive_directory_path)
+    archive_ds = ArchiveDataSet("brassica_rnaseq_reads")
+    archive_ds.persist_to_path(archive_directory_path)
+    archive_file = ArchiveFile(archive_ds)
+
+    # Move some data into the archive.
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
-    archive_output_path = os.path.join(tmp_project, 'archive')
+    archive_output_path = os.path.join(archive_directory_path, 'archive')
     copy_tree(archive_input_path, archive_output_path)
-    create_manifest(os.path.join(tmp_project, "archive/"))
 
-    create_archive(tmp_project)
-    compress_archive(tmp_project + '.tar')
+    tar_path = archive_file.persist_to_tar(d)
+    compress_archive(tar_path)
 
-    archive_name = tmp_project + '.tar' + '.gz'
-
-    shutil.rmtree(archive_output_path)
-
-    return archive_name
+    return tar_path + '.gz'
 
 
 def test_initialise_and_append_to_tar_archive(tmp_dir):
