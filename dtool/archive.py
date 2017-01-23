@@ -31,22 +31,29 @@ class ArchiveDataSet(DataSet):
 
 
 class ArchiveFile(object):
-    """Class for working with tarred/gzipped archive datasets."""
+    """Class for working with tarred/gzipped archive datasets.
+
+    Initialising using a dataset is used for creating archives, while
+    initialising from a file is used for extracting and verifying."""
+
+    # TODO - should this be split into two classes?
 
     # Don't touch this!
     header_file_order = (".dtool/dtool",
                          ".dtool/manifest.json",
                          "README.yml")
 
+    # TODO - consider replacing initialisation with a .from_dataset
     def __init__(self, archive_dataset=None):
+        self._name = None
         self._tar_path = None
-        self.archive_dataset = archive_dataset
+        self._archive_dataset = archive_dataset
 
     def initialise_tar(self, path):
         path = os.path.abspath(path)
-        self._tar_path = os.path.join(path, self.archive_dataset.name + ".tar")
+        self._tar_path = os.path.join(path, self._archive_dataset.name + ".tar")
         working_dir, dataset_dir = os.path.split(
-            self.archive_dataset._abs_path)
+            self._archive_dataset._abs_path)
 
         headers_with_path = [os.path.join(dataset_dir, hf)
                              for hf in ArchiveFile.header_file_order]
@@ -57,16 +64,16 @@ class ArchiveFile(object):
     def append_to_tar(self, path):
         path = os.path.abspath(path)
         working_dir, dataset_dir = os.path.split(
-            self.archive_dataset._abs_path)
+            self._archive_dataset._abs_path)
         archive_dir_rel_path = os.path.join(
-            dataset_dir, self.archive_dataset.data_directory)
+            dataset_dir, self._archive_dataset.data_directory)
         cmd = ["tar", "-rf", self._tar_path, archive_dir_rel_path]
         subprocess.call(cmd, cwd=working_dir)
 
     def persist_to_tar(self, path):
         """Write archive dataset to tarball."""
 
-        self.archive_dataset.update_manifest()
+        self._archive_dataset.update_manifest()
         self.initialise_tar(path)
         self.append_to_tar(path)
 
@@ -104,21 +111,32 @@ class ArchiveFile(object):
 
         with tarfile.open(path, 'r:*') as tar:
             first_member = tar.next()
-            archive_name, _ = first_member.name.split(os.path.sep, 1)
+            archive_file._name, _ = first_member.name.split(os.path.sep, 1)
 
-        admin_file_path = os.path.join(archive_name, '.dtool', 'dtool')
+        admin_file_path = os.path.join(archive_file._name, '.dtool', 'dtool')
         admin_str = archive_file._extract_string_contents(admin_file_path)
         archive_file._admin_metadata = json.loads(admin_str)
 
         manifest_file_path = os.path.join(
-            archive_name,
+            archive_file._name,
             archive_file.admin_metadata['manifest_path'])
         manifest_str = archive_file._extract_string_contents(
             manifest_file_path)
         archive_file._manifest = json.loads(manifest_str)
 
-
         return archive_file
+
+    def calculate_file_hash(self, filename):
+
+        full_file_path = os.path.join(
+            self._name,
+            self.admin_metadata['manifest_root'],
+            filename)
+
+        with tarfile.open(self._tar_path, 'r:*') as tar:
+            fp = tar.extractfile(full_file_path)
+
+            return shasum_from_file_object(fp)
 
 
 class Archive(object):
@@ -258,16 +276,16 @@ def verify_file(archive_path, file_in_archive):
     """
     archive_path = os.path.abspath(archive_path)
 
-    archive = Archive.from_file(archive_path)
+    archive_file = ArchiveFile.from_file(archive_path)
 
-    file_list = archive.manifest["file_list"]
+    file_list = archive_file.manifest["file_list"]
 
     filedict_by_path = {entry['path']: entry for entry in file_list}
 
     file_entry = filedict_by_path[file_in_archive]
 
     manifest_hash = file_entry['hash']
-    archive_hash = archive.calculate_file_hash(file_in_archive)
+    archive_hash = archive_file.calculate_file_hash(file_in_archive)
 
     return manifest_hash == archive_hash
 

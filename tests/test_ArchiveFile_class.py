@@ -66,6 +66,8 @@ def test_initialise_ArchiveFile():
     from dtool.archive import ArchiveFile
     archive = ArchiveFile()
     assert archive._tar_path is None
+    assert archive._name is None
+    assert archive._archive_dataset is None
 
 
 # Functional tests.
@@ -77,7 +79,7 @@ def test_from_archive_directory(tmp_dir):
     archive_ds.persist_to_path(tmp_dir)
 
     archive_file = ArchiveFile(archive_dataset=archive_ds)
-    assert archive_ds == archive_file.archive_dataset
+    assert archive_ds == archive_file._archive_dataset
 
 
 def test_create_archive(tmp_dir):
@@ -159,3 +161,14 @@ def test_from_tar(tmp_archive):
 
     assert 'dtool_version' in archive_file.admin_metadata
     assert 'file_list' in archive_file.manifest
+
+
+def test_archive_calculate_hash(tmp_archive):
+    from dtool.archive import ArchiveFile
+
+    archive = ArchiveFile.from_file(tmp_archive)
+
+    actual = archive.calculate_file_hash('file1.txt')
+    expected = 'a250369afb3eeaa96fb0df99e7755ba784dfd69c'
+
+    assert actual == expected
