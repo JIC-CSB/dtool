@@ -26,7 +26,8 @@ class ArchiveDataSet(DataSet):
     """Class for creating specific archive datasets."""
 
     def __init__(self, name):
-        super(ArchiveDataSet, self).__init__(name=name, data_directory="archive")
+        super(ArchiveDataSet, self).__init__(name=name,
+                                             data_directory="archive")
 
 
 class ArchiveFile(object):
@@ -44,23 +45,32 @@ class ArchiveFile(object):
     def initialise_tar(self, path):
         path = os.path.abspath(path)
         self._tar_path = os.path.join(path, self.archive_dataset.name + ".tar")
-        working_dir, dataset_dir = os.path.split(self.archive_dataset._abs_path)
+        working_dir, dataset_dir = os.path.split(
+            self.archive_dataset._abs_path)
 
         headers_with_path = [os.path.join(dataset_dir, hf)
-            for hf in ArchiveFile.header_file_order]
+                             for hf in ArchiveFile.header_file_order]
 
         cmd = ["tar", "-cf", self._tar_path] + headers_with_path
+        subprocess.call(cmd, cwd=working_dir)
+
+    def append_to_tar(self, path):
+        path = os.path.abspath(path)
+        working_dir, dataset_dir = os.path.split(
+            self.archive_dataset._abs_path)
+        archive_dir_rel_path = os.path.join(
+            dataset_dir, self.archive_dataset.data_directory)
+        cmd = ["tar", "-rf", self._tar_path, archive_dir_rel_path]
         subprocess.call(cmd, cwd=working_dir)
 
     def persist_to_tar(self, path):
         """Write archive dataset to tarball."""
 
         self.initialise_tar(path)
+        self.append_to_tar(path)
 
         return self._tar_path
 
-#   def persist_to_gzip(path):
-#       """Write archive dataset to gzip."""
 
 class Archive(object):
 

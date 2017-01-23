@@ -1,11 +1,15 @@
 """Tests for dtool.archive.ArchiveFile class."""
 
 import os
+from distutils.dir_util import copy_tree
 import shutil
 import tempfile
 import subprocess
 
 import pytest
+
+HERE = os.path.dirname(__file__)
+TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
 
 
 @pytest.fixture
@@ -54,6 +58,11 @@ def test_create_archive(tmp_dir):
     archive_ds = ArchiveDataSet("my_archive")
     archive_ds.persist_to_path(archive_directory_path)
 
+    # Move some data into the archive.
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    archive_output_path = os.path.join(archive_directory_path, 'archive')
+    copy_tree(archive_input_path, archive_output_path)
+
     archive_file = ArchiveFile(archive_ds)
     tar_path = archive_file.persist_to_tar(tmp_dir)
 
@@ -66,7 +75,7 @@ def test_create_archive(tmp_dir):
     # Move the original input data into a new directory.
     reference_data_path = os.path.join(tmp_dir, "expected")
     os.rename(archive_directory_path, reference_data_path)
-    assert not os.path.isdir(expected_tar_file_path)
+    assert not os.path.isdir(archive_directory_path)
 
     # Untar the tarball just created.
     cmd = ["tar", "-xf", expected_tar_file_path]
@@ -74,7 +83,6 @@ def test_create_archive(tmp_dir):
 
     # Test that the archive has been re-instated by untaring.
     assert os.path.isdir(archive_directory_path)
-
 
     # Test order of files in tarball.
 
@@ -93,5 +101,7 @@ def test_create_archive(tmp_dir):
         expected_filename = os.path.join('input', filename)
         assert split_output[n] == expected_filename
 
-#    from filecmp import dircmp
-#    dcmp = dircmp(e
+    from dtool import generate_relative_paths
+    untarred_file_set = set(generate_relative_paths(archive_directory_path))
+    reference_file_set = set(generate_relative_paths(reference_data_path))
+    assert untarred_file_set == reference_file_set
