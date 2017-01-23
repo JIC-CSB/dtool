@@ -301,7 +301,7 @@ def verify_all(archive_path):
 
     archive_path = os.path.abspath(archive_path)
 
-    archive = Archive.from_file(archive_path)
+    archive = ArchiveFile.from_file(archive_path)
 
     file_list = archive.manifest["file_list"]
 
