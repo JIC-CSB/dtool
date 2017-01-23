@@ -11,11 +11,17 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- Full DataSet class
+- ArchiveDataSet class
+- ArchiveFile class
 - Collection class in dtool module
 
 Changed
 ^^^^^^^
 
+- *new metadata file structure (.dtool/dtool and .dtool/manifest.json)*
+- *major API breaking changes*
+- moved away from functional towards OO paradigm
 - dtool.arctool.new_archive_dataset now uses DataSet class, always takes descriptive metadata as a parameter and returns both the dataset and the path to which it is persisted
 
 Deprecated
