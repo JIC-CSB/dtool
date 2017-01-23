@@ -140,10 +140,10 @@ def test_new(chdir):
     assert os.path.isfile('my_test_project/my_dataset/.dtool/manifest.json')
     assert os.path.isfile('my_test_project/my_dataset/README.yml')
 
-    dataset = DataSet.from_path('my_test_project/my_dataset')
+    DataSet.from_path('my_test_project/my_dataset')
 
     # TODO - fix this!
-    #assert dataset.descriptive_metadata['project_name'] == 'my_test_project'
+    # assert dataset.descriptive_metadata['project_name'] == 'my_test_project'
 
 
 def test_new_dataset(chdir):

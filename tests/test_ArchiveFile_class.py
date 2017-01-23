@@ -183,6 +183,7 @@ def test_from_tar_gz(tmp_archive):
     assert len(archive_file.admin_metadata['uuid']) == 36
     assert 'file_list' in archive_file.manifest
 
+
 def test_archive_calculate_hash(tmp_archive):
     from dtool.archive import ArchiveFile
 

@@ -9,7 +9,6 @@ import datetime
 
 import click
 
-import dtool
 from dtool import (
     __version__,
     DataSet,
@@ -25,7 +24,6 @@ from dtool.arctool import (
 )
 from dtool.archive import (
     ArchiveFile,
-#   append_to_tar_archive,
     compress_archive,
     verify_all,
     is_collection
@@ -118,7 +116,6 @@ def cli_new_dataset(staging_path, project_metadata=dict()):
         ("owner_name", u"Your Name"),
         ("owner_email", u"your.email@example.com"),
         ("unix_username", u"namey"),
-#       ("archive_date", unicode(datetime.date.today())),
         ("archive_date", datetime.date.today()),
     ]
     descriptive_metadata = {}
@@ -128,8 +125,8 @@ def cli_new_dataset(staging_path, project_metadata=dict()):
 
     descriptive_metadata.update(project_metadata)
 
-    dataset, dataset_path, readme_path = new_archive_dataset(staging_path,
-                                                             descriptive_metadata)
+    dataset, dataset_path, readme_path = new_archive_dataset(
+        staging_path, descriptive_metadata)
 
     click.secho('Created new archive in: ', nl=False)
     click.secho(dataset_path, fg='green')
@@ -212,8 +209,8 @@ def create(path):
 #       manifest = json.load(fh)
 #   manifest_filedict = manifest['file_list']
 
-    manifest_filedict = dataset.manifest["file_list"]
-    tot_size = sum(entry['size'] for entry in manifest_filedict)
+    # manifest_filedict = dataset.manifest["file_list"]
+    # tot_size = sum(entry['size'] for entry in manifest_filedict)
 
     archive_file = ArchiveFile(dataset)
     hacked_path = os.path.join(path, "..")

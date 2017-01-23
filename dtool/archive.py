@@ -51,7 +51,8 @@ class ArchiveFile(object):
 
     def initialise_tar(self, path):
         path = os.path.abspath(path)
-        self._tar_path = os.path.join(path, self._archive_dataset.name + ".tar")
+        self._tar_path = os.path.join(
+            path, self._archive_dataset.name + ".tar")
         working_dir, dataset_dir = os.path.split(
             self._archive_dataset._abs_path)
 

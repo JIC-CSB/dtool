@@ -18,8 +18,6 @@ from dtool.manifest import (
     generate_manifest,
 )
 from dtool.archive import (
-#   initialise_tar_archive,
-#   append_to_tar_archive,
     extract_file,
     icreate_collection,
     is_collection,
@@ -201,24 +199,6 @@ def rel_paths_for_archiving(path):
     return rel_paths, tot_size
 
 
-def initialise_archive(path):
-    pass
-
-#   initial_files = [u".dtool-dataset",
-#                    u"README.yml",
-#                    u"manifest.json"]
-
-#   first_file = initial_files[0]
-
-#   tar_output_path = initialise_tar_archive(path, first_file)
-
-#   for file in initial_files[1:]:
-#       append_to_tar_archive(path, file)
-
-#   return tar_output_path
-
-
-
 # Should this function be deprecated?
 # It is no longer used by the arctool cli.
 def create_archive(path):
@@ -228,20 +208,6 @@ def create_archive(path):
     :returns: path to created tarball
     """
 
-#   tar_output_path = initialise_archive(path)
-
-#   manifest_path = os.path.join(path, 'manifest.json')
-#   with open(manifest_path) as fh:
-#       manifest = json.load(fh)
-
-#   filedict_manifest = manifest["file_list"]
-
-#   for entry in filedict_manifest:
-#       rel_path = entry['path']
-#       rel_path = os.path.join('archive', entry['path'])
-#       append_to_tar_archive(path, rel_path)
-
-#   return tar_output_path
     archive_dataset = ArchiveDataSet.from_path(path)
     archive_file = ArchiveFile(archive_dataset)
     output_path = os.path.join(path, "..")
