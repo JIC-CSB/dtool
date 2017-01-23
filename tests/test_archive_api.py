@@ -65,50 +65,21 @@ def tmp_archive(request):
     return tar_path + '.gz'
 
 
-def test_initialise_and_append_to_tar_archive(tmp_dir):
-    from dtool.archive import initialise_tar_archive, append_to_tar_archive
-    tmp_project = os.path.join(tmp_dir, "project")
-    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
-    archive_output_path = os.path.join(tmp_project, 'archive')
-    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
-    copy_tree(archive_input_path, archive_output_path)
-
-    expected_path = os.path.join(tmp_dir, "project.tar")
-    actual_path = initialise_tar_archive(tmp_project,
-                                         "archive/file1.txt")
-    assert actual_path == expected_path
-    assert os.path.isfile(expected_path)
-
-    actual_path = append_to_tar_archive(tmp_project,
-                                        "archive/dir1/file2.txt")
-    assert actual_path == expected_path
-    assert os.path.isfile(expected_path)
-
-
-def test_compress_archive(tmp_dir):
+def test_compress_archive(tmp_archive):
 
     from dtool.archive import compress_archive
 
-    from dtool.arctool import (
-        new_archive_dataset,
-        create_manifest,
-        create_archive,
-    )
+    tar_filename, _ = tmp_archive.rsplit('.', 1)
+    expected_gz_filename = tar_filename + '.gz'
+    expected_gz_filename = os.path.abspath(expected_gz_filename)
 
-    new_archive_dataset(tmp_dir, TEST_DESCRIPTIVE_METADATA)
-    tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
-    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
-    archive_output_path = os.path.join(tmp_project, 'archive')
-    copy_tree(archive_input_path, archive_output_path)
-    create_manifest(os.path.join(tmp_project, "archive/"))
-
-    tar_filename = create_archive(tmp_project)
+    unzip_command = ["gunzip", tmp_archive]
+    subprocess.call(unzip_command)
     assert os.path.isfile(tar_filename)
+    assert not os.path.isfile(expected_gz_filename)
 
     gzip_filename = compress_archive(tar_filename)
 
-    expected_gz_filename = tar_filename + '.gz'
-    expected_gz_filename = os.path.abspath(expected_gz_filename)
     assert gzip_filename == expected_gz_filename
     assert os.path.isfile(expected_gz_filename)
     assert not os.path.isfile(tar_filename)
@@ -139,56 +110,6 @@ def test_extract_file(tmp_archive):
     readme_path = extract_file(tarball_path, "README.yml")
     assert readme_path == expected_path
     assert os.path.isfile(readme_path)
-
-
-def test_archive_from_gz_file(tmp_archive):
-    from dtool.archive import Archive
-
-    archive = Archive.from_file(tmp_archive)
-
-    assert archive.name == 'brassica_rnaseq_reads'
-    assert len(archive.uuid) == 36
-    assert archive.info['dataset_name'] == 'brassica_rnaseq_reads'
-
-
-def test_archive_from_tar_file(tmp_archive):
-    from dtool.archive import Archive
-
-    unzip_command = ["gunzip", tmp_archive]
-    subprocess.call(unzip_command)
-
-    tar_filename, _ = tmp_archive.rsplit('.', 1)
-
-    archive = Archive.from_file(tar_filename)
-
-    assert archive.name == 'brassica_rnaseq_reads'
-    assert len(archive.uuid) == 36
-    assert archive.info['dataset_name'] == 'brassica_rnaseq_reads'
-
-
-def test_archive_manifest(tmp_archive):
-    from dtool.archive import Archive
-
-    archive = Archive.from_file(tmp_archive)
-
-    manifest = archive.manifest
-
-    assert "file_list" in manifest
-
-    file_list = manifest["file_list"]
-
-    assert len(file_list) == 3
-
-
-def test_archive_calculate_hash(tmp_archive):
-    from dtool.archive import Archive
-
-    archive = Archive.from_file(tmp_archive)
-
-    actual = archive.calculate_file_hash('file1.txt')
-    expected = 'a250369afb3eeaa96fb0df99e7755ba784dfd69c'
-
-    assert actual == expected
 
 
 def test_archive_verify_all(tmp_archive):

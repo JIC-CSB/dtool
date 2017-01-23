@@ -154,14 +154,34 @@ def test_create_archive(tmp_dir):
 def test_from_tar(tmp_archive):
     from dtool.archive import ArchiveFile
 
+    unzip_command = ["gunzip", tmp_archive]
+    subprocess.call(unzip_command)
+
+    tar_filename, _ = tmp_archive.rsplit('.', 1)
+
+    archive_file = ArchiveFile.from_file(tar_filename)
+
+    assert isinstance(archive_file, ArchiveFile)
+    assert archive_file._tar_path == tar_filename
+
+    assert 'dtool_version' in archive_file.admin_metadata
+    assert archive_file.admin_metadata['name'] == 'brassica_rnaseq_reads'
+    assert len(archive_file.admin_metadata['uuid']) == 36
+    assert 'file_list' in archive_file.manifest
+
+
+def test_from_tar_gz(tmp_archive):
+    from dtool.archive import ArchiveFile
+
     archive_file = ArchiveFile.from_file(tmp_archive)
 
     assert isinstance(archive_file, ArchiveFile)
     assert archive_file._tar_path == tmp_archive
 
     assert 'dtool_version' in archive_file.admin_metadata
+    assert archive_file.admin_metadata['name'] == 'brassica_rnaseq_reads'
+    assert len(archive_file.admin_metadata['uuid']) == 36
     assert 'file_list' in archive_file.manifest
-
 
 def test_archive_calculate_hash(tmp_archive):
     from dtool.archive import ArchiveFile
