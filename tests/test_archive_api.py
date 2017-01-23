@@ -52,13 +52,13 @@ def tmp_archive(request):
     os.mkdir(archive_directory_path)
     archive_ds = ArchiveDataSet("brassica_rnaseq_reads")
     archive_ds.persist_to_path(archive_directory_path)
-    archive_file = ArchiveFile(archive_ds)
 
     # Move some data into the archive.
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(archive_directory_path, 'archive')
     copy_tree(archive_input_path, archive_output_path)
 
+    archive_file = ArchiveFile(archive_ds)
     tar_path = archive_file.persist_to_tar(d)
     compress_archive(tar_path)
 

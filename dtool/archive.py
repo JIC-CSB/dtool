@@ -72,6 +72,54 @@ class ArchiveFile(object):
 
         return self._tar_path
 
+    def _extract_file_contents(self, file_path):
+        with tarfile.open(self._tar_path, 'r:*') as tar:
+            fp = tar.extractfile(file_path)
+            contents = fp.read()
+
+        return contents
+
+    def _extract_string_contents(self, file_path):
+        contents = self._extract_file_contents(file_path)
+
+        return contents.decode('utf-8')
+
+    @property
+    def admin_metadata(self):
+
+        return self._admin_metadata
+
+    @property
+    def manifest(self):
+
+        return self._manifest
+
+    @classmethod
+    def from_file(cls, path):
+        """Read archive from file, either .tar or .tar.gz"""
+
+        archive_file = cls()
+
+        archive_file._tar_path = path
+
+        with tarfile.open(path, 'r:*') as tar:
+            first_member = tar.next()
+            archive_name, _ = first_member.name.split(os.path.sep, 1)
+
+        admin_file_path = os.path.join(archive_name, '.dtool', 'dtool')
+        admin_str = archive_file._extract_string_contents(admin_file_path)
+        archive_file._admin_metadata = json.loads(admin_str)
+
+        manifest_file_path = os.path.join(
+            archive_name,
+            archive_file.admin_metadata['manifest_path'])
+        manifest_str = archive_file._extract_string_contents(
+            manifest_file_path)
+        archive_file._manifest = json.loads(manifest_str)
+
+
+        return archive_file
+
 
 class Archive(object):
 

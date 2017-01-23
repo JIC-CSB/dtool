@@ -23,6 +23,38 @@ def tmp_dir(request):
     return d
 
 
+@pytest.fixture
+def tmp_archive(request):
+
+    from dtool.archive import (
+        ArchiveDataSet,
+        ArchiveFile)
+
+    from dtool.archive import compress_archive
+
+    d = tempfile.mkdtemp()
+
+    @request.addfinalizer
+    def teardown():
+        shutil.rmtree(d)
+
+    archive_directory_path = os.path.join(d, "brassica_rnaseq_reads")
+    os.mkdir(archive_directory_path)
+    archive_ds = ArchiveDataSet("brassica_rnaseq_reads")
+    archive_ds.persist_to_path(archive_directory_path)
+
+    # Move some data into the archive.
+    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
+    archive_output_path = os.path.join(archive_directory_path, 'archive')
+    copy_tree(archive_input_path, archive_output_path)
+
+    archive_file = ArchiveFile(archive_ds)
+    tar_path = archive_file.persist_to_tar(d)
+    compress_archive(tar_path)
+
+    return tar_path + '.gz'
+
+
 def test_archive_header_file_order():
     from dtool.archive import ArchiveFile
     assert ArchiveFile.header_file_order == ('.dtool/dtool',
@@ -115,3 +147,15 @@ def test_create_archive(tmp_dir):
         manifest = json.load(fh)
 
     assert len(manifest['file_list']) == 2
+
+
+def test_from_tar(tmp_archive):
+    from dtool.archive import ArchiveFile
+
+    archive_file = ArchiveFile.from_file(tmp_archive)
+
+    assert isinstance(archive_file, ArchiveFile)
+    assert archive_file._tar_path == tmp_archive
+
+    assert 'dtool_version' in archive_file.admin_metadata
+    assert 'file_list' in archive_file.manifest
