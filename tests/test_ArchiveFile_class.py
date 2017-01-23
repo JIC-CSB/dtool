@@ -1,6 +1,7 @@
 """Tests for dtool.archive.ArchiveFile class."""
 
 import os
+import json
 from distutils.dir_util import copy_tree
 import shutil
 import tempfile
@@ -105,3 +106,12 @@ def test_create_archive(tmp_dir):
     untarred_file_set = set(generate_relative_paths(archive_directory_path))
     reference_file_set = set(generate_relative_paths(reference_data_path))
     assert untarred_file_set == reference_file_set
+
+    # Test correctness of manifest
+
+    manifest_path = os.path.join(
+        archive_directory_path, '.dtool', 'manifest.json')
+    with open(manifest_path) as fh:
+        manifest = json.load(fh)
+
+    assert len(manifest['file_list']) == 2

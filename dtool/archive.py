@@ -66,6 +66,7 @@ class ArchiveFile(object):
     def persist_to_tar(self, path):
         """Write archive dataset to tarball."""
 
+        self.archive_dataset.update_manifest()
         self.initialise_tar(path)
         self.append_to_tar(path)
 
