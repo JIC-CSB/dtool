@@ -95,11 +95,11 @@ def test_create_archive(tmp_dir):
         'input',
         ArchiveFile.header_file_order[0])
 
-    assert split_output[0] == expected_first_header_file
+    assert split_output[0].decode("utf-8") == expected_first_header_file
 
     for n, filename in enumerate(ArchiveFile.header_file_order):
         expected_filename = os.path.join('input', filename)
-        assert split_output[n] == expected_filename
+        assert split_output[n].decode("utf-8") == expected_filename
 
     from dtool import generate_relative_paths
     untarred_file_set = set(generate_relative_paths(archive_directory_path))
