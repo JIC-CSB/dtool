@@ -110,7 +110,7 @@ def test_new_archive_dataset(tmp_dir):
     assert dataset_path == expected_path
     assert os.path.isdir(dataset_path)
 
-    expected_dataset_file = os.path.join(dataset_path, ".dtool-dataset")
+    expected_dataset_file = os.path.join(dataset_path, ".dtool", "dtool")
     assert os.path.isfile(expected_dataset_file)
 
     readme_yml_path = os.path.join(tmp_dir,
@@ -132,7 +132,7 @@ def test_new_archive_dataset(tmp_dir):
     assert "uuid" in dataset_info
     assert "unix_username" in dataset_info
     assert dataset_info["manifest_root"] == "archive"
-    assert dataset_info['dataset_name'] == 'brassica_rnaseq_reads'
+    assert dataset_info['name'] == 'brassica_rnaseq_reads'
 
     # Test that yaml is valid.
     with open(readme_yml_path, "r") as fh:
@@ -264,9 +264,9 @@ def test_rel_paths_for_archiving(tmp_dir):
     copy_tree(archive_input_path, archive_output_path)
     create_manifest(os.path.join(tmp_project, "archive/"))
 
-    expected_paths = [u".dtool-dataset",
+    expected_paths = [u".dtool/dtool",
+                      u".dtool/manifest.json",
                       u"README.yml",
-                      u"manifest.json",
                       u"archive/README.txt",
                       u"archive/file1.txt",
                       u"archive/dir1/file2.txt"]
@@ -306,12 +306,12 @@ def test_create_archive(tmp_dir):
 
     # Test that all expected files are present in archive
     expected = set([  # 'brassica_rnaseq_reads',
-                      'brassica_rnaseq_reads/.dtool-dataset',
-                      # 'brassica_rnaseq_reads/archive',
+                      'brassica_rnaseq_reads/.dtool/dtool',
+                      'brassica_rnaseq_reads/.dtool/manifest.json',
+                      'brassica_rnaseq_reads/archive',
                       'brassica_rnaseq_reads/README.yml',
-                      'brassica_rnaseq_reads/manifest.json',
                       'brassica_rnaseq_reads/archive/README.txt',
-                      # 'brassica_rnaseq_reads/archive/dir1',
+                      'brassica_rnaseq_reads/archive/dir1',
                       'brassica_rnaseq_reads/archive/file1.txt',
                       'brassica_rnaseq_reads/archive/dir1/file2.txt'])
 
@@ -324,9 +324,10 @@ def test_create_archive(tmp_dir):
     assert expected == actual, (expected, actual)
 
     # Test that order of critical files is correct
-    expected = ['brassica_rnaseq_reads/.dtool-dataset',
+    expected = ['brassica_rnaseq_reads/.dtool/dtool',
+                'brassica_rnaseq_reads/.dtool/manifest.json',
                 'brassica_rnaseq_reads/README.yml',
-                'brassica_rnaseq_reads/manifest.json']
+                ]
 
     actual = []
     with tarfile.open(expected_tar_filename, 'r') as tar:

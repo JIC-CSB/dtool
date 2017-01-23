@@ -13,12 +13,13 @@ from dtool import (
     log,
     DataSet,
 )
+from dtool.archive import ArchiveDataSet, ArchiveFile
 from dtool.manifest import (
     generate_manifest,
 )
 from dtool.archive import (
-    initialise_tar_archive,
-    append_to_tar_archive,
+#   initialise_tar_archive,
+#   append_to_tar_archive,
     extract_file,
     icreate_collection,
     is_collection,
@@ -182,9 +183,7 @@ def rel_paths_for_archiving(path):
     :param path: path to directory for archiving
     :returns: list of relative paths for archiving, and total size of files
     """
-    rel_paths = [u".dtool-dataset",
-                 u"README.yml",
-                 u"manifest.json"]
+    rel_paths = list(ArchiveFile.header_file_order)
     tot_size = 0
 
     for rp in rel_paths:
@@ -203,19 +202,21 @@ def rel_paths_for_archiving(path):
 
 
 def initialise_archive(path):
+    pass
 
-    initial_files = [u".dtool-dataset",
-                     u"README.yml",
-                     u"manifest.json"]
+#   initial_files = [u".dtool-dataset",
+#                    u"README.yml",
+#                    u"manifest.json"]
 
-    first_file = initial_files[0]
+#   first_file = initial_files[0]
 
-    tar_output_path = initialise_tar_archive(path, first_file)
+#   tar_output_path = initialise_tar_archive(path, first_file)
 
-    for file in initial_files[1:]:
-        append_to_tar_archive(path, file)
+#   for file in initial_files[1:]:
+#       append_to_tar_archive(path, file)
 
-    return tar_output_path
+#   return tar_output_path
+
 
 
 # Should this function be deprecated?
@@ -227,20 +228,24 @@ def create_archive(path):
     :returns: path to created tarball
     """
 
-    tar_output_path = initialise_archive(path)
+#   tar_output_path = initialise_archive(path)
 
-    manifest_path = os.path.join(path, 'manifest.json')
-    with open(manifest_path) as fh:
-        manifest = json.load(fh)
+#   manifest_path = os.path.join(path, 'manifest.json')
+#   with open(manifest_path) as fh:
+#       manifest = json.load(fh)
 
-    filedict_manifest = manifest["file_list"]
+#   filedict_manifest = manifest["file_list"]
 
-    for entry in filedict_manifest:
-        rel_path = entry['path']
-        rel_path = os.path.join('archive', entry['path'])
-        append_to_tar_archive(path, rel_path)
+#   for entry in filedict_manifest:
+#       rel_path = entry['path']
+#       rel_path = os.path.join('archive', entry['path'])
+#       append_to_tar_archive(path, rel_path)
 
-    return tar_output_path
+#   return tar_output_path
+    archive_dataset = ArchiveDataSet.from_path(path)
+    archive_file = ArchiveFile(archive_dataset)
+    output_path = os.path.join(path, "..")
+    return archive_file.persist_to_tar(output_path)
 
 
 def summarise_archive(path):
@@ -255,7 +260,7 @@ def summarise_archive(path):
     archive_name, exts = archive_basename.split('.', 1)
     assert exts == 'tar.gz'
 
-    manifest_path = os.path.join(archive_name, 'manifest.json')
+    manifest_path = os.path.join(archive_name, '.dtool/manifest.json')
 
     with tarfile.open(path, 'r:gz') as tar:
         manifest_fp = tar.extractfile(manifest_path)
@@ -278,7 +283,7 @@ def extract_manifest(archive_path):
     :param archive_path: path to archive
     :returns: path to extracted manifest file
     """
-    return extract_file(archive_path, "manifest.json")
+    return extract_file(archive_path, ".dtool/manifest.json")
 
 
 def extract_readme(archive_path):
