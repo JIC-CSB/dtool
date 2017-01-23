@@ -111,7 +111,7 @@ def new_archive_dataset(staging_path, descriptive_metadata):
         'arctool_archive_dir_README.txt',
         {})
 
-    return dataset, dataset_path
+    return dataset, dataset_path, archive_readme_file_path
 
 
 def create_manifest(path):

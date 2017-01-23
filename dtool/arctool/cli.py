@@ -24,8 +24,8 @@ from dtool.arctool import (
     new_archive_dataset,
 )
 from dtool.archive import (
-    Archive,
-    append_to_tar_archive,
+    ArchiveFile,
+#   append_to_tar_archive,
     compress_archive,
     verify_all,
     is_collection
@@ -118,7 +118,8 @@ def cli_new_dataset(staging_path, project_metadata=dict()):
         ("owner_name", u"Your Name"),
         ("owner_email", u"your.email@example.com"),
         ("unix_username", u"namey"),
-        ("archive_date", unicode(datetime.date.today())),
+#       ("archive_date", unicode(datetime.date.today())),
+        ("archive_date", datetime.date.today()),
     ]
     descriptive_metadata = {}
     for name, default in readme_info:
@@ -127,24 +128,20 @@ def cli_new_dataset(staging_path, project_metadata=dict()):
 
     descriptive_metadata.update(project_metadata)
 
-    dataset, dataset_path = new_archive_dataset(staging_path,
-                                                descriptive_metadata)
+    dataset, dataset_path, readme_path = new_archive_dataset(staging_path,
+                                                             descriptive_metadata)
 
     click.secho('Created new archive in: ', nl=False)
     click.secho(dataset_path, fg='green')
 
-    # Fix problem serializing datetime objects
-    metadata = dataset.descriptive_metadata
-    metadata['archive_date'] = str(metadata['archive_date'])
-
-    log_data = {'metadata': metadata,
+    log_data = {'metadata': descriptive_metadata,
                 'archive_path': dataset_path,
                 'dataset_uuid': dataset.uuid}
     logger.emit('new', log_data)
 
-    archive_data_path = os.path.join(dataset_path, dataset.manifest_root)
+    archive_data_path = os.path.join(dataset_path, dataset.data_directory)
     click.secho('Now:')
-    click.secho('  1. Edit {}'.format(dataset.readme_path), fg='yellow')
+    click.secho('  1. Edit {}'.format(readme_path), fg='yellow')
     click.secho('  2. Move archive data into {}'.format(archive_data_path),
                 fg='yellow')
     click.secho('Then: ', nl=False)
@@ -198,7 +195,7 @@ def create(path):
                 'dataset_uuid': dataset.uuid}
     logger.emit('pre_create_archive', log_data)
 
-    readme_path = dataset.readme_path
+    readme_path = dataset.abs_readme_path
     click.secho('Validating readme at: ', nl=False)
     click.secho(readme_path, fg='green')
     readme_str = open(readme_path, "r").read()
@@ -211,25 +208,31 @@ def create(path):
         click.secho("No manifest file found in archive", fg='red')
         sys.exit(2)
 
-    with open(manifest_path) as fh:
-        manifest = json.load(fh)
-    manifest_filedict = manifest['file_list']
+#   with open(manifest_path) as fh:
+#       manifest = json.load(fh)
+#   manifest_filedict = manifest['file_list']
+
+    manifest_filedict = dataset.manifest["file_list"]
     tot_size = sum(entry['size'] for entry in manifest_filedict)
 
-    tar_file_path = dtool.arctool.initialise_archive(path)
+    archive_file = ArchiveFile(dataset)
+    hacked_path = os.path.join(path, "..")
+    tar_file_path = archive_file.persist_to_tar(hacked_path)
 
-    def show_func(item):
-        if item is None:
-            return ''
-        return str(item['path'])
+#   tar_file_path = dtool.arctool.initialise_archive(path)
 
-    with click.progressbar(manifest_filedict,
-                           length=tot_size,
-                           item_show_func=show_func) as bar:
-        for entry in bar:
-            rpath = os.path.join('archive', entry['path'])
-            append_to_tar_archive(path, rpath)
-            bar.update(entry['size'])
+#   def show_func(item):
+#       if item is None:
+#           return ''
+#       return str(item['path'])
+
+#   with click.progressbar(manifest_filedict,
+#                          length=tot_size,
+#                          item_show_func=show_func) as bar:
+#       for entry in bar:
+#           rpath = os.path.join('archive', entry['path'])
+#           append_to_tar_archive(path, rpath)
+#           bar.update(entry['size'])
 
     click.secho('Archiving data at: ', nl=False)
     click.secho(path, fg='green')
@@ -255,13 +258,13 @@ def create(path):
                 type=click.Path(exists=True))
 def compress(path, cores, slurm):
     path = os.path.abspath(path)
-    archive = Archive.from_file(path)
+    archive = ArchiveFile.from_file(path)
 
     if not slurm:
         click.secho('Compressing archive: ', nl=False)
         click.secho(path, fg='green')
 
-        pre_log = {'dataset_uuid': archive.uuid,
+        pre_log = {'dataset_uuid': archive.admin_metadata["uuid"],
                    'archive_path': path,
                    'cores': cores,
                    'tar_size': os.stat(path).st_size}
@@ -272,7 +275,7 @@ def compress(path, cores, slurm):
         click.secho('Created compressed file: ', nl=False)
         click.secho(compressed_archive_path, fg='green')
 
-        post_log = {'dataset_uuid': archive.uuid,
+        post_log = {'dataset_uuid': archive.admin_metadata["uuid"],
                     'compressed_archive_path': compressed_archive_path,
                     'gzip_size': os.stat(compressed_archive_path).st_size}
         logger.emit('post_compress_archive', post_log)

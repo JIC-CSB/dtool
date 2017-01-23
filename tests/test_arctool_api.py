@@ -101,8 +101,8 @@ def test_archive_fixture(tmp_archive):
 def test_new_archive_dataset(tmp_dir):
     from dtool.arctool import new_archive_dataset
 
-    dataset, dataset_path = new_archive_dataset(tmp_dir,
-                                                TEST_DESCRIPTIVE_METADATA)
+    dataset, dataset_path, _ = new_archive_dataset(tmp_dir,
+                                                   TEST_DESCRIPTIVE_METADATA)
 
     expected_path = os.path.join(tmp_dir,
                                  "brassica_rnaseq_reads")
