@@ -12,9 +12,10 @@ import click
 from dtool import (
     __version__,
     DataSet,
+    Project,
 )
 from dtool.arctool import (
-    Project,
+    # Project,
     create_manifest,
     extract_manifest,
     extract_readme,
@@ -59,23 +60,30 @@ def new(ctx, staging_path):
 
     # Makes default behaviour for 'arctool new' be create dataset
     if ctx.invoked_subcommand is None:
-        if not is_collection(staging_path):
-            project = create_project(staging_path)
-        else:
+        try:
             project = Project.from_path(staging_path)
+            project_path = staging_path
+        except ValueError:
+            project = create_project(staging_path)
+            project_path = os.path.join(staging_path, project.name)
 
-        cli_new_dataset(project.path, project.metadata)
+        cli_new_dataset(project_path, project.descriptive_metadata)
 
 
 def create_project(staging_path):
 
+    staging_path = os.path.abspath(staging_path)
+
     project_name = click.prompt('project_name',
                                 default='my_project')
 
-    project = Project(staging_path, project_name)
+    project = Project(project_name)
+    project_dir = os.path.join(staging_path, project_name)
+    os.mkdir(project_dir)
+    project.persist_to_path(project_dir)
 
     click.secho('Created new project in: ', nl=False)
-    click.secho(project.path, fg='green')
+    click.secho(project_dir, fg='green')
 
     return project
 

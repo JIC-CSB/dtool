@@ -56,7 +56,6 @@ def dataset():
     os.mkdir(dataset_name)
 
     ds = DataSet(dataset_name, 'data')
-    ds.descriptive_metadata = descriptive_metadata
     ds.persist_to_path(descriptive_metadata["dataset_name"])
 
     write_templated_file(ds.abs_readme_path,

@@ -1,6 +1,7 @@
 """Tests for the arctool cli."""
 
 import os
+import json
 import tempfile
 import shutil
 import subprocess
@@ -133,7 +134,16 @@ def test_new(chdir):
 
     assert not result.exception
 
-    assert os.path.isfile('my_test_project/.dtool-collection')
+    # Test creation of project
+    assert os.path.isdir('my_test_project')
+    admin_metadata_file = 'my_test_project/.dtool/dtool'
+    assert os.path.isfile(admin_metadata_file)
+    with open(admin_metadata_file) as fh:
+        admin_metadata = json.load(fh)
+    assert admin_metadata['type'] == 'collection'
+    assert os.path.isfile('my_test_project/README.yml')
+
+    # Test creation of dataset
     assert os.path.isdir('my_test_project/my_dataset')
     assert os.path.isdir('my_test_project/my_dataset/.dtool')
     assert os.path.isfile('my_test_project/my_dataset/.dtool/dtool')
@@ -186,7 +196,11 @@ def test_new_project(chdir):
     assert not result.exception
 
     assert os.path.isdir('my_test_project')
-    assert os.path.isfile('my_test_project/.dtool-collection')
+    admin_metadata_file = 'my_test_project/.dtool/dtool'
+    assert os.path.isfile(admin_metadata_file)
+    with open(admin_metadata_file) as fh:
+        admin_metadata = json.load(fh)
+    assert admin_metadata['type'] == 'collection'
     assert os.path.isfile('my_test_project/README.yml')
 
 
