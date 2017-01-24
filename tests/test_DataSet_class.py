@@ -43,7 +43,7 @@ def test_dataset_initialisation():
     assert dataset._admin_metadata['manifest_path'] == expected_manifest_path
     assert dataset._abs_manifest_path is None
     assert isinstance(dataset.dtool_version, str)
-    assert isinstance(dataset.unix_username, str)
+    assert isinstance(dataset.creator_username, str)
     assert dataset.abs_readme_path is None
 
     assert dataset.data_directory == '.'

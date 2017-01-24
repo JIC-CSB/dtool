@@ -114,7 +114,7 @@ class DataSet(_DtoolObject):
                              "name": name,
                              "manifest_path": os.path.join(
                                     ".dtool", "manifest.json"),
-                             "unix_username": getpass.getuser(),
+                             "creator_username": getpass.getuser(),
                              "manifest_root": data_directory}
         super(DataSet, self).__init__(specific_metadata)
 
@@ -124,9 +124,9 @@ class DataSet(_DtoolObject):
         return self._admin_metadata['name']
 
     @property
-    def unix_username(self):
-        """Return the unix username of the creator of the dataset."""
-        return self._admin_metadata['unix_username']
+    def creator_username(self):
+        """Return the username of the creator of the dataset."""
+        return self._admin_metadata['creator_username']
 
     @property
     def data_directory(self):
