@@ -31,6 +31,7 @@ import yaml
 import magic
 
 from dtool.filehasher import generate_file_hash
+from dtool.utils import write_templated_file
 
 __version__ = "0.7.0"
 
@@ -91,6 +92,10 @@ class _DtoolObject(object):
         return os.path.join(self._abs_path,
                             self._admin_metadata['readme_path'])
 
+    def _safe_create_readme(self):
+        if not os.path.isfile(self.abs_readme_path):
+            with open(self.abs_readme_path, 'w') as fh:
+                fh.write("")
 
 class DataSet(_DtoolObject):
     """Class for representing datasets."""
@@ -192,9 +197,7 @@ class DataSet(_DtoolObject):
         dtool_dir_path = os.path.join(path, '.dtool')
         os.mkdir(dtool_dir_path)
 
-        if not os.path.isfile(self.abs_readme_path):
-            with open(self.abs_readme_path, 'w') as fh:
-                fh.write("")
+        self._safe_create_readme()
 
         self.update_manifest()
 
@@ -288,11 +291,26 @@ class Collection(_DtoolObject):
         dtool_dir_path = os.path.join(path, ".dtool")
         dtool_file_path = os.path.join(dtool_dir_path, "dtool")
         os.mkdir(dtool_dir_path)
-        if not os.path.isfile(self.abs_readme_path):
-            with open(self.abs_readme_path, "w") as fh:
-                fh.write("")
+        self._safe_create_readme()
         with open(dtool_file_path, "w") as fh:
             json.dump(self._admin_metadata, fh)
+
+
+class Project(Collection):
+    """Class representing a specific project.
+
+    Writes a README.yml with the project name."""
+
+    def __init__(self, name):
+        super(Project, self).__init__()
+        self.name = name
+
+    def _safe_create_readme(self):
+        descriptive_metadata = {'project_name': self.name}
+        write_templated_file(
+            self.abs_readme_path,
+            'arctool_project_README.yml',
+            descriptive_metadata)
 
 
 def log(message):
