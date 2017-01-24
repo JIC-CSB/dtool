@@ -50,7 +50,6 @@ class _DtoolObject(object):
         self._admin_metadata.update(extra_admin_metadata)
         self._abs_path = None
 
-  
     @property
     def descriptive_metadata(self):
         """Return descriptive metadata as a dictionary.
@@ -96,7 +95,6 @@ class _DtoolObject(object):
 class DataSet(_DtoolObject):
     """Class for representing datasets."""
 
-
     def __init__(self, name, data_directory='.'):
         specific_metadata = {"type": "dataset",
                              "name": name,
@@ -111,7 +109,6 @@ class DataSet(_DtoolObject):
         """Return the name of the dataset."""
         return self._admin_metadata['name']
 
-
     @property
     def unix_username(self):
         """Return the unix username of the creator of the dataset."""
@@ -123,7 +120,6 @@ class DataSet(_DtoolObject):
         the manifest root)."""
 
         return self._admin_metadata['manifest_root']
-
 
     @property
     def _abs_manifest_path(self):
@@ -244,7 +240,6 @@ class Collection(_DtoolObject):
         specific_metadata = {"type": "collection"}
         super(Collection, self).__init__(specific_metadata)
 
-  
     @classmethod
     def from_path(cls, path):
         """Return instance of :class:`dtool.Collection` instantiated from path.
