@@ -45,6 +45,7 @@ VERBOSE = True
 class DtoolTypeError(TypeError):
     pass
 
+
 class NotDtoolObject(TypeError):
     pass
 
@@ -103,6 +104,7 @@ class _DtoolObject(object):
         if not os.path.isfile(self.abs_readme_path):
             with open(self.abs_readme_path, 'w') as fh:
                 fh.write("")
+
 
 class DataSet(_DtoolObject):
     """Class for representing datasets."""
@@ -267,7 +269,8 @@ class Collection(_DtoolObject):
 
         dtool_file_path = os.path.join(path, '.dtool', 'dtool')
         if not os.path.isfile(dtool_file_path):
-            raise NotDtoolObject('Not a collection; .dtool/dtool does not exist')
+            raise NotDtoolObject(
+                'Not a collection; .dtool/dtool does not exist')
 
         with open(dtool_file_path) as fh:
             collection._admin_metadata = json.load(fh)

@@ -17,7 +17,6 @@ from dtool import (
     NotDtoolObject,
 )
 from dtool.arctool import (
-    # Project,
     create_manifest,
     extract_manifest,
     extract_readme,
@@ -29,7 +28,6 @@ from dtool.archive import (
     ArchiveFile,
     compress_archive,
     verify_all,
-    is_collection
 )
 from dtool.slurm import generate_slurm_script
 

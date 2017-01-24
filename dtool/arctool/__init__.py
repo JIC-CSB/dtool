@@ -7,8 +7,6 @@ import datetime
 
 import yaml
 
-from jinja2 import Environment, PackageLoader
-
 from dtool import (
     log,
     DataSet,
@@ -19,59 +17,11 @@ from dtool.manifest import (
 )
 from dtool.archive import (
     extract_file,
-    icreate_collection,
-    is_collection,
 )
 from dtool.utils import write_templated_file
 
 HERE = os.path.dirname(__file__)
 TEMPLATE_DIR = os.path.join(HERE, '..', 'templates')
-
-
-class Project(object):
-    """Arctool project as a collection of datasets."""
-
-    def __init__(self, staging_path, project_name):
-        self.path = icreate_collection(staging_path, project_name)
-        self.readme_file = os.path.join(self.path, 'README.yml')
-        self.name = project_name
-
-        self._safe_create_readme()
-
-    @classmethod
-    def from_path(cls, project_path):
-
-        if not is_collection(project_path):
-            raise ValueError('Not a project: {}'.format(project_path))
-
-        readme_file = os.path.join(project_path, 'README.yml')
-
-        with open(readme_file) as fh:
-            project_name = yaml.load(fh)['project_name']
-
-        staging_path = os.path.join(project_path, '..')
-        return cls(staging_path, project_name)
-
-    def _safe_create_readme(self):
-
-        if os.path.isfile(self.readme_file):
-            return
-
-        env = Environment(loader=PackageLoader('dtool', 'templates'),
-                          keep_trailing_newline=True)
-
-        readme_template = env.get_template('arctool_project_README.yml')
-
-        project_metadata = {'project_name': self.name}
-
-        with open(self.readme_file, 'w') as fh:
-            fh.write(readme_template.render(project_metadata))
-
-    @property
-    def metadata(self):
-
-        with open(self.readme_file) as fh:
-            return yaml.load(fh)
 
 
 def new_archive_dataset(staging_path, descriptive_metadata):

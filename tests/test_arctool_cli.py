@@ -237,38 +237,3 @@ def test_create_new_datasets_within_existing_project(chdir):
         result = runner.invoke(new, input=input_string)
 
         assert not result.exception
-
-
-def test_create_new_datasets_within_existing_project(chdir):
-
-    from click.testing import CliRunner
-    from dtool.arctool.cli import new
-
-    runner = CliRunner()
-
-    input_string = 'my_test_project\n'
-    input_string += '\n'  # prompting for project with create dataset
-    input_string += 'my_dataset\n'
-    input_string += '\n'  # confidential
-    input_string += '\n'  # personally identifiable information
-    input_string += 'Test User\n'
-    input_string += 'test.user@example.com\n'
-    input_string += 'usert\n'
-    input_string += '\n'  # Date
-
-    result = runner.invoke(new, input=input_string)
-
-    with remember_cwd():
-        os.chdir('my_test_project')
-
-        input_string = '\n'  # prompting for project
-        input_string += 'my_second_dataset\n'
-        input_string += '\n'  # confidential
-        input_string += '\n'  # personally identifiable information
-        input_string += 'Test User\n'
-        input_string += 'test.user@example.com\n'
-        input_string += 'usert\n'
-        input_string += '\n'  # Date
-        result = runner.invoke(new, input=input_string)
-
-        assert not result.exception
