@@ -326,6 +326,29 @@ class Project(Collection):
                 descriptive_metadata)
 
 
+class DescriptiveMetadata(object):
+    """Class for building up descriptive metadata."""
+
+    def __init__(self, schema=None):
+        if schema is None:
+            self._schema = None
+            self._ordered_keys = []
+            self._dict = {}
+        else:
+            self._ordered_keys, _ = map(list, zip(*schema))
+            self._dict = dict(schema)
+
+    def __getitem__(self, key):
+        return self._dict[key]
+
+    @property
+    def ordered_keys(self):
+        return self._ordered_keys
+
+    def update(self, d):
+        self._dict.update(d)
+
+
 def log(message):
     """Log a message.
 
