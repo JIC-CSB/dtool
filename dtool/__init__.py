@@ -315,11 +315,12 @@ class Project(Collection):
         self.name = name
 
     def _safe_create_readme(self):
-        descriptive_metadata = {'project_name': self.name}
-        write_templated_file(
-            self.abs_readme_path,
-            'arctool_project_README.yml',
-            descriptive_metadata)
+        if not os.path.isfile(self.abs_readme_path):
+            descriptive_metadata = {'project_name': self.name}
+            write_templated_file(
+                self.abs_readme_path,
+                'arctool_project_README.yml',
+                descriptive_metadata)
 
 
 def log(message):
