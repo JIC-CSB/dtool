@@ -305,3 +305,17 @@ def test_update_manifest_does_nothing_if_not_persisted():
     dataset.update_manifest()
 
     assert dataset.manifest == {}
+
+
+def test_decriptive_metadata_property(tmp_dir):
+    from dtool import DataSet
+    dataset = DataSet('my_dataset')
+    assert dataset.descriptive_metadata == {}
+
+    dataset.persist_to_path(tmp_dir)
+    assert dataset.descriptive_metadata == {}
+
+    with open(dataset.abs_readme_path, "w") as fh:
+        fh.write("---\n")
+        fh.write("project: my_project\n")
+    assert dataset.descriptive_metadata == {"project": "my_project"}

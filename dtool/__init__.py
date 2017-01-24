@@ -41,20 +41,32 @@ VERBOSE = True
 # structural metadata - manifest.json
 
 
-class DataSet(object):
-    """Class for representing datasets."""
+class _DtoolObject(object):
 
-    def __init__(self, name, data_directory='.'):
-        self._admin_metadata = {'uuid': str(uuid.uuid4()),
-                                'name': name,
-                                'type': 'dataset',
-                                'dtool_version': __version__,
-                                'readme_path': 'README.yml',
-                                'manifest_path': os.path.join(
-                                    '.dtool', 'manifest.json'),
-                                'unix_username': getpass.getuser(),
-                                'manifest_root': data_directory}
+    def __init__(self, extra_admin_metadata={}):
+        self._admin_metadata = {"uuid": str(uuid.uuid4()),
+                                "readme_path": "README.yml",
+                                "dtool_version": __version__}
+        self._admin_metadata.update(extra_admin_metadata)
         self._abs_path = None
+
+  
+    @property
+    def descriptive_metadata(self):
+        """Return descriptive metadata as a dictionary.
+
+        Read in from README.yml dynamically. Returns empty dictionary
+        if file does not exist or is empty.
+
+        Current implementation will return list if README.yml contains
+        list as top level data structure.
+        """
+        if self.abs_readme_path is not None:
+            with open(self.abs_readme_path) as fh:
+                contents = yaml.load(fh)
+                if contents:
+                    return contents
+        return {}
 
     def __eq__(self, other):
         return self._admin_metadata == other._admin_metadata
@@ -65,14 +77,40 @@ class DataSet(object):
         return self._admin_metadata['uuid']
 
     @property
+    def dtool_version(self):
+        """Return the version of the dtool API."""
+        return self._admin_metadata['dtool_version']
+
+    @property
+    def abs_readme_path(self):
+        """Return the absolute path of the dataset or None.
+
+        Returns None if not persisted to path.
+        """
+        if self._abs_path is None:
+            return None
+        return os.path.join(self._abs_path,
+                            self._admin_metadata['readme_path'])
+
+
+class DataSet(_DtoolObject):
+    """Class for representing datasets."""
+
+
+    def __init__(self, name, data_directory='.'):
+        specific_metadata = {"type": "dataset",
+                             "name": name,
+                             "manifest_path": os.path.join(
+                                    ".dtool", "manifest.json"),
+                             "unix_username": getpass.getuser(),
+                             "manifest_root": data_directory}
+        super(DataSet, self).__init__(specific_metadata)
+
+    @property
     def name(self):
         """Return the name of the dataset."""
         return self._admin_metadata['name']
 
-    @property
-    def dtool_version(self):
-        """Return the version of the dtool API."""
-        return self._admin_metadata['dtool_version']
 
     @property
     def unix_username(self):
@@ -86,16 +124,6 @@ class DataSet(object):
 
         return self._admin_metadata['manifest_root']
 
-    @property
-    def abs_readme_path(self):
-        """Return the absolute path of the dataset or None.
-
-        Returns None if not persisted to path.
-        """
-        if self._abs_path is None:
-            return None
-        return os.path.join(self._abs_path,
-                            self._admin_metadata['readme_path'])
 
     @property
     def _abs_manifest_path(self):
@@ -209,57 +237,14 @@ class DataSet(object):
         return dataset
 
 
-class Collection(object):
+class Collection(_DtoolObject):
     """Class for representing collections of data sets."""
 
     def __init__(self):
-        self._admin_metadata = {"type": "collection",
-                                "uuid": str(uuid.uuid4()),
-                                "readme_path": "README.yml",
-                                "dtool_version": __version__}
-        self._abs_path = None
+        specific_metadata = {"type": "collection"}
+        super(Collection, self).__init__(specific_metadata)
 
-    def __eq__(self, other):
-        return self._admin_metadata == other._admin_metadata
-
-    @property
-    def uuid(self):
-        """Return the collection's UUID."""
-        return self._admin_metadata['uuid']
-
-    @property
-    def dtool_version(self):
-        """Return the version of the dtool API."""
-        return self._admin_metadata['dtool_version']
-
-    @property
-    def abs_readme_path(self):
-        """Return the absolute path of the dataset or None.
-
-        Returns None if not persisted to path.
-        """
-        if self._abs_path is None:
-            return None
-        return os.path.join(self._abs_path,
-                            self._admin_metadata['readme_path'])
-
-    @property
-    def descriptive_metadata(self):
-        """Return descriptive metadata as a dictionary.
-
-        Read in from README.yml dynamically. Returns empty dictionary
-        if file does not exist or is empty.
-
-        Current implementation will return list if README.yml contains
-        list as top level data structure.
-        """
-        if self.abs_readme_path is not None:
-            with open(self.abs_readme_path) as fh:
-                contents = yaml.load(fh)
-                if contents:
-                    return contents
-        return {}
-
+  
     @classmethod
     def from_path(cls, path):
         """Return instance of :class:`dtool.Collection` instantiated from path.
