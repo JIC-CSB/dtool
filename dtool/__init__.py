@@ -42,6 +42,13 @@ VERBOSE = True
 # structural metadata - manifest.json
 
 
+class DtoolTypeError(TypeError):
+    pass
+
+class NotDtoolObject(TypeError):
+    pass
+
+
 class _DtoolObject(object):
 
     def __init__(self, extra_admin_metadata={}):
@@ -210,25 +217,26 @@ class DataSet(_DtoolObject):
         """Return instance of :class:`dtool.DataSet` instantiated from path.
 
         :param path: path to collection directory
-        :raises: ValueError if the path has not been marked up
-                 as a collection in the .dtool/dtool file.
+        :raises: DtoolTypeError if the path has not been marked up
+                 as a dataset in the .dtool/dtool file.
+                 NotDtoolObject exception if .dtool/dtool not present.
         :returns: :class:`dtool.DataSet`
         """
         path = os.path.abspath(path)
         dtool_file_path = os.path.join(path, '.dtool', 'dtool')
         if not os.path.isfile(dtool_file_path):
-            raise ValueError('Not a dataset; .dtool/dtool does not exist')
+            raise NotDtoolObject('Not a dataset; .dtool/dtool does not exist')
 
         dataset = DataSet("")
         with open(dtool_file_path) as fh:
             dataset._admin_metadata = json.load(fh)
 
         if 'type' not in dataset._admin_metadata:
-            raise ValueError(
+            raise DtoolTypeError(
                 'Not a dataset; no type definition in .dtool/dtool')
 
         if dataset._admin_metadata['type'] != 'dataset':
-            raise ValueError(
+            raise DtoolTypeError(
                 'Not a dataset; wrong type definition in .dtool/dtool')
 
         dataset._abs_path = path
@@ -248,8 +256,9 @@ class Collection(_DtoolObject):
         """Return instance of :class:`dtool.Collection` instantiated from path.
 
         :param path: path to collection directory
-        :raises: ValueError if the path has not been marked up
+        :raises: DtoolTypeError if the path has not been marked up
                  as a collection in the .dtool/dtool file.
+                 NotDtoolObject exception if .dtool/dtool not present.
         :returns: :class:`dtool.Collection`
         """
         path = os.path.abspath(path)
@@ -258,17 +267,17 @@ class Collection(_DtoolObject):
 
         dtool_file_path = os.path.join(path, '.dtool', 'dtool')
         if not os.path.isfile(dtool_file_path):
-            raise ValueError('Not a collection; .dtool/dtool does not exist')
+            raise NotDtoolObject('Not a collection; .dtool/dtool does not exist')
 
         with open(dtool_file_path) as fh:
             collection._admin_metadata = json.load(fh)
 
         if 'type' not in collection._admin_metadata:
-            raise ValueError(
+            raise DtoolTypeError(
                 'Not a collection; no type definition in .dtool/dtool')
 
         if collection._admin_metadata['type'] != 'collection':
-            raise ValueError(
+            raise DtoolTypeError(
                 'Not a collection; wrong type definition in .dtool/dtool')
 
         collection._abs_path = path

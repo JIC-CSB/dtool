@@ -112,7 +112,7 @@ def test_from_path(tmp_dir):
 
 
 def test_check_type_on_from_path(chdir):
-    from dtool import Collection
+    from dtool import Collection, DtoolTypeError
 
     admin_metadata = {'type': 'dataset'}
     dtool_dir = '.dtool'
@@ -122,12 +122,12 @@ def test_check_type_on_from_path(chdir):
     with open(dtool_file, 'w') as fh:
         json.dump(admin_metadata, fh)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(DtoolTypeError):
         Collection.from_path('.')
 
 
-def test_from_path_raises_valuerror_if_type_does_not_exist(chdir):
-    from dtool import Collection
+def test_from_path_raises_DtoolTypeError_if_type_does_not_exist(chdir):
+    from dtool import Collection, DtoolTypeError
 
     admin_metadata = {}
     dtool_dir = '.dtool'
@@ -137,24 +137,24 @@ def test_from_path_raises_valuerror_if_type_does_not_exist(chdir):
     with open(dtool_file, 'w') as fh:
         json.dump(admin_metadata, fh)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(DtoolTypeError):
         Collection.from_path('.')
 
 
-def test_no_dtool_file_raises_valueerror(chdir):
-    from dtool import Collection
+def test_no_dtool_file_raises_NotDtoolObject(chdir):
+    from dtool import Collection, NotDtoolObject
 
     dtool_dir = '.dtool'
     os.mkdir(dtool_dir)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(NotDtoolObject):
         Collection.from_path('.')
 
 
-def test_no_dtool_dir_raises_valueerror(tmp_dir):
-    from dtool import Collection
+def test_no_dtool_dir_raises_NotDtoolObject(tmp_dir):
+    from dtool import Collection, NotDtoolObject
 
-    with pytest.raises(ValueError):
+    with pytest.raises(NotDtoolObject):
         Collection.from_path(tmp_dir)
 
 

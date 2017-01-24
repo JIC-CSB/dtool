@@ -232,21 +232,21 @@ def test_dataset_from_path(tmp_dir):
 
 
 def test_dataset_from_path_raises_if_no_dtool_file(tmp_dir):
-    from dtool import DataSet
-    with pytest.raises(ValueError):
+    from dtool import DataSet, NotDtoolObject
+    with pytest.raises(NotDtoolObject):
         DataSet.from_path(tmp_dir)
 
 
 def test_dataset_from_path_if_called_on_collection(tmp_dir):
-    from dtool import DataSet, Collection
+    from dtool import DataSet, Collection, DtoolTypeError
     collection = Collection()
     collection.persist_to_path(tmp_dir)
-    with pytest.raises(ValueError):
+    with pytest.raises(DtoolTypeError):
         DataSet.from_path(tmp_dir)
 
 
-def test_from_path_raises_valuerror_if_type_does_not_exist(chdir):
-    from dtool import DataSet
+def test_from_path_raises_DtoolTypeError_if_type_does_not_exist(chdir):
+    from dtool import DataSet, DtoolTypeError
 
     admin_metadata = {}
     dtool_dir = '.dtool'
@@ -256,7 +256,7 @@ def test_from_path_raises_valuerror_if_type_does_not_exist(chdir):
     with open(dtool_file, 'w') as fh:
         json.dump(admin_metadata, fh)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(DtoolTypeError):
         DataSet.from_path('.')
 
 

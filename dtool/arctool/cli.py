@@ -13,6 +13,8 @@ from dtool import (
     __version__,
     DataSet,
     Project,
+    DtoolTypeError,
+    NotDtoolObject,
 )
 from dtool.arctool import (
     # Project,
@@ -63,9 +65,11 @@ def new(ctx, staging_path):
         try:
             project = Project.from_path(staging_path)
             project_path = staging_path
-        except ValueError:
+        except NotDtoolObject:
             project = create_project(staging_path)
             project_path = os.path.join(staging_path, project.name)
+        except DtoolTypeError:
+            raise(click.UsageError("Don't create a project in a dataset"))
 
         cli_new_dataset(project_path, project.descriptive_metadata)
 
