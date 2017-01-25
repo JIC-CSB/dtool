@@ -37,7 +37,7 @@ def tmp_archive(request):
 
     from dtool.archive import (
         ArchiveDataSet,
-        ArchiveFile)
+        ArchiveFileBuilder)
 
     from dtool.archive import compress_archive
 
@@ -57,8 +57,8 @@ def tmp_archive(request):
     archive_output_path = os.path.join(archive_directory_path, 'archive')
     copy_tree(archive_input_path, archive_output_path)
 
-    archive_file = ArchiveFile(archive_ds)
-    tar_path = archive_file.persist_to_tar(d)
+    archive_builder = ArchiveFileBuilder.from_path(archive_directory_path)
+    tar_path = archive_builder.persist_to_tar(d)
     compress_archive(tar_path)
 
     return tar_path + '.gz'
