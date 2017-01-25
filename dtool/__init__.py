@@ -341,6 +341,9 @@ class DescriptiveMetadata(object):
     def __getitem__(self, key):
         return self._dict[key]
 
+    def keys(self):
+        return self.ordered_keys
+
     @property
     def ordered_keys(self):
         return self._ordered_keys

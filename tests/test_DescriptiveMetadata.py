@@ -26,3 +26,19 @@ def test_DescriptiveMetadata_update():
 
     descriptive_metadata.update({"new_prop": "test"})
     assert descriptive_metadata["new_prop"] == "test"
+
+
+def test_DescriptiveMetadata_works_with_templating():
+    from dtool import DescriptiveMetadata
+    schema = [("project_name", "my_project")]
+    descriptive_metadata = DescriptiveMetadata(schema)
+
+    from jinja2 import PackageLoader, Environment
+
+    env = Environment(loader=PackageLoader('dtool', 'templates'),
+                      keep_trailing_newline=True)
+    template = env.get_template('arctool_project_README.yml')
+
+    output = template.render(descriptive_metadata)
+
+    assert output == '---\n\nproject_name: my_project\n'
