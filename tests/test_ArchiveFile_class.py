@@ -1,7 +1,6 @@
 """Tests for dtool.archive.ArchiveFile class."""
 
 import os
-import json
 from distutils.dir_util import copy_tree
 import shutil
 import tempfile
@@ -13,6 +12,7 @@ import pytest
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
 
+
 @contextlib.contextmanager
 def get_context_tmp_dir():
     d = tempfile.mkdtemp()
@@ -20,6 +20,7 @@ def get_context_tmp_dir():
         yield d
     finally:
         shutil.rmtree(d)
+
 
 @pytest.fixture
 def tmp_dir(request):
@@ -124,10 +125,11 @@ def test_archive_calculate_hash(tmp_archive):
     assert actual == expected
 
 
-#def test_extract_readme(tmp_archive):
+# def test_extract_readme(tmp_archive):
 #    from dtool.archive import ArchiveFile
 #    archive = ArchiveFile.from_file(tmp_archive)
 #    with get_context_tmp_dir() as d:
 #        archive.extract_file(".dtool/manifest.json", d)
-#        expected_path = os.path.join(d, archive._name, ".dtool", "manifest.json")
+#        expected_path = os.path.join(
+#           d, archive._name, ".dtool", "manifest.json")
 #        assert os.path.isfile(expected_path)

@@ -20,12 +20,14 @@ def shasum_from_file_object(f):
 
     return hasher.hexdigest()
 
+
 class ArchiveDataSet(DataSet):
     """Class for creating specific archive datasets."""
 
     def __init__(self, name):
         super(ArchiveDataSet, self).__init__(name=name,
                                              data_directory="archive")
+
 
 class _ArchiveFileBase(object):
 
@@ -45,7 +47,9 @@ class ArchiveFileBuilder(_ArchiveFileBase):
 
     @classmethod
     def from_path(cls, path):
-        """Return :class:`dtool.archive.ArchiveFileBuilder` from a archive dataset directory."""
+        """Return :class:`dtool.archive.ArchiveFileBuilder`.
+
+        Parsed from a archive dataset directory."""
         archive_builder = cls()
         archive_builder._archive_dataset = ArchiveDataSet.from_path(path)
         return archive_builder

@@ -11,7 +11,7 @@ from dtool import (
     log,
     DataSet,
 )
-from dtool.archive import ArchiveDataSet, ArchiveFile, ArchiveFileBuilder
+from dtool.archive import ArchiveFile, ArchiveFileBuilder
 from dtool.manifest import (
     generate_manifest,
 )
