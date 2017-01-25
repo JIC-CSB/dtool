@@ -349,6 +349,9 @@ class DescriptiveMetadata(object):
         return self._ordered_keys
 
     def update(self, d):
+        new_keys = set(d.keys()) - set(self.keys())
+        ordered_new_keys = sorted(list(new_keys))
+        self._ordered_keys.extend(ordered_new_keys)
         self._dict.update(d)
 
 

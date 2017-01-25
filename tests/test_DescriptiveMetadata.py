@@ -1,5 +1,6 @@
 """Test the DescriptiveMetadata class."""
 
+
 def test_DescriptiveMetadata_initialisation():
     from dtool import DescriptiveMetadata
     descriptive_metadata = DescriptiveMetadata()
@@ -27,6 +28,9 @@ def test_DescriptiveMetadata_update():
     descriptive_metadata.update({"new_prop": "test"})
     assert descriptive_metadata["new_prop"] == "test"
 
+    assert set(descriptive_metadata._dict.keys()) \
+        == set(descriptive_metadata.keys())
+
 
 def test_DescriptiveMetadata_works_with_templating():
     from dtool import DescriptiveMetadata
@@ -42,3 +46,26 @@ def test_DescriptiveMetadata_works_with_templating():
     output = template.render(descriptive_metadata)
 
     assert output == '---\n\nproject_name: my_project\n'
+
+
+def test_DescriptiveMetadata_iter_keys_and_defaults():
+    from dtool import DescriptiveMetadata
+    schema = [("project_name", "old_project"),
+              ("dataset_name", "old_dataset")]
+    descriptive_metadata = DescriptiveMetadata(schema)
+    extra_data = dict([("dataset_name", "new_dataset"),
+                       ("extra_property", "something")])
+    descriptive_metadata.update(extra_data)
+
+    # keys_and_defaults = [i for i in descriptive_metadata]
+    # assert keys_and_defaults == [("project_name", "old_project"),
+    #                              ("dataset_name", "new_dataset"),
+    #                                 )]
+
+
+# def test_DescriptiveMetadata_prompt_for_values():
+#     from dtool import DescriptiveMetadata
+#     schema = [("project_name", "old_project"),
+#               ("dataset_name", "old_dataset")]
+#     descriptive_metadata = DescriptiveMetadata(schema)
+#     descriptive_metadata.prompt_for_values()
