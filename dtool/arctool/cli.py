@@ -5,7 +5,6 @@ import sys
 import os
 import json
 import getpass
-import datetime
 
 import click
 
@@ -15,6 +14,7 @@ from dtool import (
     Project,
     DtoolTypeError,
     NotDtoolObject,
+    DescriptiveMetadata,
 )
 from dtool.arctool import (
     create_manifest,
@@ -30,6 +30,7 @@ from dtool.archive import (
     verify_all,
 )
 from dtool.slurm import generate_slurm_script
+from dtool.utils import auto_metadata
 
 from fluent import sender
 
@@ -125,15 +126,13 @@ def cli_new_dataset(staging_path, project_metadata=dict()):
         ("personally_identifiable_information", False),
         ("owner_name", u"Your Name"),
         ("owner_email", u"your.email@example.com"),
-        ("unix_username", u"namey"),
-        ("archive_date", datetime.date.today()),
+        ("owner_username", u"namey"),
+        ("date", u"today"),
     ]
-    descriptive_metadata = {}
-    for name, default in readme_info:
-        descriptive_metadata[name] = click.prompt(name,
-                                                  default=default)
-
+    descriptive_metadata = DescriptiveMetadata(readme_info)
+    descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
     descriptive_metadata.update(project_metadata)
+    descriptive_metadata.prompt_for_values()
 
     dataset, dataset_path, readme_path = new_archive_dataset(
         staging_path, descriptive_metadata)
