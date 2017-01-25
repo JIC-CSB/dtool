@@ -11,7 +11,7 @@ from fluent import sender
 
 from dtool import __version__, DataSet, DescriptiveMetadata
 from dtool.arctool import create_manifest
-from dtool.utils import write_templated_file
+from dtool.utils import write_templated_file, auto_metadata
 
 logger = sender.FluentSender('arctool', host='v0679', port=24224)
 
@@ -42,9 +42,10 @@ def dataset():
         ("owner_name", "Your Name"),
         ("owner_email", "your.email@example.com"),
         ("owner_username", "namey"),
-        ("creation_date", "today"),
+        ("date", "today"),
     ]
     descriptive_metadata = DescriptiveMetadata(readme_info)
+    descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
     descriptive_metadata.prompt_for_values()
     dataset_name = descriptive_metadata["dataset_name"]
 

@@ -7,7 +7,7 @@ owners:
   - name: {{ owner_name }}
     email: {{ owner_email }}
     username: {{ owner_username }}
-creation_date: {{ creation_date }}
+creation_date: {{ date }}
 # links:
 #  - http://doi.dx.org/your_doi
 #  - http://github.com/your_code_repository
