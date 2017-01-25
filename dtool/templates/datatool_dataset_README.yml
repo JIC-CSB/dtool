@@ -6,7 +6,7 @@ personally_identifiable_information: {{ personally_identifiable_information }}
 owners:
   - name: {{ owner_name }}
     email: {{ owner_email }}
-    unix_username: {{ unix_username }}
+    username: {{ owner_username }}
 creation_date: {{ creation_date }}
 # links:
 #  - http://doi.dx.org/your_doi

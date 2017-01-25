@@ -50,3 +50,16 @@ def test_write_templated_file(tmp_dir):
         assert parsed_file[check_var] == variables[check_var]
 
     assert str(parsed_file['creation_date']) == variables['creation_date']
+
+
+def test_auto_metadata_generation():
+    from dtool.utils import auto_metadata
+    import datetime
+    import getpass
+
+    username = getpass.getuser()
+    email = username + "@example.com"
+    assert auto_metadata("example.com") == \
+        {"date": str(datetime.date.today()),
+         "owner_username": username,
+         "owner_email": email}

@@ -9,7 +9,7 @@ import click
 
 from fluent import sender
 
-from dtool import __version__, DataSet
+from dtool import __version__, DataSet, DescriptiveMetadata
 from dtool.arctool import create_manifest
 from dtool.utils import write_templated_file
 
@@ -41,13 +41,11 @@ def dataset():
         ("personally_identifiable_information", False),
         ("owner_name", "Your Name"),
         ("owner_email", "your.email@example.com"),
-        ("unix_username", "namey"),
+        ("owner_username", "namey"),
         ("creation_date", "today"),
     ]
-    descriptive_metadata = {}
-    for name, default in readme_info:
-        descriptive_metadata[name] = click.prompt(name,
-                                                  default=default)
+    descriptive_metadata = DescriptiveMetadata(readme_info)
+    descriptive_metadata.prompt_for_values()
     dataset_name = descriptive_metadata["dataset_name"]
 
     if os.path.isdir(dataset_name):
