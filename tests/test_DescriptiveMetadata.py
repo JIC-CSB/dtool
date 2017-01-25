@@ -63,9 +63,24 @@ def test_DescriptiveMetadata_iter_keys_and_defaults():
                                  ("extra_property", "something")]
 
 
-# def test_DescriptiveMetadata_prompt_for_values():
-#     from dtool import DescriptiveMetadata
-#     schema = [("project_name", "old_project"),
-#               ("dataset_name", "old_dataset")]
-#     descriptive_metadata = DescriptiveMetadata(schema)
-#     descriptive_metadata.prompt_for_values()
+def test_DescriptiveMetadata_prompt_for_values():
+    from dtool import DescriptiveMetadata
+    schema = [("project_name", "old_project"),
+              ("dataset_name", "old_dataset")]
+    descriptive_metadata = DescriptiveMetadata(schema)
+
+    import click
+    from click.testing import CliRunner
+
+    runner = CliRunner()
+
+    @click.command()
+    def prompt_assist():
+        descriptive_metadata.prompt_for_values()
+
+    input_string = 'new_project\n\n'
+    result = runner.invoke(prompt_assist, input=input_string)
+
+    assert not result.exception
+
+    assert descriptive_metadata['project_name'] == 'new_project'

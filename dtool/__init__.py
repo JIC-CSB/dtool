@@ -28,6 +28,7 @@ import uuid
 import getpass
 
 import yaml
+import click
 import magic
 
 from dtool.filehasher import generate_file_hash
@@ -357,6 +358,10 @@ class DescriptiveMetadata(object):
         ordered_new_keys = sorted(list(new_keys))
         self._ordered_keys.extend(ordered_new_keys)
         self._dict.update(d)
+
+    def prompt_for_values(self):
+        for key, default in self:
+            self._dict[key] = click.prompt(key, default=default)
 
 
 def log(message):
