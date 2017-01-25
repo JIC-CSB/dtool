@@ -39,25 +39,16 @@ class ArchiveFileBuilder(_ArchiveFileBase):
     """Class for building up tarred archive datasets.
     """
 
+    def __init__(self):
+        self._tar_path = None
+        self._archive_dataset = None
+
     @classmethod
     def from_path(cls, path):
         """Return :class:`dtool.archive.ArchiveFileBuilder` from a archive dataset directory."""
         archive_builder = cls()
         archive_builder._archive_dataset = ArchiveDataSet.from_path(path)
         return archive_builder
-
-
-class ArchiveFile(_ArchiveFileBase):
-    """Class for working with tarred/gzipped archive datasets.
-
-    Initialising using a dataset is used for creating archives, while
-    initialising from a file is used for extracting and verifying."""
-
-    # TODO - consider replacing initialisation with a .from_dataset
-    def __init__(self, archive_dataset=None):
-        self._name = None
-        self._tar_path = None
-        self._archive_dataset = archive_dataset
 
     def initialise_tar(self, path):
         path = os.path.abspath(path)
@@ -89,6 +80,18 @@ class ArchiveFile(_ArchiveFileBase):
         self.append_to_tar(path)
 
         return self._tar_path
+
+
+class ArchiveFile(_ArchiveFileBase):
+    """Class for working with tarred/gzipped archive datasets.
+
+    Initialising using a dataset is used for creating archives, while
+    initialising from a file is used for extracting and verifying."""
+
+    # TODO - consider replacing initialisation with a .from_dataset
+    def __init__(self):
+        self._name = None
+        self._tar_path = None
 
     def _extract_file_contents(self, file_path):
         with tarfile.open(self._tar_path, 'r:*') as tar:
