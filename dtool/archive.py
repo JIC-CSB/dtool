@@ -20,7 +20,6 @@ def shasum_from_file_object(f):
 
     return hasher.hexdigest()
 
-
 class ArchiveDataSet(DataSet):
     """Class for creating specific archive datasets."""
 
@@ -28,19 +27,31 @@ class ArchiveDataSet(DataSet):
         super(ArchiveDataSet, self).__init__(name=name,
                                              data_directory="archive")
 
-
-class ArchiveFile(object):
-    """Class for working with tarred/gzipped archive datasets.
-
-    Initialising using a dataset is used for creating archives, while
-    initialising from a file is used for extracting and verifying."""
-
-    # TODO - should this be split into two classes?
+class _ArchiveFileBase(object):
 
     # Don't touch this!
     header_file_order = (".dtool/dtool",
                          ".dtool/manifest.json",
                          "README.yml")
+
+
+class ArchiveFileBuilder(_ArchiveFileBase):
+    """Class for building up tarred archive datasets.
+    """
+
+    @classmethod
+    def from_path(cls, path):
+        """Return :class:`dtool.archive.ArchiveFileBuilder` from a archive dataset directory."""
+        archive_builder = cls()
+        archive_builder._archive_dataset = ArchiveDataSet.from_path(path)
+        return archive_builder
+
+
+class ArchiveFile(_ArchiveFileBase):
+    """Class for working with tarred/gzipped archive datasets.
+
+    Initialising using a dataset is used for creating archives, while
+    initialising from a file is used for extracting and verifying."""
 
     # TODO - consider replacing initialisation with a .from_dataset
     def __init__(self, archive_dataset=None):

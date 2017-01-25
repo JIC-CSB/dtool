@@ -6,12 +6,20 @@ from distutils.dir_util import copy_tree
 import shutil
 import tempfile
 import subprocess
+import contextlib
 
 import pytest
 
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
 
+@contextlib.contextmanager
+def get_context_tmp_dir():
+    d = tempfile.mkdtemp()
+    try:
+        yield d
+    finally:
+        shutil.rmtree(d)
 
 @pytest.fixture
 def tmp_dir(request):
@@ -193,3 +201,12 @@ def test_archive_calculate_hash(tmp_archive):
     expected = 'a250369afb3eeaa96fb0df99e7755ba784dfd69c'
 
     assert actual == expected
+
+
+#def test_extract_readme(tmp_archive):
+#    from dtool.archive import ArchiveFile
+#    archive = ArchiveFile.from_file(tmp_archive)
+#    with get_context_tmp_dir() as d:
+#        archive.extract_file(".dtool/manifest.json", d)
+#        expected_path = os.path.join(d, archive._name, ".dtool", "manifest.json")
+#        assert os.path.isfile(expected_path)
