@@ -11,6 +11,35 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- dtool.archive.ArchiveFileBuilder
+
+
+Changed
+^^^^^^^
+
+- dtool.archive.ArchiveFile no longer used to build archives
+
+
+Deprecated
+^^^^^^^^^^
+
+Removed
+^^^^^^^
+
+Fixed
+^^^^^
+
+
+Security
+^^^^^^^^
+
+
+[0.8.0] - 2017-01-25
+~~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
 - DescriptiveMetadata class
 - Full DataSet class
 - ArchiveDataSet class
