@@ -57,10 +57,10 @@ def test_DescriptiveMetadata_iter_keys_and_defaults():
                        ("extra_property", "something")])
     descriptive_metadata.update(extra_data)
 
-    # keys_and_defaults = [i for i in descriptive_metadata]
-    # assert keys_and_defaults == [("project_name", "old_project"),
-    #                              ("dataset_name", "new_dataset"),
-    #                                 )]
+    keys_and_defaults = [i for i in descriptive_metadata]
+    assert keys_and_defaults == [("project_name", "old_project"),
+                                 ("dataset_name", "new_dataset"),
+                                 ("extra_property", "something")]
 
 
 # def test_DescriptiveMetadata_prompt_for_values():

@@ -338,6 +338,10 @@ class DescriptiveMetadata(object):
             self._ordered_keys, _ = map(list, zip(*schema))
             self._dict = dict(schema)
 
+    def __iter__(self):
+        for k in self.ordered_keys:
+            yield k, self._dict[k]
+
     def __getitem__(self, key):
         return self._dict[key]
 
