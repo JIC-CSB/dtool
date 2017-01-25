@@ -26,6 +26,7 @@ from dtool.arctool import (
 )
 from dtool.archive import (
     ArchiveFile,
+    ArchiveFileBuilder,
     compress_archive,
     verify_all,
 )
@@ -221,9 +222,9 @@ def create(path):
     # manifest_filedict = dataset.manifest["file_list"]
     # tot_size = sum(entry['size'] for entry in manifest_filedict)
 
-    archive_file = ArchiveFile(dataset)
+    archive_builder = ArchiveFileBuilder.from_path(path)
     hacked_path = os.path.join(path, "..")
-    tar_file_path = archive_file.persist_to_tar(hacked_path)
+    tar_file_path = archive_builder.persist_to_tar(hacked_path)
 
 #   tar_file_path = dtool.arctool.initialise_archive(path)
 

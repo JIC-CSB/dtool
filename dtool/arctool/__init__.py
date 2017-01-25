@@ -11,7 +11,7 @@ from dtool import (
     log,
     DataSet,
 )
-from dtool.archive import ArchiveDataSet, ArchiveFile
+from dtool.archive import ArchiveDataSet, ArchiveFile, ArchiveFileBuilder
 from dtool.manifest import (
     generate_manifest,
 )
@@ -158,10 +158,9 @@ def create_archive(path):
     :returns: path to created tarball
     """
 
-    archive_dataset = ArchiveDataSet.from_path(path)
-    archive_file = ArchiveFile(archive_dataset)
+    archive_builder = ArchiveFileBuilder.from_path(path)
     output_path = os.path.join(path, "..")
-    return archive_file.persist_to_tar(output_path)
+    return archive_builder.persist_to_tar(output_path)
 
 
 def summarise_archive(path):
