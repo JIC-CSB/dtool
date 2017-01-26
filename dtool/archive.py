@@ -156,30 +156,22 @@ class ArchiveFile(_ArchiveFileBase):
 
             return shasum_from_file_object(fp)
 
+    def verify_file(self, file_in_archive):
+        """Verify single file in archive.
 
-def verify_file(archive_path, file_in_archive):
-    """Verify single file in archive.
+        :param file_in_archive: file to verify
+        :returns: True if checksum matches, False otherwise.
+        """
+        file_list = self.manifest["file_list"]
 
-    The archive can be a tarball or a compressed tarball.
+        filedict_by_path = {entry['path']: entry for entry in file_list}
 
-    :param archive_path: path to the archive containing the file
-    :param file_in_archive: file to verify
-    :returns: True if checksum matches, False otherwise.
-    """
-    archive_path = os.path.abspath(archive_path)
+        file_entry = filedict_by_path[file_in_archive]
 
-    archive_file = ArchiveFile.from_file(archive_path)
+        manifest_hash = file_entry['hash']
+        archive_hash = self.calculate_file_hash(file_in_archive)
 
-    file_list = archive_file.manifest["file_list"]
-
-    filedict_by_path = {entry['path']: entry for entry in file_list}
-
-    file_entry = filedict_by_path[file_in_archive]
-
-    manifest_hash = file_entry['hash']
-    archive_hash = archive_file.calculate_file_hash(file_in_archive)
-
-    return manifest_hash == archive_hash
+        return manifest_hash == archive_hash
 
 
 def verify_all(archive_path):

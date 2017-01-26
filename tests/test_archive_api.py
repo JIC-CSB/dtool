@@ -91,6 +91,11 @@ def test_archive_verify_all(tmp_archive):
 
 
 def test_verify_file(tmp_archive):
-    from dtool.archive import verify_file
+    from dtool.archive import ArchiveFile
 
-    assert verify_file(tmp_archive, 'file1.txt')
+    archive_file = ArchiveFile.from_file(tmp_archive)
+
+    assert archive_file.verify_file('file1.txt')
+
+    archive_file._manifest["file_list"][0]["hash"] = "nonsense"
+    assert not archive_file.verify_file('file1.txt')
