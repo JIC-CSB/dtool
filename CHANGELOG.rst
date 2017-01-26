@@ -11,6 +11,8 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- Ability to create projects using the ``datatool``
+- dtool.DescriptiveMetadata.persist_to_path method
 - dtool.archive.ArchiveFileBuilder
 
 
