@@ -11,6 +11,7 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- ``datatool new dataset`` now derives descriptive metadata defaults from parent collections/projects
 - Recursive build up of descriptive metadata from parent directories
 - Ability to create projects using the ``datatool``
 - dtool.DescriptiveMetadata.persist_to_path method
