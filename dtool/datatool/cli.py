@@ -17,7 +17,7 @@ from dtool import (
     Collection,
 )
 from dtool.arctool import create_manifest
-from dtool.utils import write_templated_file, auto_metadata
+from dtool.utils import auto_metadata
 from dtool.clickutils import create_project
 
 logger = sender.FluentSender('arctool', host='v0679', port=24224)
