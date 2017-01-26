@@ -12,6 +12,8 @@ import yaml
 import magic
 import pytest
 
+from dtool.arctool import ArchiveFileBuilder
+
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
 TEST_DESCRIPTIVE_METADATA = dict([
@@ -24,6 +26,18 @@ TEST_DESCRIPTIVE_METADATA = dict([
         ("unix_username", u"namey"),
         ("archive_date", u"2017-01-01"),
     ])
+
+
+def create_archive(path):
+    """Create archive from path using tar.
+
+    :param path: path to archive in staging area
+    :returns: path to created tarball
+    """
+
+    archive_builder = ArchiveFileBuilder.from_path(path)
+    output_path = os.path.join(path, "..")
+    return archive_builder.persist_to_tar(output_path)
 
 
 @pytest.fixture
@@ -64,7 +78,6 @@ def tmp_archive(request):
     from dtool.arctool import (
         new_archive_dataset,
         create_manifest,
-        create_archive,
     )
     from dtool.archive import compress_archive
 
@@ -288,8 +301,6 @@ def test_rel_paths_for_archiving(tmp_dir):
 
 
 def test_create_archive(tmp_dir):
-    from dtool.arctool import create_archive
-
     from dtool.arctool import new_archive_dataset, create_manifest
 
     new_archive_dataset(tmp_dir, TEST_DESCRIPTIVE_METADATA)
@@ -339,8 +350,6 @@ def test_create_archive(tmp_dir):
 
 
 def test_create_archive_with_trailing_slash(tmp_dir):
-    from dtool.arctool import create_archive
-
     from dtool.arctool import new_archive_dataset, create_manifest
 
     new_archive_dataset(tmp_dir, TEST_DESCRIPTIVE_METADATA)
@@ -357,9 +366,6 @@ def test_create_archive_with_trailing_slash(tmp_dir):
 
 
 def test_issue_with_log_create_archive_in_different_dir(tmp_dir):
-
-    from dtool.arctool import create_archive
-
     from dtool.arctool import new_archive_dataset, create_manifest
 
     new_archive_dataset(tmp_dir, TEST_DESCRIPTIVE_METADATA)
