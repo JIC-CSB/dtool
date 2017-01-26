@@ -73,6 +73,27 @@ def test_new_dataset(chdir):
     assert dataset.name == 'my_dataset'
 
 
+def test_new_project(chdir):
+
+    from click.testing import CliRunner
+    from dtool.datatool.cli import project
+    from dtool import Project
+
+    runner = CliRunner()
+
+    input_string = 'my_project\n'
+
+    result = runner.invoke(project, input=input_string)
+
+    assert not result.exception
+
+    assert os.path.isdir('my_project')
+    expected_dtool_file = os.path.join('my_project', '.dtool', 'dtool')
+    assert os.path.isfile(expected_dtool_file)
+
+    loaded_project = Project.from_path('my_project')
+
+
 def test_manifest_create(tmp_dir):
 
     data_dir = os.path.join(tmp_dir, "data")

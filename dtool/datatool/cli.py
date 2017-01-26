@@ -9,7 +9,12 @@ import click
 
 from fluent import sender
 
-from dtool import __version__, DataSet, DescriptiveMetadata
+from dtool import (
+    __version__,
+    DataSet,
+    DescriptiveMetadata,
+    Project,
+)
 from dtool.arctool import create_manifest
 from dtool.utils import write_templated_file, auto_metadata
 
@@ -60,6 +65,34 @@ def dataset():
     write_templated_file(ds.abs_readme_path,
                          'datatool_dataset_README.yml',
                          descriptive_metadata)
+
+
+def create_project(base_path):
+
+    staging_path = os.path.abspath(base_path)
+
+    project_name = click.prompt('project_name',
+                                default='my_project')
+
+    project = Project(project_name)
+    project_dir = os.path.join(base_path, project_name)
+    os.mkdir(project_dir)
+    project.persist_to_path(project_dir)
+
+    click.secho('Created new project in: ', nl=False)
+    click.secho(project_dir, fg='green')
+
+    return project
+
+
+@new.command()
+@click.option(
+    '--base-path',
+    help='Path to directory where new project will be created',
+    default='.',
+    type=click.Path(exists=True))
+def project(base_path):
+    create_project(base_path)
 
 
 @cli.group()
