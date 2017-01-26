@@ -15,9 +15,6 @@ from dtool.archive import ArchiveFile, ArchiveFileBuilder
 from dtool.manifest import (
     generate_manifest,
 )
-from dtool.archive import (
-    extract_file,
-)
 from dtool.utils import write_templated_file
 
 HERE = os.path.dirname(__file__)
@@ -190,21 +187,3 @@ def summarise_archive(path):
     summary['manifest'] = manifest
 
     return summary
-
-
-def extract_manifest(archive_path):
-    """Extract manifest from archive into directory where archive is located.
-
-    :param archive_path: path to archive
-    :returns: path to extracted manifest file
-    """
-    return extract_file(archive_path, ".dtool/manifest.json")
-
-
-def extract_readme(archive_path):
-    """Extract readme from archive into directory where archive is located.
-
-    :param archive_path: path to archive
-    :returns: path to extracted readme file
-    """
-    return extract_file(archive_path, "README.yml")

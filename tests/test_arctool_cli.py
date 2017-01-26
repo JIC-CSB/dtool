@@ -98,16 +98,6 @@ def test_full_archiving_workflow(chdir):
     # Remove the dataset path to ensure that files are actually extracted.
     shutil.rmtree(dataset_path)
 
-    cmd = ["arctool", "extract", "readme", gzip_path]
-    subprocess.call(cmd)
-    readme_path = os.path.join(dataset_path, "README.yml")
-    assert os.path.isfile(readme_path)
-
-    cmd = ["arctool", "extract", "manifest", gzip_path]
-    subprocess.call(cmd)
-    manifest_path = os.path.join(dataset_path, ".dtool/manifest.json")
-    assert os.path.isfile(manifest_path)
-
     cmd = ["arctool", "verify", "summary", gzip_path]
     subprocess.call(cmd)
 

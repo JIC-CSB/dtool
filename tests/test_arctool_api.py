@@ -387,31 +387,3 @@ def test_summarise_archive(tmp_archive):
     assert isinstance(summary, dict)
 
     assert summary['n_files'] == 3
-
-
-def test_extract_manifest(tmp_archive):
-
-    from dtool.arctool import extract_manifest
-
-    extracted_manifest_path = extract_manifest(tmp_archive)
-
-    assert os.path.isfile(extracted_manifest_path)
-
-    with open(extracted_manifest_path) as fh:
-        manifest = json.load(fh)
-
-    assert len(manifest['file_list']) == 3
-
-
-def test_extract_readme(tmp_archive):
-
-    from dtool.arctool import extract_readme
-
-    extracted_readme_path = extract_readme(tmp_archive)
-
-    assert os.path.isfile(extracted_readme_path)
-
-    with open(extracted_readme_path) as fh:
-        readme = yaml.load(fh)
-
-    assert readme['dataset_name'] == 'brassica_rnaseq_reads'

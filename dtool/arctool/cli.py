@@ -18,8 +18,6 @@ from dtool import (
 )
 from dtool.arctool import (
     create_manifest,
-    extract_manifest,
-    extract_readme,
     summarise_archive,
     readme_yml_is_valid,
     new_archive_dataset,
@@ -323,41 +321,6 @@ def full(path):
         click.secho("passed", fg='green')
     else:
         click.secho("failed", fg='red')
-
-
-@cli.group()
-def extract():
-    pass
-
-
-@extract.command()
-@click.argument('path', 'Path to compressed archive.',
-                type=click.Path(exists=True))
-def manifest(path):
-    extracted_manifest_path = extract_manifest(path)
-    click.secho('Extracted ', nl=False)
-    click.secho(extracted_manifest_path, fg='green')
-
-
-@extract.command()
-@click.argument('path', 'Path to compressed archive.',
-                type=click.Path(exists=True))
-def readme(path):
-    extracted_readme_path = extract_readme(path)
-    click.secho('Extracted ', nl=False)
-    click.secho(extracted_readme_path, fg='green')
-
-
-@extract.command()
-@click.argument('path', 'Path to compressed archive.',
-                type=click.Path(exists=True))
-def metadata(path):
-    extracted_readme_path = extract_readme(path)
-    click.secho('Extracted ', nl=False)
-    click.secho(extracted_readme_path, fg='green')
-    extracted_manifest_path = extract_manifest(path)
-    click.secho('Extracted ', nl=False)
-    click.secho(extracted_manifest_path, fg='green')
 
 
 if __name__ == "__main__":

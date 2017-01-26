@@ -30,6 +30,8 @@ Deprecated
 Removed
 ^^^^^^^
 
+- Ability to extract files from (gzipped) tarball using the arctool cli
+
 Fixed
 ^^^^^
 
