@@ -85,9 +85,10 @@ def test_compress_archive(tmp_archive):
 
 
 def test_archive_verify_all(tmp_archive):
-    from dtool.archive import verify_all
+    from dtool.archive import ArchiveFile
 
-    assert verify_all(tmp_archive)
+    archive_file = ArchiveFile.from_file(tmp_archive)
+    assert archive_file.verify_all()
 
 
 def test_verify_file(tmp_archive):

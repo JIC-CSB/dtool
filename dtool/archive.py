@@ -173,31 +173,25 @@ class ArchiveFile(_ArchiveFileBase):
 
         return manifest_hash == archive_hash
 
+    def verify_all(self):
+        """Verify all files in archive.
 
-def verify_all(archive_path):
-    """Verify all files in archive.
+        :returns: True if all files verify, False otherwise.
+        """
 
-    :param archive_path: path to archive containing files
-    :returns: True if all files verify, False otherwise.
-    """
+        # TODO - raise exception?
 
-    # TODO - raise exception?
+        file_list = self.manifest["file_list"]
 
-    archive_path = os.path.abspath(archive_path)
+        for entry in file_list:
+            file_in_archive = entry['path']
+            manifest_hash = entry['hash']
+            archive_hash = self.calculate_file_hash(file_in_archive)
 
-    archive = ArchiveFile.from_file(archive_path)
+            if archive_hash != manifest_hash:
+                return False
 
-    file_list = archive.manifest["file_list"]
-
-    for entry in file_list:
-        file_in_archive = entry['path']
-        manifest_hash = entry['hash']
-        archive_hash = archive.calculate_file_hash(file_in_archive)
-
-        if archive_hash != manifest_hash:
-            return False
-
-    return True
+        return True
 
 
 ################################################################

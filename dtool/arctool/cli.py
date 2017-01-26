@@ -26,7 +26,6 @@ from dtool.archive import (
     ArchiveFile,
     ArchiveFileBuilder,
     compress_archive,
-    verify_all,
 )
 from dtool.slurm import generate_slurm_script
 from dtool.utils import auto_metadata
@@ -314,7 +313,8 @@ def full(path):
     click.secho("Performing full verification on:", nl=False)
     click.secho(" {}".format(path), fg='green')
 
-    result = verify_all(path)
+    archive_file = ArchiveFile.from_path(path)
+    result = archive_file.verify_all()
 
     click.secho("Verification ", nl=False)
     if result:
