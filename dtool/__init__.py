@@ -63,7 +63,14 @@ class _DtoolObject(object):
     @property
     def _filesystem_parent(self):
         """Return instance of parent if it is a dtool object otherwise None."""
-        return None
+        if self._abs_path is None:
+            return None
+        parent_path = os.path.join(self._abs_path, "..")
+        try:
+            dtool_object = _DtoolObject.from_path(parent_path)
+        except NotDtoolObject:
+            return None
+        return dtool_object
 
     @property
     def descriptive_metadata(self):
@@ -75,12 +82,17 @@ class _DtoolObject(object):
         Current implementation will return list if README.yml contains
         list as top level data structure.
         """
+        content = {}
+        parent = self._filesystem_parent
+        if parent is not None:
+            content.update(parent.descriptive_metadata)  # (Magic) recursion.
+
         if self.abs_readme_path is not None:
             with open(self.abs_readme_path) as fh:
-                contents = yaml.load(fh)
-                if contents:
-                    return contents
-        return {}
+                local_content = yaml.load(fh)
+                if local_content:
+                    content.update(local_content)
+        return content
 
     def __eq__(self, other):
         return self._admin_metadata == other._admin_metadata
