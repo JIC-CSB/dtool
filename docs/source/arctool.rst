@@ -104,15 +104,8 @@ Generate meta data for the files that you just moved into the
 
 ::
 
-    $ arctool manifest create some_project/data_set_1/archive
+    $ arctool manifest create some_project/data_set_1
 
-This will generate a ``some_project/data_set_1/manifest.json`` file.
-
-::
-
-    $ head some_project/data_set_1/manifest.json
-
-    # Add output here
 
 Creating the archive file
 ^^^^^^^^^^^^^^^^^^^^^^^^^
