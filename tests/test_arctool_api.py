@@ -12,11 +12,12 @@ import yaml
 import magic
 import pytest
 
+from dtool import DescriptiveMetadata
 from dtool.archive import ArchiveFileBuilder
 
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
-TEST_DESCRIPTIVE_METADATA = dict([
+TEST_DESCRIPTIVE_METADATA = DescriptiveMetadata([
         ("project_name", u"my_project"),
         ("dataset_name", u"brassica_rnaseq_reads"),
         ("confidential", False),
@@ -247,10 +248,11 @@ archive_date: 2016-01-12
 
 
 def test_new_archive_dataset_input_descriptive_metadata(tmp_dir):
+    from dtool import DescriptiveMetadata
     from dtool.arctool import new_archive_dataset
 
-    metadata = dict(project_name="some_project",
-                    dataset_name="data_set_1")
+    metadata = DescriptiveMetadata([("project_name", "some_project"),
+                                    ("dataset_name", "data_set_1")])
     new_archive_dataset(tmp_dir, metadata)
 
     # Test file creation.

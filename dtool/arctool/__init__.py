@@ -41,10 +41,8 @@ def new_archive_dataset(staging_path, descriptive_metadata):
     os.mkdir(dataset_path)
     dataset.persist_to_path(dataset_path)
 
-    write_templated_file(
-        dataset.abs_readme_path,
-        'arctool_dataset_README.yml',
-        descriptive_metadata)
+    descriptive_metadata.persist_to_path(
+        dataset_path, template='arctool_dataset_README.yml')
 
     # Create a readme file in the archive subdirectory of the dataset
     archive_readme_file_path = os.path.join(dataset_path,
