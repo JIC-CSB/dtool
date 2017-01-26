@@ -157,30 +157,6 @@ class ArchiveFile(_ArchiveFileBase):
             return shasum_from_file_object(fp)
 
 
-def compress_archive(path, n_threads=8):
-    """Compress the (tar) archive at the given path.
-
-    Uses pigz for speed.
-
-    :param path: path to the archive tarball
-    :param n_threads: number of threads for pigz to use
-    :returns: path to created gzip file
-    """
-    path = os.path.abspath(path)
-
-    basename = os.path.basename(path)
-    archive_name, ext = os.path.splitext(basename)
-    assert ext == '.tar'
-
-    compress_tool = 'pigz'
-    compress_args = ['-p', str(n_threads), path]
-    compress_command = [compress_tool] + compress_args
-
-    subprocess.call(compress_command)
-
-    return path + '.gz'
-
-
 def verify_file(archive_path, file_in_archive):
     """Verify single file in archive.
 
@@ -230,3 +206,32 @@ def verify_all(archive_path):
             return False
 
     return True
+
+
+################################################################
+# Helper function(s) for wrapping shell commands on the tar file.
+################################################################
+
+
+def compress_archive(path, n_threads=8):
+    """Compress the (tar) archive at the given path.
+
+    Uses pigz for speed.
+
+    :param path: path to the archive tarball
+    :param n_threads: number of threads for pigz to use
+    :returns: path to created gzip file
+    """
+    path = os.path.abspath(path)
+
+    basename = os.path.basename(path)
+    archive_name, ext = os.path.splitext(basename)
+    assert ext == '.tar'
+
+    compress_tool = 'pigz'
+    compress_args = ['-p', str(n_threads), path]
+    compress_command = [compress_tool] + compress_args
+
+    subprocess.call(compress_command)
+
+    return path + '.gz'
