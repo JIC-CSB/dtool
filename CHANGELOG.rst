@@ -21,6 +21,7 @@ Added
 Changed
 ^^^^^^^
 
+- Move summarise_archive function into dtool.archive.ArchiveFile.summarise method
 - Move verify_file and verify_all into dtool.archive.ArchiveFile class
 - dtool.archive.ArchiveFile no longer used to build archives
 
