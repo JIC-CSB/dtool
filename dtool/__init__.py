@@ -363,6 +363,19 @@ class DescriptiveMetadata(object):
         for key, default in self:
             self._dict[key] = click.prompt(key, default=default)
 
+    def persist_to_path(self, path, filename='README.yml', template=None):
+        """Write the metadata to path + filename."""
+
+        output_path = os.path.join(path, filename)
+
+        if template is None:
+            with open(output_path, 'w') as fh:
+                fh.write("---\n\n")
+                for k in self.ordered_keys:
+                    fh.write('{}: {}\n'.format(k, self[k]))
+        else:
+            write_templated_file(output_path, template, self)
+
 
 def log(message):
     """Log a message.

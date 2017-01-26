@@ -1,5 +1,21 @@
 """Test the DescriptiveMetadata class."""
 
+import os
+import shutil
+import tempfile
+
+import pytest
+
+
+@pytest.fixture
+def tmp_dir(request):
+    d = tempfile.mkdtemp()
+
+    @request.addfinalizer
+    def teardown():
+        shutil.rmtree(d)
+    return d
+
 
 def test_DescriptiveMetadata_initialisation():
     from dtool import DescriptiveMetadata
@@ -84,3 +100,35 @@ def test_DescriptiveMetadata_prompt_for_values():
     assert not result.exception
 
     assert descriptive_metadata['project_name'] == 'new_project'
+
+
+def test_DescriptiveMetadata_persist_to_file(tmp_dir):
+    from dtool import DescriptiveMetadata
+    schema = [("project_name", "old_project"),
+              ("dataset_name", "old_dataset")]
+    descriptive_metadata = DescriptiveMetadata(schema)
+
+    output_file = os.path.join(tmp_dir, 'README.yml')
+    descriptive_metadata.persist_to_path(tmp_dir)
+
+    assert os.path.isfile(output_file)
+
+    with open(output_file) as fh:
+        contents = fh.read()
+
+    assert contents == """---
+
+project_name: old_project
+dataset_name: old_dataset
+"""
+
+    descriptive_metadata.persist_to_path(
+        tmp_dir, template='arctool_project_README.yml')
+
+    with open(output_file) as fh:
+        contents = fh.read()
+
+    assert contents == """---
+
+project_name: old_project
+"""
