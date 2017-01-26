@@ -60,6 +60,12 @@ class _DtoolObject(object):
         self._admin_metadata.update(extra_admin_metadata)
         self._abs_path = None
 
+
+    @property
+    def _filesystem_parent(self):
+        """Return instance of parent if it is a dtool object otherwise None."""
+        return None
+
     @property
     def descriptive_metadata(self):
         """Return descriptive metadata as a dictionary.
@@ -79,6 +85,20 @@ class _DtoolObject(object):
 
     def __eq__(self, other):
         return self._admin_metadata == other._admin_metadata
+
+    @classmethod
+    def from_path(cls, path):
+        dtool_object = cls()
+        dtool_object._abs_path = os.path.abspath(path)
+
+        dtool_file_path = os.path.join(path, '.dtool', 'dtool')
+        if not os.path.isfile(dtool_file_path):
+            raise NotDtoolObject('Not a dtool object; .dtool/dtool does not exist')
+
+        with open(dtool_file_path) as fh:
+            dtool_object._admin_metadata = json.load(fh)
+
+        return dtool_object
 
     @property
     def uuid(self):
@@ -225,14 +245,7 @@ class DataSet(_DtoolObject):
                  NotDtoolObject exception if .dtool/dtool not present.
         :returns: :class:`dtool.DataSet`
         """
-        path = os.path.abspath(path)
-        dtool_file_path = os.path.join(path, '.dtool', 'dtool')
-        if not os.path.isfile(dtool_file_path):
-            raise NotDtoolObject('Not a dataset; .dtool/dtool does not exist')
-
-        dataset = DataSet("")
-        with open(dtool_file_path) as fh:
-            dataset._admin_metadata = json.load(fh)
+        dataset = _DtoolObject.from_path(path)
 
         if 'type' not in dataset._admin_metadata:
             raise DtoolTypeError(
@@ -242,7 +255,8 @@ class DataSet(_DtoolObject):
             raise DtoolTypeError(
                 'Not a dataset; wrong type definition in .dtool/dtool')
 
-        dataset._abs_path = path
+        # This is Python's crazy way of "allowing" class promotion.
+        dataset.__class__ = cls
 
         return dataset
 
@@ -264,17 +278,7 @@ class Collection(_DtoolObject):
                  NotDtoolObject exception if .dtool/dtool not present.
         :returns: :class:`dtool.Collection`
         """
-        path = os.path.abspath(path)
-
-        collection = Collection()
-
-        dtool_file_path = os.path.join(path, '.dtool', 'dtool')
-        if not os.path.isfile(dtool_file_path):
-            raise NotDtoolObject(
-                'Not a collection; .dtool/dtool does not exist')
-
-        with open(dtool_file_path) as fh:
-            collection._admin_metadata = json.load(fh)
+        collection = _DtoolObject.from_path(path)
 
         if 'type' not in collection._admin_metadata:
             raise DtoolTypeError(
@@ -284,7 +288,8 @@ class Collection(_DtoolObject):
             raise DtoolTypeError(
                 'Not a collection; wrong type definition in .dtool/dtool')
 
-        collection._abs_path = path
+        # This is Python's crazy way of "allowing" class promotion.
+        collection.__class__ = cls
 
         return collection
 
