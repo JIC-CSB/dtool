@@ -85,7 +85,8 @@ def tmp_archive(request):
     def teardown():
         shutil.rmtree(d)
 
-    dataset, path, readme_path = new_archive_dataset(d, TEST_DESCRIPTIVE_METADATA)
+    dataset, path, readme_path = new_archive_dataset(
+        d, TEST_DESCRIPTIVE_METADATA)
     tmp_project = os.path.join(d, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')

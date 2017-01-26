@@ -1,7 +1,6 @@
 """Module containing arctool API."""
 
 import os
-import json
 import datetime
 
 import yaml
@@ -9,10 +8,6 @@ import yaml
 from dtool import (
     log,
     DataSet,
-)
-from dtool.archive import ArchiveFile
-from dtool.manifest import (
-    generate_manifest,
 )
 from dtool.utils import write_templated_file
 

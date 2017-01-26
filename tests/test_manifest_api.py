@@ -1,7 +1,6 @@
 """Test the manifest module."""
 
 import os
-import json
 import shutil
 import tempfile
 
@@ -34,23 +33,6 @@ def test_file_metadata():
     assert metadata["hash"] == "09648d19e11f0b20e5473594fc278afbede3c9a4"
     assert metadata["size"] == 276
     assert metadata["mimetype"] == "image/png"
-
-
-def test_generate_manifest():
-
-    from dtool.manifest import generate_manifest
-
-    expected_manifest_file = os.path.join(TEST_OUTPUT_DATA, 'manifest.json')
-    with open(expected_manifest_file) as fh:
-        expected = json.load(fh)
-
-    test_archive_path = os.path.join(TEST_INPUT_DATA, 'archive')
-    actual = generate_manifest(test_archive_path)
-
-    for a, e in zip(actual["file_list"], expected["file_list"]):
-        assert a["path"] == e["path"]
-        assert a["hash"] == e["hash"]
-        assert a["size"] == e["size"]
 
 
 def test_generate_relative_paths():
