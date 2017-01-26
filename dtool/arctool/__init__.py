@@ -56,29 +56,6 @@ def new_archive_dataset(staging_path, descriptive_metadata):
     return dataset, dataset_path, archive_readme_file_path
 
 
-def create_manifest(path):
-    """Create manifest for all files in directory under the given path.
-
-    The manifest is created one level up from the given path.
-    This makes the function idempotent, i.e. if it was run again it
-    would create an identical file. This would not be the case if the
-    manifest was created in the given path.
-
-    :param path: path to directory with data
-    :returns: path to created manifest
-    """
-    path = os.path.abspath(path)
-    archive_root_path, _ = os.path.split(path)
-    manifest_filename = os.path.join(archive_root_path, 'manifest.json')
-
-    manifest_data = generate_manifest(path)
-
-    with open(manifest_filename, 'w') as f:
-        json.dump(manifest_data, f, indent=4)
-
-    return manifest_filename
-
-
 def readme_yml_is_valid(yml_string):
     """Return True if string representing README.yml content is valid.
 
@@ -117,27 +94,3 @@ def readme_yml_is_valid(yml_string):
             return False
 
     return True
-
-
-def rel_paths_for_archiving(path):
-    """Return list of relative paths for archiving and total size.
-
-    :param path: path to directory for archiving
-    :returns: list of relative paths for archiving, and total size of files
-    """
-    rel_paths = list(ArchiveFile.header_file_order)
-    tot_size = 0
-
-    for rp in rel_paths:
-        ap = os.path.join(path, rp)
-        tot_size = tot_size + os.stat(ap).st_size
-
-    with open(os.path.join(path, "manifest.json")) as fh:
-        manifest = json.load(fh)
-
-    for entry in manifest["file_list"]:
-        tot_size = tot_size + entry["size"]
-        rpath = os.path.join("archive", entry["path"])
-        rel_paths.append(rpath)
-
-    return rel_paths, tot_size

@@ -3,7 +3,6 @@
 
 import sys
 import os
-import json
 import getpass
 
 import click
@@ -17,11 +16,11 @@ from dtool import (
     DescriptiveMetadata,
 )
 from dtool.arctool import (
-    create_manifest,
     readme_yml_is_valid,
     new_archive_dataset,
 )
 from dtool.archive import (
+    ArchiveDataSet,
     ArchiveFile,
     ArchiveFileBuilder,
     compress_archive,
@@ -131,7 +130,7 @@ def cli_new_dataset(staging_path, project_metadata=dict()):
     click.secho('  2. Move archive data into {}'.format(archive_data_path),
                 fg='yellow')
     click.secho('Then: ', nl=False)
-    click.secho('arctool manifest create {}'.format(archive_data_path),
+    click.secho('arctool manifest create {}'.format(dataset_path),
                 fg='cyan')
 
 
@@ -141,28 +140,25 @@ def manifest():
 
 
 @manifest.command()
-@click.argument('path', 'Path to archive directory.',
+@click.argument('path', 'Path to archive dataset directory.',
                 type=click.Path(exists=True))
 def create(path):
 
-    logger.emit('pre_create_manifest', {'path': path})
+    archive_dataset = ArchiveDataSet.from_path(path)
 
-    manifest_path = create_manifest(path)
+    log_data = {'uuid': archive_dataset.uuid, 'path': path}
+    logger.emit('pre_create_manifest', log_data)
 
-    with open(manifest_path) as fh:
-        manifest = json.load(fh)
+    archive_dataset.update_manifest()
 
-    click.secho('Created manifest: ', nl=False)
-    click.secho(manifest_path, fg='green')
+    click.secho('Created manifest', fg='green')
 
-    log_data = {'manifest_path': manifest_path,
-                'manifest': manifest}
+    log_data = {'uuid': archive_dataset.uuid,
+                'manifest': archive_dataset.manifest}
     logger.emit('post_create_manifest', log_data)
 
-    dataset_path, _ = os.path.split(manifest_path)
-    dataset_path = os.path.abspath(dataset_path)
     click.secho('Next: ', nl=False)
-    click.secho('arctool archive create {}'.format(dataset_path), fg='cyan')
+    click.secho('arctool archive create {}'.format(path), fg='cyan')
 
 
 @cli.group()
@@ -188,18 +184,6 @@ def create(path):
     if not readme_yml_is_valid(readme_str):
         click.secho("Not valid", fg='red')
         sys.exit(2)
-
-    manifest_path = os.path.join(path, "manifest.json")
-    if not os.path.isfile(manifest_path):
-        click.secho("No manifest file found in archive", fg='red')
-        sys.exit(2)
-
-#   with open(manifest_path) as fh:
-#       manifest = json.load(fh)
-#   manifest_filedict = manifest['file_list']
-
-    # manifest_filedict = dataset.manifest["file_list"]
-    # tot_size = sum(entry['size'] for entry in manifest_filedict)
 
     archive_builder = ArchiveFileBuilder.from_path(path)
     hacked_path = os.path.join(path, "..")

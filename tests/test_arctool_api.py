@@ -76,10 +76,7 @@ def tmp_dir(request):
 @pytest.fixture
 def tmp_archive(request):
 
-    from dtool.arctool import (
-        new_archive_dataset,
-        create_manifest,
-    )
+    from dtool.arctool import new_archive_dataset
     from dtool.archive import compress_archive
 
     d = tempfile.mkdtemp()
@@ -88,12 +85,13 @@ def tmp_archive(request):
     def teardown():
         shutil.rmtree(d)
 
-    new_archive_dataset(d, TEST_DESCRIPTIVE_METADATA)
+    dataset, path, readme_path = new_archive_dataset(d, TEST_DESCRIPTIVE_METADATA)
     tmp_project = os.path.join(d, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
     copy_tree(archive_input_path, archive_output_path)
-    create_manifest(os.path.join(tmp_project, "archive/"))
+
+    dataset.update_manifest()
 
     create_archive(tmp_project)
     compress_archive(tmp_project + '.tar')
@@ -268,49 +266,17 @@ def test_new_archive_dataset_input_descriptive_metadata(tmp_dir):
     assert readme_data["dataset_name"] == "data_set_1"
 
 
-def test_rel_paths_for_archiving(tmp_dir):
-    from dtool.arctool import rel_paths_for_archiving
-
-    from dtool.arctool import new_archive_dataset, create_manifest
-    new_archive_dataset(tmp_dir, TEST_DESCRIPTIVE_METADATA)
-    tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
-    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
-    archive_output_path = os.path.join(tmp_project, 'archive')
-    copy_tree(archive_input_path, archive_output_path)
-    create_manifest(os.path.join(tmp_project, "archive/"))
-
-    expected_paths = [u".dtool/dtool",
-                      u".dtool/manifest.json",
-                      u"README.yml",
-                      u"archive/README.txt",
-                      u"archive/file1.txt",
-                      u"archive/dir1/file2.txt"]
-    actual_paths, actual_size = rel_paths_for_archiving(tmp_project)
-
-    expected_size = 0
-    for p in expected_paths:
-        ap = os.path.join(tmp_project, p)
-        expected_size = expected_size + os.stat(ap).st_size
-    assert actual_size == expected_size
-
-    # Ensure that the first free files are in fixed order.
-    for i in range(3):
-        assert actual_paths[i] == expected_paths[i]
-
-    # Assert that all files exist.
-    assert len(actual_paths) == len(expected_paths)
-    assert set(actual_paths) == set(expected_paths)
-
-
 def test_create_archive(tmp_dir):
-    from dtool.arctool import new_archive_dataset, create_manifest
+    from dtool.arctool import new_archive_dataset
 
-    new_archive_dataset(tmp_dir, TEST_DESCRIPTIVE_METADATA)
+    dataset, path, readme_path = new_archive_dataset(
+        tmp_dir, TEST_DESCRIPTIVE_METADATA)
     tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
     archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
     archive_output_path = os.path.join(tmp_project, 'archive')
     copy_tree(archive_input_path, archive_output_path)
-    create_manifest(os.path.join(tmp_project, "archive/"))
+
+    dataset.update_manifest()
 
     create_archive(tmp_project)
 
@@ -349,38 +315,3 @@ def test_create_archive(tmp_dir):
 
     for e, a in zip(expected, actual):
         assert e == a
-
-
-def test_create_archive_with_trailing_slash(tmp_dir):
-    from dtool.arctool import new_archive_dataset, create_manifest
-
-    new_archive_dataset(tmp_dir, TEST_DESCRIPTIVE_METADATA)
-    tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
-    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
-    archive_output_path = os.path.join(tmp_project, 'archive')
-    copy_tree(archive_input_path, archive_output_path)
-    create_manifest(os.path.join(tmp_project, "archive/"))
-
-    create_archive(tmp_project + "/")
-
-    expected_tar_filename = os.path.join(tmp_dir, 'brassica_rnaseq_reads.tar')
-    assert os.path.isfile(expected_tar_filename)
-
-
-def test_issue_with_log_create_archive_in_different_dir(tmp_dir):
-    from dtool.arctool import new_archive_dataset, create_manifest
-
-    new_archive_dataset(tmp_dir, TEST_DESCRIPTIVE_METADATA)
-    tmp_project = os.path.join(tmp_dir, "brassica_rnaseq_reads")
-    archive_input_path = os.path.join(TEST_INPUT_DATA, 'archive')
-    archive_output_path = os.path.join(tmp_project, 'archive')
-    copy_tree(archive_input_path, archive_output_path)
-    create_manifest(os.path.join(tmp_project, "archive/"))
-
-    with remember_cwd():
-        os.chdir(tmp_project)
-        actual_tar_path = create_archive(tmp_project)
-
-    expected_tar_path = os.path.join(tmp_dir, 'brassica_rnaseq_reads.tar')
-
-    assert expected_tar_path == actual_tar_path

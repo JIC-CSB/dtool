@@ -80,9 +80,9 @@ def test_full_archiving_workflow(chdir):
     cmd = ["arctool", "--version"]
     subprocess.call(cmd)
 
-    cmd = ["arctool", "manifest", "create", archive_output_path]
+    cmd = ["arctool", "manifest", "create", dataset_path]
     subprocess.call(cmd)
-    manifest_path = os.path.join(dataset_path, "manifest.json")
+    manifest_path = os.path.join(dataset_path, ".dtool", "manifest.json")
     assert os.path.isfile(manifest_path)
 
     cmd = ["arctool", "archive", "create", dataset_path]

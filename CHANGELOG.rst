@@ -11,6 +11,7 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- ``arctool manifest create`` (points at dataset directory)
 - ``datatool new dataset`` now derives descriptive metadata defaults from parent collections/projects
 - Recursive build up of descriptive metadata from parent directories
 - Ability to create projects using the ``datatool``
@@ -21,6 +22,7 @@ Added
 Changed
 ^^^^^^^
 
+- Now need to create ``datatool manifest update`` at dataset dir
 - Move summarise_archive function into dtool.archive.ArchiveFile.summarise method
 - Move verify_file and verify_all into dtool.archive.ArchiveFile class
 - dtool.archive.ArchiveFile no longer used to build archives
@@ -33,9 +35,14 @@ Removed
 ^^^^^^^
 
 - Ability to extract files from (gzipped) tarball using the arctool cli
+- arctool.create_manifest function
+- arctool.rel_paths_for_archiving
+- ``datatool manifest create``
 
 Fixed
 ^^^^^
+
+- Fixed command line tools; broken because they still used create_manifest function
 
 
 Security

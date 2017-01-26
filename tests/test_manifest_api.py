@@ -78,22 +78,14 @@ def test_generate_relative_paths_with_trailing_slash():
     assert sorted(actual) == sorted(expected)
 
 
-def test_create_manifest(tmp_dir):
-    from dtool.arctool import create_manifest
+def test_generate_manifest(tmp_dir):
+    from dtool import generate_manifest
 
     tmp_project = os.path.join(tmp_dir, "proj")
 
     shutil.copytree(TEST_INPUT_DATA, tmp_project)
-    manifest_path = create_manifest(os.path.join(tmp_project, "archive"))
-
-    expected_path = os.path.join(tmp_project, "manifest.json")
-    expected_path = os.path.abspath(expected_path)
-    assert manifest_path == expected_path
-    assert os.path.isfile(manifest_path)
-
-    # Ensure manifest is valid json.
-    with open(manifest_path, "r") as fh:
-        manifest = json.load(fh)
+    archive_subdir_path = os.path.join(tmp_project, "archive")
+    manifest = generate_manifest(archive_subdir_path)
 
     assert "file_list" in manifest
 
@@ -110,19 +102,13 @@ def test_create_manifest(tmp_dir):
 
 
 def test_manifest_mimetypes(tmp_dir):
-    from dtool.arctool import create_manifest
+    from dtool import generate_manifest
 
     tmp_project = os.path.join(tmp_dir, "proj")
-
     shutil.copytree(TEST_MIMETYPE_DATA, tmp_project)
-    create_manifest(os.path.join(tmp_project, "archive"))
 
-    manifest_path = os.path.join(tmp_project, "manifest.json")
-    assert os.path.isfile(manifest_path)
-
-    # Ensure manifest is valid json.
-    with open(manifest_path, "r") as fh:
-        manifest = json.load(fh)
+    archive_subdir_path = os.path.join(tmp_project, "archive")
+    manifest = generate_manifest(archive_subdir_path)
 
     file_list = manifest["file_list"]
 
@@ -140,18 +126,6 @@ def test_manifest_mimetypes(tmp_dir):
         actual = file['mimetype']
         expected = expected_mimetypes[file_path]
         assert expected == actual
-
-
-def test_create_manifest_strip_trailing_slash(tmp_dir):
-    from dtool.arctool import create_manifest
-
-    tmp_project = os.path.join(tmp_dir, "proj")
-
-    shutil.copytree(TEST_INPUT_DATA, tmp_project)
-    create_manifest(os.path.join(tmp_project, "archive/"))
-
-    manifest_path = os.path.join(tmp_project, "manifest.json")
-    assert os.path.isfile(manifest_path)
 
 
 def test_generate_filedict_list():

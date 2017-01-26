@@ -16,7 +16,6 @@ from dtool import (
     NotDtoolObject,
     Collection,
 )
-from dtool.arctool import create_manifest
 from dtool.utils import auto_metadata
 from dtool.clickutils import create_project
 
@@ -91,19 +90,16 @@ def manifest():
 
 
 @manifest.command()
-@click.argument('path', 'Path to archive directory.',
+@click.argument('path', 'Path to dataset directory.',
                 type=click.Path(exists=True))
-def create(path):
-    logger.emit('pre_create_manifest', {'path': path})
+def update(path):
+    logger.emit('pre_update_manifest', {'path': path})
 
-    manifest_path = create_manifest(path)
+    dataset = DataSet.from_path(path)
+    dataset.update_manifest()
 
-    with open(manifest_path) as fh:
-        manifest = json.load(fh)
+    click.secho('Updated manifest')
 
-    click.secho('Created manifest: ', nl=False)
-    click.secho(manifest_path, fg='green')
-
-    log_data = {'manifest_path': manifest_path,
-                'manifest': manifest}
-    logger.emit('post_create_manifest', log_data)
+    log_data = {'uuid': dataset.uuid,
+                'manifest': dataset.manifest}
+    logger.emit('post_update_manifest', log_data)

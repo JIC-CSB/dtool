@@ -1,6 +1,7 @@
 """Tests for the dtool cli."""
 
 import contextlib
+from distutils.dir_util import copy_tree
 import os
 import subprocess
 import shutil
@@ -138,14 +139,18 @@ def test_new_dataset_in_project(chdir):
     assert dataset.descriptive_metadata['project_name'] == 'new_test_project'
 
 
-def test_manifest_create(tmp_dir):
+def test_manifest_update(tmp_dir):
+
+    from dtool import DataSet
+    dataset = DataSet("test_dataset", "data")
+    dataset.persist_to_path(tmp_dir)
 
     data_dir = os.path.join(tmp_dir, "data")
-    shutil.copytree(TEST_INPUT_DATA, data_dir)
+    copy_tree(TEST_INPUT_DATA, data_dir)
 
-    cmd = ["datatool", "manifest", "create", data_dir]
+    cmd = ["datatool", "manifest", "update", tmp_dir]
     subprocess.call(cmd)
-    manifest_path = os.path.join(tmp_dir, "manifest.json")
+    manifest_path = os.path.join(tmp_dir, ".dtool", "manifest.json")
     assert os.path.isfile(manifest_path)
 
     # Ensure manifest is valid json.
