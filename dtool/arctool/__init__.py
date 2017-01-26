@@ -2,7 +2,6 @@
 
 import os
 import json
-import tarfile
 import datetime
 
 import yaml
@@ -11,7 +10,7 @@ from dtool import (
     log,
     DataSet,
 )
-from dtool.archive import ArchiveFile, ArchiveFileBuilder
+from dtool.archive import ArchiveFile
 from dtool.manifest import (
     generate_manifest,
 )
@@ -144,46 +143,3 @@ def rel_paths_for_archiving(path):
         rel_paths.append(rpath)
 
     return rel_paths, tot_size
-
-
-# Should this function be deprecated?
-# It is no longer used by the arctool cli.
-def create_archive(path):
-    """Create archive from path using tar.
-
-    :param path: path to archive in staging area
-    :returns: path to created tarball
-    """
-
-    archive_builder = ArchiveFileBuilder.from_path(path)
-    output_path = os.path.join(path, "..")
-    return archive_builder.persist_to_tar(output_path)
-
-
-def summarise_archive(path):
-    """Return dictionary with summary information about an archive.
-
-    :param path: path to archive tar gzipped file
-    :returns: dictionary of summary information about the archive
-    """
-    path = os.path.abspath(path)
-
-    archive_basename = os.path.basename(path)
-    archive_name, exts = archive_basename.split('.', 1)
-    assert exts == 'tar.gz'
-
-    manifest_path = os.path.join(archive_name, '.dtool/manifest.json')
-
-    with tarfile.open(path, 'r:gz') as tar:
-        manifest_fp = tar.extractfile(manifest_path)
-        manifest_str = manifest_fp.read().decode("utf-8")
-        manifest = json.loads(manifest_str)
-
-    total_size = sum(entry['size'] for entry in manifest['file_list'])
-
-    summary = {}
-    summary['n_files'] = len(manifest['file_list'])
-    summary['total_size'] = total_size
-    summary['manifest'] = manifest
-
-    return summary

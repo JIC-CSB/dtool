@@ -12,7 +12,7 @@ import yaml
 import magic
 import pytest
 
-from dtool.arctool import ArchiveFileBuilder
+from dtool.archive import ArchiveFileBuilder
 
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "basic", "input")
@@ -382,14 +382,3 @@ def test_issue_with_log_create_archive_in_different_dir(tmp_dir):
     expected_tar_path = os.path.join(tmp_dir, 'brassica_rnaseq_reads.tar')
 
     assert expected_tar_path == actual_tar_path
-
-
-def test_summarise_archive(tmp_archive):
-
-    from dtool.arctool import summarise_archive
-
-    summary = summarise_archive(tmp_archive)
-
-    assert isinstance(summary, dict)
-
-    assert summary['n_files'] == 3

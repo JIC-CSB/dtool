@@ -125,11 +125,13 @@ def test_archive_calculate_hash(tmp_archive):
     assert actual == expected
 
 
-# def test_extract_readme(tmp_archive):
-#    from dtool.archive import ArchiveFile
-#    archive = ArchiveFile.from_file(tmp_archive)
-#    with get_context_tmp_dir() as d:
-#        archive.extract_file(".dtool/manifest.json", d)
-#        expected_path = os.path.join(
-#           d, archive._name, ".dtool", "manifest.json")
-#        assert os.path.isfile(expected_path)
+def test_summarise_archive(tmp_archive):
+
+    from dtool.archive import ArchiveFile
+
+    archive_file = ArchiveFile.from_file(tmp_archive)
+    summary = archive_file.summarise()
+
+    assert isinstance(summary, dict)
+
+    assert summary['n_files'] == 2

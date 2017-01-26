@@ -193,6 +193,20 @@ class ArchiveFile(_ArchiveFileBase):
 
         return True
 
+    def summarise(self):
+        """Return dictionary with summary information about an archive.
+
+        :returns: dictionary of summary information about the archive
+        """
+        total_size = sum(entry['size'] for entry in self.manifest['file_list'])
+
+        summary = {}
+        summary['n_files'] = len(self.manifest['file_list'])
+        summary['total_size'] = total_size
+        summary['manifest'] = self.manifest
+
+        return summary
+
 
 ################################################################
 # Helper function(s) for wrapping shell commands on the tar file.

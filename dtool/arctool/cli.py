@@ -18,7 +18,6 @@ from dtool import (
 )
 from dtool.arctool import (
     create_manifest,
-    summarise_archive,
     readme_yml_is_valid,
     new_archive_dataset,
 )
@@ -292,7 +291,8 @@ def verify():
 @click.argument('path', 'Path to compressed archive.',
                 type=click.Path(exists=True))
 def summary(path):
-    summary_data = summarise_archive(path)
+    archive_file = ArchiveFile.from_file(path)
+    summary_data = archive_file.summarise()
 
     size_in_gibi = float(summary_data['total_size']) / (2 ** 30)
 
