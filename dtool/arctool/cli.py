@@ -32,6 +32,7 @@ from dtool.archive import (
 )
 from dtool.slurm import generate_slurm_script
 from dtool.utils import auto_metadata
+from dtool.clickutils import create_project
 
 from fluent import sender
 
@@ -72,24 +73,6 @@ def new(ctx, staging_path):
             raise(click.UsageError("Don't create a project in a dataset"))
 
         cli_new_dataset(project_path, project.descriptive_metadata)
-
-
-def create_project(staging_path):
-
-    staging_path = os.path.abspath(staging_path)
-
-    project_name = click.prompt('project_name',
-                                default='my_project')
-
-    project = Project(project_name)
-    project_dir = os.path.join(staging_path, project_name)
-    os.mkdir(project_dir)
-    project.persist_to_path(project_dir)
-
-    click.secho('Created new project in: ', nl=False)
-    click.secho(project_dir, fg='green')
-
-    return project
 
 
 @new.command()
