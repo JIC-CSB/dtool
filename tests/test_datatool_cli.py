@@ -1,5 +1,6 @@
 """Tests for the dtool cli."""
 
+import contextlib
 import os
 import subprocess
 import shutil
@@ -10,6 +11,15 @@ import pytest
 
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "mimetype", "input", "archive")
+
+
+@contextlib.contextmanager
+def remember_cwd():
+    cwd = os.getcwd()
+    try:
+        yield
+    finally:
+        os.chdir(cwd)
 
 
 @pytest.fixture
@@ -92,6 +102,40 @@ def test_new_project(chdir):
     assert os.path.isfile(expected_dtool_file)
 
     Project.from_path('my_project')
+
+
+def test_new_dataset_in_project(chdir):
+
+    from click.testing import CliRunner
+    from dtool.datatool.cli import dataset, project
+    from dtool import DataSet
+
+    runner = CliRunner()
+
+    input_string = 'new_test_project\n'
+
+    result = runner.invoke(project, input=input_string)
+
+    assert not result.exception
+
+    with remember_cwd():
+        os.chdir('new_test_project')
+        input_string = '\n'
+        input_string += 'new_test_dataset\n'
+        input_string += '\n'  # confidential
+        input_string += '\n'  # personally identifiable information
+        input_string += 'Test User\n'
+        input_string += 'test.user@example.com\n'
+        input_string += 'usert\n'
+        input_string += '\n'  # Date
+
+        result = runner.invoke(dataset, input=input_string)
+
+        assert not result.exception
+
+    dataset = DataSet.from_path('new_test_project/new_test_dataset')
+
+    assert dataset.descriptive_metadata['project_name'] == 'new_test_project'
 
 
 def test_manifest_create(tmp_dir):
