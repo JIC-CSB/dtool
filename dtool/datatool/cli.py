@@ -13,6 +13,8 @@ from dtool import (
     __version__,
     DataSet,
     DescriptiveMetadata,
+    NotDtoolObject,
+    Collection,
 )
 from dtool.arctool import create_manifest
 from dtool.utils import write_templated_file, auto_metadata
@@ -39,6 +41,12 @@ def new():
 
 @new.command()
 def dataset():
+    try:
+        collection = Collection.from_path('.')
+        parent_descriptive_metadata = collection.descriptive_metadata
+    except NotDtoolObject:
+        parent_descriptive_metadata = {}
+
     readme_info = [
         ("project_name", "project_name"),
         ("dataset_name", "dataset_name"),
@@ -51,6 +59,7 @@ def dataset():
     ]
     descriptive_metadata = DescriptiveMetadata(readme_info)
     descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
+    descriptive_metadata.update(parent_descriptive_metadata)
     descriptive_metadata.prompt_for_values()
     dataset_name = descriptive_metadata["dataset_name"]
 
@@ -60,11 +69,10 @@ def dataset():
     os.mkdir(dataset_name)
 
     ds = DataSet(dataset_name, 'data')
-    ds.persist_to_path(descriptive_metadata["dataset_name"])
+    ds.persist_to_path(dataset_name)
 
-    write_templated_file(ds.abs_readme_path,
-                         'datatool_dataset_README.yml',
-                         descriptive_metadata)
+    descriptive_metadata.persist_to_path(
+        dataset_name, template='datatool_dataset_README.yml')
 
 
 @new.command()
