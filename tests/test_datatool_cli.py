@@ -91,7 +91,7 @@ def test_new_project(chdir):
     expected_dtool_file = os.path.join('my_project', '.dtool', 'dtool')
     assert os.path.isfile(expected_dtool_file)
 
-    loaded_project = Project.from_path('my_project')
+    Project.from_path('my_project')
 
 
 def test_manifest_create(tmp_dir):

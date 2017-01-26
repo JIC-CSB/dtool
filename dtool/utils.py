@@ -1,10 +1,8 @@
 """dtool utilities."""
 
-import os
 import getpass
 import datetime
 
-import click
 from jinja2 import Environment, PackageLoader
 
 

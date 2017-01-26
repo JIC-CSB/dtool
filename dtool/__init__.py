@@ -60,7 +60,6 @@ class _DtoolObject(object):
         self._admin_metadata.update(extra_admin_metadata)
         self._abs_path = None
 
-
     @property
     def _filesystem_parent(self):
         """Return instance of parent if it is a dtool object otherwise None."""
@@ -93,7 +92,8 @@ class _DtoolObject(object):
 
         dtool_file_path = os.path.join(path, '.dtool', 'dtool')
         if not os.path.isfile(dtool_file_path):
-            raise NotDtoolObject('Not a dtool object; .dtool/dtool does not exist')
+            raise NotDtoolObject(
+                'Not a dtool object; .dtool/dtool does not exist')
 
         with open(dtool_file_path) as fh:
             dtool_object._admin_metadata = json.load(fh)

@@ -36,7 +36,7 @@ def test_from_path_on_collection(tmp_dir):
 
     dtool_object = _DtoolObject.from_path(tmp_dir)
     assert dtool_object._abs_path == tmp_dir
-    assert dtool_object.uuid  == collection.uuid
+    assert dtool_object.uuid == collection.uuid
 
 
 def test_from_path_on_empty_dir_raises_NotDtoolObject(tmp_dir):
@@ -77,7 +77,7 @@ def test_from_path_on_empty_dir_raises_NotDtoolObject(tmp_dir):
 #        ("dataset_name", "my_dataset")])
 #    dataset_metadata.persist_to_path(dataset_path)
 #
-#    in_memory_dataset = DataSet.from_path(dataset_path)
-#    assert in_memory_dataset.descriptive_metadata["project_name"] == "my_project"
-#    assert in_memory_dataset.descriptive_metadata["collection_name"] == "my_collection"
-#    assert in_memory_dataset.descriptive_metadata["dataset_name"] == "my_dataset"
+#    dataset = DataSet.from_path(dataset_path)
+#    assert dataset.descriptive_metadata["project_name"] == "my_project"
+#    assert dataset.descriptive_metadata["collection_name"] == "my_collection"
+#    assert dataset.descriptive_metadata["dataset_name"] == "my_dataset"

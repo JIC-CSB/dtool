@@ -13,7 +13,6 @@ from dtool import (
     __version__,
     DataSet,
     DescriptiveMetadata,
-    Project,
 )
 from dtool.arctool import create_manifest
 from dtool.utils import write_templated_file, auto_metadata
