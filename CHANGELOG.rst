@@ -11,6 +11,9 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- ``datatool markup`` CLI command
+- ``dtool.metadata_from_path`` helper function
+
 Changed
 ^^^^^^^
 
