@@ -34,7 +34,7 @@ def cli(fluentd_host):
 
 
 @cli.command()
-def init():
+def markup():
     try:
         collection = Collection.from_path('..')
         parent_descriptive_metadata = collection.descriptive_metadata
@@ -70,18 +70,16 @@ def dataset():
     descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
     descriptive_metadata.update(parent_descriptive_metadata)
     descriptive_metadata.prompt_for_values()
-    dataset_name = descriptive_metadata["dataset_name"]
 
+    dataset_name = descriptive_metadata["dataset_name"]
     if os.path.isdir(dataset_name):
         raise OSError('Directory already exists: {}'.format(dataset_name))
-
     os.mkdir(dataset_name)
+    descriptive_metadata.persist_to_path(
+        dataset_name, template='datatool_dataset_README.yml')
 
     ds = DataSet(dataset_name, 'data')
     ds.persist_to_path(dataset_name)
-
-    descriptive_metadata.persist_to_path(
-        dataset_name, template='datatool_dataset_README.yml')
 
 
 @new.command()

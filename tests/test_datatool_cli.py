@@ -176,9 +176,9 @@ def test_manifest_update(tmp_dir):
         assert expected == actual
 
 
-def test_init(tmp_dir):
+def test_markup(tmp_dir):
     from click.testing import CliRunner
-    from dtool.datatool.cli import init
+    from dtool.datatool.cli import markup
     from dtool import DataSet
 
     existing_data_dir = os.path.join(tmp_dir, 'data')
@@ -204,7 +204,7 @@ def test_init(tmp_dir):
     assert not os.path.isfile(expected_dtool_file)
     with remember_cwd():
         os.chdir(existing_data_dir)
-        result = runner.invoke(init, input=input_string)
+        result = runner.invoke(markup, input=input_string)
 
         assert not result.exception
 
@@ -219,9 +219,9 @@ def test_init(tmp_dir):
     assert descriptive_metadata["owners"][0]["name"] == "Test User"
 
 
-def test_init_inherits_parent_metadata(tmp_dir):
+def test_markup_inherits_parent_metadata(tmp_dir):
     from click.testing import CliRunner
-    from dtool.datatool.cli import init
+    from dtool.datatool.cli import markup
     from dtool import DataSet, Project
 
     project = Project("test_inheritance")
@@ -250,7 +250,7 @@ def test_init_inherits_parent_metadata(tmp_dir):
     assert not os.path.isfile(expected_dtool_file)
     with remember_cwd():
         os.chdir(existing_data_dir)
-        result = runner.invoke(init, input=input_string)
+        result = runner.invoke(markup, input=input_string)
 
         assert not result.exception
 
