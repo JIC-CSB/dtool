@@ -17,6 +17,7 @@ Added
 Changed
 ^^^^^^^
 
+- datatool and arctool CLIs now use utility functions for new dataset and markup
 
 Deprecated
 ^^^^^^^^^^

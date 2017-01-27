@@ -11,12 +11,7 @@ from fluent import sender
 from dtool import (
     __version__,
     DataSet,
-    DescriptiveMetadata,
-    NotDtoolObject,
-    Collection,
-    metadata_from_path
 )
-from dtool.utils import auto_metadata
 from dtool.clickutils import create_project, generate_descriptive_metadata
 from dtool.datatool import README_SCHEMA
 
