@@ -14,9 +14,10 @@ from dtool import (
     DescriptiveMetadata,
     NotDtoolObject,
     Collection,
+    metadata_from_path
 )
 from dtool.utils import auto_metadata
-from dtool.clickutils import create_project
+from dtool.clickutils import create_project, generate_descriptive_metadata
 from dtool.datatool import README_SCHEMA
 
 logger = sender.FluentSender('arctool', host='v0679', port=24224)
@@ -35,20 +36,10 @@ def cli(fluentd_host):
 
 @cli.command()
 def markup():
-    try:
-        collection = Collection.from_path('..')
-        parent_descriptive_metadata = collection.descriptive_metadata
-    except NotDtoolObject:
-        parent_descriptive_metadata = {}
-
-    descriptive_metadata = DescriptiveMetadata(README_SCHEMA)
-    descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
-    descriptive_metadata.update(parent_descriptive_metadata)
-    descriptive_metadata.prompt_for_values()
+    descriptive_metadata = generate_descriptive_metadata(
+        README_SCHEMA, '..')
 
     dataset_name = descriptive_metadata["dataset_name"]
-
-   
 
     descriptive_metadata.persist_to_path(
         '.', template='datatool_dataset_README.yml')
@@ -64,21 +55,15 @@ def new():
 
 @new.command()
 def dataset():
-    try:
-        collection = Collection.from_path('.')
-        parent_descriptive_metadata = collection.descriptive_metadata
-    except NotDtoolObject:
-        parent_descriptive_metadata = {}
 
-    descriptive_metadata = DescriptiveMetadata(README_SCHEMA)
-    descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
-    descriptive_metadata.update(parent_descriptive_metadata)
-    descriptive_metadata.prompt_for_values()
+    descriptive_metadata = generate_descriptive_metadata(
+        README_SCHEMA, '.')
 
     dataset_name = descriptive_metadata["dataset_name"]
     if os.path.isdir(dataset_name):
         raise OSError('Directory already exists: {}'.format(dataset_name))
     os.mkdir(dataset_name)
+
     descriptive_metadata.persist_to_path(
         dataset_name, template='datatool_dataset_README.yml')
 
