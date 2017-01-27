@@ -32,6 +32,35 @@ def cli(fluentd_host):
     logger.emit('cli_command', message)
 
 
+@cli.command()
+def init():
+    try:
+        collection = Collection.from_path('..')
+        parent_descriptive_metadata = collection.descriptive_metadata
+    except NotDtoolObject:
+        parent_descriptive_metadata = {}
+
+    readme_info = [
+        ("project_name", "project_name"),
+        ("dataset_name", "dataset_name"),
+        ("confidential", False),
+        ("personally_identifiable_information", False),
+        ("owner_name", "Your Name"),
+        ("owner_email", "your.email@example.com"),
+        ("unix_username", "namey"),
+        ("creation_date", "today"),
+    ]
+    descriptive_metadata = DescriptiveMetadata(readme_info)
+    descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
+    descriptive_metadata.update(parent_descriptive_metadata)
+    descriptive_metadata.prompt_for_values()
+    dataset_name = descriptive_metadata["dataset_name"]
+
+    ds = DataSet(dataset_name)
+    ds.persist_to_path('.')
+    descriptive_metadata.persist_to_path('.')
+
+
 @cli.group()
 def new():
     pass
