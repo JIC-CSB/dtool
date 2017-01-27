@@ -212,6 +212,12 @@ def test_init(tmp_dir):
 
     DataSet.from_path(existing_data_dir)
 
+    readme_path = os.path.join(existing_data_dir, "README.yml")
+    with open(readme_path) as fh:
+        descriptive_metadata = yaml.load(fh)
+    assert "owner_name" not in descriptive_metadata
+    assert descriptive_metadata["owners"][0]["name"] == "Test User"
+
 
 def test_init_inherits_parent_metadata(tmp_dir):
     from click.testing import CliRunner

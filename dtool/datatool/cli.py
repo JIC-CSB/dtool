@@ -17,6 +17,7 @@ from dtool import (
 )
 from dtool.utils import auto_metadata
 from dtool.clickutils import create_project
+from dtool.datatool import README_SCHEMA
 
 logger = sender.FluentSender('arctool', host='v0679', port=24224)
 
@@ -40,17 +41,7 @@ def init():
     except NotDtoolObject:
         parent_descriptive_metadata = {}
 
-    readme_info = [
-        ("project_name", "project_name"),
-        ("dataset_name", "dataset_name"),
-        ("confidential", False),
-        ("personally_identifiable_information", False),
-        ("owner_name", "Your Name"),
-        ("owner_email", "your.email@example.com"),
-        ("unix_username", "namey"),
-        ("creation_date", "today"),
-    ]
-    descriptive_metadata = DescriptiveMetadata(readme_info)
+    descriptive_metadata = DescriptiveMetadata(README_SCHEMA)
     descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
     descriptive_metadata.update(parent_descriptive_metadata)
     descriptive_metadata.prompt_for_values()
@@ -58,7 +49,8 @@ def init():
 
     ds = DataSet(dataset_name)
     ds.persist_to_path('.')
-    descriptive_metadata.persist_to_path('.')
+    descriptive_metadata.persist_to_path(
+        '.', template='datatool_dataset_README.yml')
 
 
 @cli.group()
@@ -74,17 +66,7 @@ def dataset():
     except NotDtoolObject:
         parent_descriptive_metadata = {}
 
-    readme_info = [
-        ("project_name", "project_name"),
-        ("dataset_name", "dataset_name"),
-        ("confidential", False),
-        ("personally_identifiable_information", False),
-        ("owner_name", "Your Name"),
-        ("owner_email", "your.email@example.com"),
-        ("owner_username", "namey"),
-        ("date", "today"),
-    ]
-    descriptive_metadata = DescriptiveMetadata(readme_info)
+    descriptive_metadata = DescriptiveMetadata(README_SCHEMA)
     descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
     descriptive_metadata.update(parent_descriptive_metadata)
     descriptive_metadata.prompt_for_values()
