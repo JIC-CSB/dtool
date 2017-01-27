@@ -45,12 +45,16 @@ def markup():
     descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
     descriptive_metadata.update(parent_descriptive_metadata)
     descriptive_metadata.prompt_for_values()
+
     dataset_name = descriptive_metadata["dataset_name"]
+
+   
+
+    descriptive_metadata.persist_to_path(
+        '.', template='datatool_dataset_README.yml')
 
     ds = DataSet(dataset_name)
     ds.persist_to_path('.')
-    descriptive_metadata.persist_to_path(
-        '.', template='datatool_dataset_README.yml')
 
 
 @cli.group()
