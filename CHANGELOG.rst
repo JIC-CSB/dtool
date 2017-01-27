@@ -11,6 +11,32 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+Changed
+^^^^^^^
+
+
+Deprecated
+^^^^^^^^^^
+
+
+Removed
+^^^^^^^
+
+
+Fixed
+^^^^^
+
+
+Security
+^^^^^^^^
+
+
+[0.9.0] - 2017-01-27
+~~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
 - ``arctool manifest create`` (points at dataset directory)
 - ``datatool new dataset`` now derives descriptive metadata defaults from parent collections/projects
 - Recursive build up of descriptive metadata from parent directories
@@ -27,10 +53,6 @@ Changed
 - Move verify_file and verify_all into dtool.archive.ArchiveFile class
 - dtool.archive.ArchiveFile no longer used to build archives
 
-
-Deprecated
-^^^^^^^^^^
-
 Removed
 ^^^^^^^
 
@@ -43,10 +65,6 @@ Fixed
 ^^^^^
 
 - Fixed command line tools; broken because they still used create_manifest function
-
-
-Security
-^^^^^^^^
 
 
 [0.8.0] - 2017-01-25
