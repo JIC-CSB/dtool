@@ -201,7 +201,7 @@ class DataSet(_DtoolObject):
                                          self._admin_metadata['manifest_root'])
         manifest = generate_manifest(abs_manifest_root)
         with open(self._abs_manifest_path, 'w') as fh:
-            json.dump(manifest, fh)
+            json.dump(manifest, fh, indent=2)
 
     def persist_to_path(self, path):
         """Mark up a directory as a dataset.
