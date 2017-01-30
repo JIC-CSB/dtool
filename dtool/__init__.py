@@ -402,6 +402,19 @@ def log(message):
     if VERBOSE:
         print(message)
 
+
+def metadata_from_path(path):
+    """Return dictionary containing metadata derived from dtool
+    objects a level of the directory structure."""
+
+    try:
+        dtool_object = _DtoolObject.from_path(path)
+        descriptive_metadata = dtool_object.descriptive_metadata
+    except NotDtoolObject:
+        descriptive_metadata = {}
+
+    return descriptive_metadata
+
 ###################################################
 # STOLEN FROM MANIFEST. PUT IT BACK LATER. MAYBE. #
 ###################################################

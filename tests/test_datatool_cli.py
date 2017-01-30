@@ -8,6 +8,7 @@ import shutil
 import tempfile
 import json
 
+import yaml
 import pytest
 
 HERE = os.path.dirname(__file__)
@@ -173,3 +174,93 @@ def test_manifest_update(tmp_dir):
         actual = file['mimetype']
         expected = expected_mimetypes[file_path]
         assert expected == actual
+
+
+def test_markup(tmp_dir):
+    from click.testing import CliRunner
+    from dtool.datatool.cli import markup
+    from dtool import DataSet
+
+    existing_data_dir = os.path.join(tmp_dir, 'data')
+
+    shutil.copytree(TEST_INPUT_DATA, existing_data_dir)
+
+    runner = CliRunner()
+
+    input_string = 'my_project\n'
+    input_string += 'my_dataset\n'
+    input_string += '\n'  # confidential
+    input_string += '\n'  # personally identifiable information
+    input_string += 'Test User\n'
+    input_string += 'test.user@example.com\n'
+    input_string += 'usert\n'
+    input_string += '\n'  # Date
+
+    expected_dtool_file = os.path.join(
+        existing_data_dir,
+        '.dtool',
+        'dtool')
+
+    assert not os.path.isfile(expected_dtool_file)
+    with remember_cwd():
+        os.chdir(existing_data_dir)
+        result = runner.invoke(markup, input=input_string)
+
+        assert not result.exception
+
+    assert os.path.isfile(expected_dtool_file)
+
+    DataSet.from_path(existing_data_dir)
+
+    readme_path = os.path.join(existing_data_dir, "README.yml")
+    with open(readme_path) as fh:
+        descriptive_metadata = yaml.load(fh)
+    assert "owner_name" not in descriptive_metadata
+    assert descriptive_metadata["owners"][0]["name"] == "Test User"
+
+
+def test_markup_inherits_parent_metadata(tmp_dir):
+    from click.testing import CliRunner
+    from dtool.datatool.cli import markup
+    from dtool import DataSet, Project
+
+    project = Project("test_inheritance")
+    project.persist_to_path(tmp_dir)
+
+    existing_data_dir = os.path.join(tmp_dir, 'data')
+
+    shutil.copytree(TEST_INPUT_DATA, existing_data_dir)
+
+    runner = CliRunner()
+
+    input_string = '\n'
+    input_string += 'my_dataset\n'
+    input_string += '\n'  # confidential
+    input_string += '\n'  # personally identifiable information
+    input_string += 'Test User\n'
+    input_string += 'test.user@example.com\n'
+    input_string += 'usert\n'
+    input_string += '\n'  # Date
+
+    expected_dtool_file = os.path.join(
+        existing_data_dir,
+        '.dtool',
+        'dtool')
+
+    assert not os.path.isfile(expected_dtool_file)
+    with remember_cwd():
+        os.chdir(existing_data_dir)
+        result = runner.invoke(markup, input=input_string)
+
+        assert not result.exception
+
+    assert os.path.isfile(expected_dtool_file)
+
+    readme_path = os.path.join(existing_data_dir, "README.yml")
+    with open(readme_path) as fh:
+        descriptive_metadata = yaml.load(fh)
+    assert descriptive_metadata["project_name"] == "test_inheritance"
+
+    dataset = DataSet.from_path(existing_data_dir)
+
+    assert dataset.descriptive_metadata["project_name"] == "test_inheritance"

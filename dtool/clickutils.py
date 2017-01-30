@@ -4,7 +4,12 @@ import os
 
 import click
 
-from dtool import Project
+from dtool import (
+    Project,
+    DescriptiveMetadata,
+    metadata_from_path,
+)
+from dtool.utils import auto_metadata
 
 
 def create_project(path):
@@ -27,3 +32,12 @@ def create_project(path):
     click.secho(project_dir, fg='green')
 
     return project
+
+
+def generate_descriptive_metadata(schema, parent_path):
+    descriptive_metadata = DescriptiveMetadata(schema)
+    descriptive_metadata.update(auto_metadata("nbi.ac.uk"))
+    descriptive_metadata.update(metadata_from_path(parent_path))
+    descriptive_metadata.prompt_for_values()
+
+    return descriptive_metadata
