@@ -387,10 +387,11 @@ class DescriptiveMetadata(object):
 
         output_path = os.path.join(path, filename)
 
-        # Find the variables in the template from the abstract syntax tree (ast).
+        # Find variables in the template from the abstract syntax tree (ast).
         env = Environment(loader=PackageLoader('dtool', 'templates'),
                           keep_trailing_newline=True)
-        ast = env.parse(template)
+        template_source = env.loader.get_source(env, template)
+        ast = env.parse(template_source)
         template_variables = meta.find_undeclared_variables(ast)
 
         # Create yaml for any variables that are not present in the template.
@@ -403,13 +404,7 @@ class DescriptiveMetadata(object):
         variables = self._dict.copy()
         variables["extra_yml_content"] = extra_yml_content
 
-        if template is None:
-            with open(output_path, 'w') as fh:
-                fh.write("---\n\n")
-                for k in self.ordered_keys:
-                    fh.write('{}: {}\n'.format(k, self[k]))
-        else:
-            write_templated_file(output_path, template, variables)
+        write_templated_file(output_path, template, variables)
 
 
 def log(message):
