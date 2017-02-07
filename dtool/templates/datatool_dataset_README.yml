@@ -1,6 +1,5 @@
 {% extends "base.yml.j2" %}
 {% block content %}
-cool_stuff: True
 project_name: {{ project_name }}
 dataset_name: {{ dataset_name }}
 confidential: {{ confidential }}
