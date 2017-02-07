@@ -1,4 +1,5 @@
----
+{% extends "base.yml.j2" %}
+{% block content %}
 project_name: {{ project_name }}
 dataset_name: {{ dataset_name }}
 confidential: {{ confidential }}
@@ -8,8 +9,11 @@ owners:
     email: {{ owner_email }}
     username: {{ owner_username }}
 archive_date: {{ date }}
+{% endblock %}
+{% block comments %}
 # links:
 #  - http://doi.dx.org/your_doi
 #  - http://github.com/your_code_repository
 # budget_codes:
 #  - E.g. CCBS1H10S
+{% endblock %}
