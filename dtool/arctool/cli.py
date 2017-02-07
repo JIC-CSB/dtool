@@ -97,7 +97,7 @@ def cli_new_dataset(staging_path):
 
     logger.emit('pre_new_archive', {'staging_path': staging_path})
 
-    descriptive_metadata = generate_descriptive_metadata(README_SCHEMA, '.')
+    descriptive_metadata = generate_descriptive_metadata(README_SCHEMA, staging_path)
 
     dataset, dataset_path, readme_path = new_archive_dataset(
         staging_path, descriptive_metadata)
