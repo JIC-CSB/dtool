@@ -27,6 +27,7 @@ import json
 import uuid
 import getpass
 
+from jinja2 import Environment, PackageLoader, meta
 import yaml
 import click
 import magic
@@ -143,12 +144,12 @@ class DataSet(_DtoolObject):
     """Class for representing datasets."""
 
     def __init__(self, name, data_directory='.'):
-        specific_metadata = {"type": "dataset",
-                             "name": name,
-                             "manifest_path": os.path.join(
-                                    ".dtool", "manifest.json"),
-                             "creator_username": getpass.getuser(),
-                             "manifest_root": data_directory}
+        specific_metadata = {
+            "type": "dataset",
+            "name": name,
+            "manifest_path": os.path.join(".dtool", "manifest.json"),
+            "creator_username": getpass.getuser(),
+            "manifest_root": data_directory}
         super(DataSet, self).__init__(specific_metadata)
 
     @property
@@ -380,10 +381,27 @@ class DescriptiveMetadata(object):
         for key, default in self:
             self._dict[key] = click.prompt(key, default=default)
 
-    def persist_to_path(self, path, filename='README.yml', template=None):
+    def persist_to_path(
+            self, path, filename='README.yml', template="base.yml.j2"):
         """Write the metadata to path + filename."""
 
         output_path = os.path.join(path, filename)
+
+        # Find the variables in the template from the abstract syntax tree (ast).
+        env = Environment(loader=PackageLoader('dtool', 'templates'),
+                          keep_trailing_newline=True)
+        ast = env.parse(template)
+        template_variables = meta.find_undeclared_variables(ast)
+
+        # Create yaml for any variables that are not present in the template.
+        extra_variables = set(self.keys()) - template_variables
+        extra_yml_content = ["{}: {}".format(k, self[k])
+                             for k in self.ordered_keys
+                             if k in extra_variables]
+
+        # Create the dictionary to pass to the template.
+        variables = self._dict.copy()
+        variables["extra_yml_content"] = extra_yml_content
 
         if template is None:
             with open(output_path, 'w') as fh:
@@ -391,7 +409,7 @@ class DescriptiveMetadata(object):
                 for k in self.ordered_keys:
                     fh.write('{}: {}\n'.format(k, self[k]))
         else:
-            write_templated_file(output_path, template, self)
+            write_templated_file(output_path, template, variables)
 
 
 def log(message):

@@ -1,0 +1,6 @@
+---
+{% block content %}{% endblock %}
+{%- for yml_string in extra_yml_content %}
+{{ yml_string }}
+{%- endfor %}
+{%- block comments %}{% endblock %}
