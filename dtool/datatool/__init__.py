@@ -5,6 +5,6 @@ README_SCHEMA = [
     ("personally_identifiable_information", False),
     ("owner_name", "Your Name"),
     ("owner_email", "your.email@example.com"),
-    ("unix_username", "namey"),
+    ("owner_username", "namey"),
     ("creation_date", "today"),
 ]
