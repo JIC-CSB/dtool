@@ -6,5 +6,5 @@ README_SCHEMA = [
     ("owner_name", u"Your Name"),
     ("owner_email", u"your.email@example.com"),
     ("owner_username", u"namey"),
-    ("creation_date", u"today"),
+    ("date", u"today"),
 ]
