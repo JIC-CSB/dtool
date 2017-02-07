@@ -11,6 +11,9 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- Extra variables from collections/projects are now propagated to the
+  descriptive metadata of the dataset/archive when using the
+``datatool``/``arctool`` CLI
 - ``datatool markup`` CLI command
 - ``dtool.metadata_from_path`` helper function
 
