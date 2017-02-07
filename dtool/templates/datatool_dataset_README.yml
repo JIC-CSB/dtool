@@ -10,11 +10,11 @@ owners:
     email: {{ owner_email }}
     username: {{ owner_username }}
 creation_date: {{ date }}
-{% endblock %}
+{%- endblock %}
 {% block comments %}
 # links:
 #  - http://doi.dx.org/your_doi
 #  - http://github.com/your_code_repository
 # budget_codes:
 #  - E.g. CCBS1H10S
-{% endblock %}
+{%- endblock %}
