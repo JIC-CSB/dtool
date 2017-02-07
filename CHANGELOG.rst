@@ -31,6 +31,7 @@ Fixed
 ^^^^^
 
 - Pretty printing of manifest.json (indent 2)
+- Remove cookiecutter dependency
 
 
 Security
