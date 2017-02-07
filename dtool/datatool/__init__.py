@@ -1,10 +1,10 @@
 README_SCHEMA = [
-    ("project_name", "project_name"),
-    ("dataset_name", "dataset_name"),
+    ("project_name", u"project_name"),
+    ("dataset_name", u"dataset_name"),
     ("confidential", False),
     ("personally_identifiable_information", False),
-    ("owner_name", "Your Name"),
-    ("owner_email", "your.email@example.com"),
-    ("owner_username", "namey"),
-    ("creation_date", "today"),
+    ("owner_name", u"Your Name"),
+    ("owner_email", u"your.email@example.com"),
+    ("owner_username", u"namey"),
+    ("creation_date", u"today"),
 ]
