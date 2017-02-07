@@ -66,7 +66,7 @@ def new(ctx, staging_path):
         except DtoolTypeError:
             raise(click.UsageError("Don't create a project in a dataset"))
 
-        cli_new_dataset(project_path, project.descriptive_metadata)
+        cli_new_dataset(project_path)
 
 
 @new.command()
@@ -89,7 +89,7 @@ def dataset(staging_path):
     cli_new_dataset(staging_path)
 
 
-def cli_new_dataset(staging_path, project_metadata=dict()):
+def cli_new_dataset(staging_path):
     staging_path = os.path.abspath(staging_path)
 
     click.secho('Starting new archive in: ', nl=False)
@@ -97,7 +97,7 @@ def cli_new_dataset(staging_path, project_metadata=dict()):
 
     logger.emit('pre_new_archive', {'staging_path': staging_path})
 
-    descriptive_metadata = generate_descriptive_metadata(README_SCHEMA, '..')
+    descriptive_metadata = generate_descriptive_metadata(README_SCHEMA, '.')
 
     dataset, dataset_path, readme_path = new_archive_dataset(
         staging_path, descriptive_metadata)
