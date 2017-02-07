@@ -33,6 +33,7 @@ Removed
 Fixed
 ^^^^^
 
+- Reading of project level metadata in ``arctool new dataset``
 - Pretty printing of manifest.json (indent 2)
 - Remove cookiecutter dependency
 - datatool README_SCHEMA
