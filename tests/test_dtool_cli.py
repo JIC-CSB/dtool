@@ -49,11 +49,11 @@ def tmp_dir(request):
 
 def test_version():
 
-    cmd = ["datatool", "--version"]
+    cmd = ["dtool", "--version"]
     output = subprocess.check_output(cmd)
     output = output.decode('utf8')
 
-    assert output.startswith('datatool, version')
+    assert output.startswith('dtool, version')
 
 
 def test_new_dataset(chdir):
@@ -149,7 +149,7 @@ def test_manifest_update(tmp_dir):
     data_dir = os.path.join(tmp_dir, "data")
     copy_tree(TEST_INPUT_DATA, data_dir)
 
-    cmd = ["datatool", "manifest", "update", tmp_dir]
+    cmd = ["dtool", "manifest", "update", tmp_dir]
     subprocess.call(cmd)
     manifest_path = os.path.join(tmp_dir, ".dtool", "manifest.json")
     assert os.path.isfile(manifest_path)
