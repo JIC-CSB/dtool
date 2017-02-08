@@ -20,5 +20,4 @@ docker run \
     --rm \
     mcdocker2singularity \
     jicscicomp/dtool \
-    arctool \
-
+    dtool \
