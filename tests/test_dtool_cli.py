@@ -59,7 +59,7 @@ def test_version():
 def test_new_dataset(chdir):
 
     from click.testing import CliRunner
-    from dtool.datatool.cli import dataset
+    from dtool.cli import dataset
     from dtool import DataSet
 
     runner = CliRunner()
@@ -88,7 +88,7 @@ def test_new_dataset(chdir):
 def test_new_project(chdir):
 
     from click.testing import CliRunner
-    from dtool.datatool.cli import project
+    from dtool.cli import project
     from dtool import Project
 
     runner = CliRunner()
@@ -109,7 +109,7 @@ def test_new_project(chdir):
 def test_new_dataset_in_project(chdir):
 
     from click.testing import CliRunner
-    from dtool.datatool.cli import dataset, project
+    from dtool.cli import dataset, project
     from dtool import DataSet
 
     runner = CliRunner()
@@ -178,7 +178,7 @@ def test_manifest_update(tmp_dir):
 
 def test_markup(tmp_dir):
     from click.testing import CliRunner
-    from dtool.datatool.cli import markup
+    from dtool.cli import markup
     from dtool import DataSet
 
     existing_data_dir = os.path.join(tmp_dir, 'data')
@@ -221,7 +221,7 @@ def test_markup(tmp_dir):
 
 def test_markup_inherits_parent_metadata(tmp_dir):
     from click.testing import CliRunner
-    from dtool.datatool.cli import markup
+    from dtool.cli import markup
     from dtool import DataSet, Project
 
     project = Project("test_inheritance")

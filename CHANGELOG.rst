@@ -15,9 +15,10 @@ Added
 Changed
 ^^^^^^^
 
-- ``datatool`` CLI renamed to ``dtool``
 - ``arctool`` - this now lives in it's own repository
    `github.com/JIC-CSB/arctool <https://github.com/JIC-CSB/arctool>`_.
+- ``datatool`` CLI renamed to ``dtool``
+- ``dtool.datatool.cli`` module renamed ``dtool.cli``
 
 
 Deprecated

@@ -6,7 +6,7 @@ readme = open("README.rst").read()
 url = "https://github.com/JIC-CSB/dtool"
 
 setup(name="dtool",
-      packages=["dtool", "dtool.datatool"],
+      packages=["dtool"],
       version=version,
       description="Tools for managing scientific data",
       include_package_data=True,
@@ -23,6 +23,6 @@ setup(name="dtool",
         "python-magic",
       ],
       entry_points={
-          'console_scripts': ['dtool=dtool.datatool.cli:cli']
+          'console_scripts': ['dtool=dtool.cli:cli']
       },
       license="MIT")
