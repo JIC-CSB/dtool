@@ -23,6 +23,6 @@ setup(name="dtool",
         "python-magic",
       ],
       entry_points={
-          'console_scripts': ['datatool=dtool.datatool.cli:cli']
+          'console_scripts': ['dtool=dtool.datatool.cli:cli']
       },
       license="MIT")
