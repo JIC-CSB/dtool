@@ -35,7 +35,7 @@ import magic
 from dtool.filehasher import generate_file_hash
 from dtool.utils import write_templated_file
 
-__version__ = "0.10.0"
+__version__ = "0.11.0"
 
 VERBOSE = True
 
