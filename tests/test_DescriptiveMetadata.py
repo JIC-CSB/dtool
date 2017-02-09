@@ -53,15 +53,12 @@ def test_DescriptiveMetadata_works_with_templating():
     schema = [("project_name", "my_project")]
     descriptive_metadata = DescriptiveMetadata(schema)
 
-    from jinja2 import PackageLoader, Environment
-
-    env = Environment(loader=PackageLoader('dtool', 'templates'),
-                      keep_trailing_newline=True)
-    template = env.get_template('arctool_project_README.yml')
+    from jinja2 import Template
+    template = Template("project_name: {{ project_name }}")
 
     output = template.render(descriptive_metadata)
 
-    assert output == '---\n\nproject_name: my_project\n'
+    assert output == 'project_name: my_project'
 
 
 def test_DescriptiveMetadata_iter_keys_and_defaults():
@@ -104,9 +101,8 @@ def test_DescriptiveMetadata_prompt_for_values():
 
 def test_DescriptiveMetadata_persist_to_file(tmp_dir):
     from dtool import DescriptiveMetadata
-    schema = [("project_name", "old_project"),
-              ("dataset_name", "old_dataset")]
-    descriptive_metadata = DescriptiveMetadata(schema)
+    from dtool.cli import README_SCHEMA
+    descriptive_metadata = DescriptiveMetadata(README_SCHEMA)
 
     output_file = os.path.join(tmp_dir, 'README.yml')
     descriptive_metadata.persist_to_path(tmp_dir)
@@ -118,17 +114,36 @@ def test_DescriptiveMetadata_persist_to_file(tmp_dir):
 
     assert contents == """---
 
-project_name: old_project
-dataset_name: old_dataset
+project_name: project_name
+dataset_name: dataset_name
+confidential: False
+personally_identifiable_information: False
+owner_name: Your Name
+owner_email: your.email@example.com
+owner_username: namey
+date: today
 """
 
     descriptive_metadata.persist_to_path(
-        tmp_dir, template='arctool_project_README.yml')
+        tmp_dir, template='datatool_dataset_README.yml')
 
     with open(output_file) as fh:
         contents = fh.read()
 
     assert contents == """---
 
-project_name: old_project
+project_name: project_name
+dataset_name: dataset_name
+confidential: False
+personally_identifiable_information: False
+owners:
+  - name: Your Name
+    email: your.email@example.com
+    username: namey
+creation_date: today
+# links:
+#  - http://doi.dx.org/your_doi
+#  - http://github.com/your_code_repository
+# budget_codes:
+#  - E.g. CCBS1H10S
 """

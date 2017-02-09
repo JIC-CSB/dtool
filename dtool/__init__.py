@@ -341,7 +341,7 @@ class Project(Collection):
             descriptive_metadata = {'project_name': self.name}
             write_templated_file(
                 self.abs_readme_path,
-                'arctool_project_README.yml',
+                'project_README.yml',
                 descriptive_metadata)
 
 
