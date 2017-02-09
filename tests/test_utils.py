@@ -4,6 +4,8 @@ import os
 
 import yaml
 
+from . import tmp_dir_fixture  # NOQA
+
 
 def test_write_templated_file(tmp_dir_fixture):  # NOQA
     from dtool.utils import write_templated_file

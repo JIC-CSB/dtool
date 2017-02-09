@@ -8,6 +8,8 @@ from dtool import (
     Project,
     DescriptiveMetadata,
     metadata_from_path,
+    _DtoolObject,
+    NotDtoolObject,
 )
 from dtool.utils import auto_metadata
 
@@ -41,3 +43,22 @@ def generate_descriptive_metadata(schema, parent_path):
     descriptive_metadata.prompt_for_values()
 
     return descriptive_metadata
+
+
+def info_from_path(path):
+    """Return information string about the path.
+
+    Is it a dtool dataset or collection or not a dtool object?
+
+    :param path: path to a directory of interest
+    :raises: OSError if path is not a directory
+    :returns: information string
+    """
+    if not os.path.isdir(path):
+        raise(OSError("Not a directory: {}".format(path)))
+    try:
+        dtool_object = _DtoolObject.from_path(path)
+    except NotDtoolObject:
+        return "Directory is not a dtool object"
+    return "Directory is a dtool {}".format(
+        dtool_object._admin_metadata["type"])
