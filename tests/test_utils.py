@@ -1,27 +1,14 @@
 """Tests for dtool utils."""
 
 import os
-import shutil
-import tempfile
 
 import yaml
-import pytest
 
 
-@pytest.fixture
-def tmp_dir(request):
-    d = tempfile.mkdtemp()
-
-    @request.addfinalizer
-    def teardown():
-        shutil.rmtree(d)
-    return d
-
-
-def test_write_templated_file(tmp_dir):
+def test_write_templated_file(tmp_dir_fixture):  # NOQA
     from dtool.utils import write_templated_file
 
-    expected_templated_file = os.path.join(tmp_dir, 'README.yml')
+    expected_templated_file = os.path.join(tmp_dir_fixture, 'README.yml')
 
     assert not os.path.isfile(expected_templated_file)
 
