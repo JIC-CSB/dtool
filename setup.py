@@ -17,7 +17,6 @@ setup(name="dtool",
       download_url="{}/tarball/{}".format(url, version),
       install_requires=[
         "click",
-        "fluent-logger",
         "jinja2",
         "pyyaml",
         "python-magic",

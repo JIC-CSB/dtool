@@ -1,12 +1,8 @@
 """Manage datasets."""
 
 import os
-import sys
-import getpass
 
 import click
-
-from fluent import sender
 
 from dtool import (
     __version__,
@@ -25,18 +21,12 @@ README_SCHEMA = [
     ("date", u"today"),
 ]
 
-logger = sender.FluentSender('arctool', host='v0679', port=24224)
-
 
 @click.group()
 @click.version_option(version=__version__)
 @click.option('--fluentd-host', envvar='FLUENTD_HOST', default='v0679')
 def cli(fluentd_host):
-    logger = sender.FluentSender('arctool', host=fluentd_host, port=24224)
-    message = {'api-version': __version__,
-               'command_line': sys.argv,
-               'unix_username': getpass.getuser()}
-    logger.emit('cli_command', message)
+    pass
 
 
 @cli.command()
@@ -95,13 +85,7 @@ def manifest():
 @click.argument('path', 'Path to dataset directory.',
                 type=click.Path(exists=True))
 def update(path):
-    logger.emit('pre_update_manifest', {'path': path})
-
     dataset = DataSet.from_path(path)
     dataset.update_manifest()
 
     click.secho('Updated manifest')
-
-    log_data = {'uuid': dataset.uuid,
-                'manifest': dataset.manifest}
-    logger.emit('post_update_manifest', log_data)
