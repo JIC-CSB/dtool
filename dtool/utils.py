@@ -5,6 +5,10 @@ import datetime
 
 from jinja2 import Environment, PackageLoader
 
+JINJA2_ENV = Environment(
+    loader=PackageLoader('dtool', 'templates'),
+    keep_trailing_newline=True)
+
 
 def write_templated_file(path, template_name, variables):
     """Load the template given by template_name, render it with
@@ -14,10 +18,7 @@ def write_templated_file(path, template_name, variables):
     :param template_name: Name of template to use
     :param variables: Dict containing variables to be templated
     """
-
-    env = Environment(loader=PackageLoader('dtool', 'templates'),
-                      keep_trailing_newline=True)
-    template = env.get_template(template_name)
+    template = JINJA2_ENV.get_template(template_name)
 
     with open(path, 'w') as fh:
         fh.write(template.render(variables))

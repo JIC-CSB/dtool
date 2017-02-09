@@ -27,13 +27,13 @@ import json
 import uuid
 import getpass
 
-from jinja2 import Environment, PackageLoader, meta
+import jinja2.meta
 import yaml
 import click
 import magic
 
 from dtool.filehasher import generate_file_hash
-from dtool.utils import write_templated_file
+from dtool.utils import write_templated_file, JINJA2_ENV
 
 __version__ = "0.11.0"
 
@@ -388,11 +388,9 @@ class DescriptiveMetadata(object):
         output_path = os.path.join(path, filename)
 
         # Find variables in the template from the abstract syntax tree (ast).
-        env = Environment(loader=PackageLoader('dtool', 'templates'),
-                          keep_trailing_newline=True)
-        template_source = env.loader.get_source(env, template)
-        ast = env.parse(template_source)
-        template_variables = meta.find_undeclared_variables(ast)
+        template_source = JINJA2_ENV.loader.get_source(JINJA2_ENV, template)
+        ast = JINJA2_ENV.parse(template_source)
+        template_variables = jinja2.meta.find_undeclared_variables(ast)
 
         # Create yaml for any variables that are not present in the template.
         extra_variables = set(self.keys()) - template_variables
