@@ -152,6 +152,31 @@ class DataSet(_DtoolObject):
             "manifest_root": data_directory}
         super(DataSet, self).__init__(specific_metadata)
 
+    @classmethod
+    def from_path(cls, path):
+        """Return instance of :class:`dtool.DataSet` instantiated from path.
+
+        :param path: path to collection directory
+        :raises: DtoolTypeError if the path has not been marked up
+                 as a dataset in the .dtool/dtool file.
+                 NotDtoolObject exception if .dtool/dtool not present.
+        :returns: :class:`dtool.DataSet`
+        """
+        dataset = _DtoolObject.from_path(path)
+
+        if 'type' not in dataset._admin_metadata:
+            raise DtoolTypeError(
+                'Not a dataset; no type definition in .dtool/dtool')
+
+        if dataset._admin_metadata['type'] != 'dataset':
+            raise DtoolTypeError(
+                'Not a dataset; wrong type definition in .dtool/dtool')
+
+        # This is Python's crazy way of "allowing" class promotion.
+        dataset.__class__ = cls
+
+        return dataset
+
     @property
     def name(self):
         """Return the name of the dataset."""
@@ -248,30 +273,16 @@ class DataSet(_DtoolObject):
         with open(dtool_file_path, 'w') as fh:
             json.dump(self._admin_metadata, fh)
 
-    @classmethod
-    def from_path(cls, path):
-        """Return instance of :class:`dtool.DataSet` instantiated from path.
+    def item_path_from_hash(self, hash_str):
+        """Return absolute path of a dataset item based on it's hash.
 
-        :param path: path to collection directory
-        :raises: DtoolTypeError if the path has not been marked up
-                 as a dataset in the .dtool/dtool file.
-                 NotDtoolObject exception if .dtool/dtool not present.
-        :returns: :class:`dtool.DataSet`
+        :param hash_str: dataset item identifier as a hash string
+        :returns: absolute path to dataset item
         """
-        dataset = _DtoolObject.from_path(path)
-
-        if 'type' not in dataset._admin_metadata:
-            raise DtoolTypeError(
-                'Not a dataset; no type definition in .dtool/dtool')
-
-        if dataset._admin_metadata['type'] != 'dataset':
-            raise DtoolTypeError(
-                'Not a dataset; wrong type definition in .dtool/dtool')
-
-        # This is Python's crazy way of "allowing" class promotion.
-        dataset.__class__ = cls
-
-        return dataset
+        for item in self.manifest["file_list"]:
+            if item["hash"] == hash_str:
+                return os.path.join(self._abs_path, item["path"])
+        raise(KeyError("File hash not in dataset"))
 
 
 class Collection(_DtoolObject):

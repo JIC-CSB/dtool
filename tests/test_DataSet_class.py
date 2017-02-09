@@ -222,6 +222,25 @@ def test_manifest_generation(chdir):
     assert keyed_by_path['README.yml']['size'] == 29
 
 
+def test_item_path_from_hash(chdir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset')
+
+    with open('test_file.txt', 'w') as fh:
+        fh.write('Hello world')
+
+    dataset.persist_to_path('.')
+
+    expected_path = os.path.abspath('test_file.txt')
+    actual_path = dataset.item_path_from_hash(
+        "7b502c3a1f48c8609ae212cdfb639dee39673f5e")
+    assert actual_path == expected_path
+
+    with pytest.raises(KeyError):
+        dataset.item_path_from_hash("nonsense")
+
+
 def test_dataset_from_path(tmp_dir):
     from dtool import DataSet
     dataset = DataSet("my_data_set")
