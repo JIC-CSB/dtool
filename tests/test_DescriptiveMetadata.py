@@ -125,7 +125,7 @@ date: today
 """
 
     descriptive_metadata.persist_to_path(
-        tmp_dir, template='datatool_dataset_README.yml')
+        tmp_dir, template='dtool_dataset_README.yml')
 
     with open(output_file) as fh:
         contents = fh.read()

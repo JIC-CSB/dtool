@@ -36,7 +36,7 @@ def test_write_templated_file(tmp_dir):
         ("date", u"2017-01-01"),
     ])
     write_templated_file(expected_templated_file,
-                         'datatool_dataset_README.yml',
+                         'dtool_dataset_README.yml',
                          variables)
 
     assert os.path.isfile(expected_templated_file)

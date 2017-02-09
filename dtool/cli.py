@@ -47,7 +47,7 @@ def markup():
     dataset_name = descriptive_metadata["dataset_name"]
 
     descriptive_metadata.persist_to_path(
-        '.', template='datatool_dataset_README.yml')
+        '.', template='dtool_dataset_README.yml')
 
     ds = DataSet(dataset_name)
     ds.persist_to_path('.')
@@ -70,7 +70,7 @@ def dataset():
     os.mkdir(dataset_name)
 
     descriptive_metadata.persist_to_path(
-        dataset_name, template='datatool_dataset_README.yml')
+        dataset_name, template='dtool_dataset_README.yml')
 
     ds = DataSet(dataset_name, 'data')
     ds.persist_to_path(dataset_name)
