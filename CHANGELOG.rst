@@ -15,11 +15,6 @@ Added
 Changed
 ^^^^^^^
 
-- ``arctool`` - this now lives in it's own repository
-   `github.com/JIC-CSB/arctool <https://github.com/JIC-CSB/arctool>`_.
-- ``datatool`` CLI renamed to ``dtool``
-- ``dtool.datatool.cli`` module renamed ``dtool.cli``
-
 
 Deprecated
 ^^^^^^^^^^
@@ -27,9 +22,6 @@ Deprecated
 
 Removed
 ^^^^^^^
-
-- The ``arctool`` CLI
-- The ``dtool.archive`` and ``dtool.arctool`` modules
 
 
 Fixed
@@ -39,6 +31,24 @@ Fixed
 Security
 ^^^^^^^^
 
+
+[0.11.0] - 2017-09-17
+~~~~~~~~~~~~~~~~~~~~~
+
+Changed
+^^^^^^^
+
+- ``arctool`` - this now lives in it's own repository
+   `github.com/JIC-CSB/arctool <https://github.com/JIC-CSB/arctool>`_.
+- ``datatool`` CLI renamed to ``dtool``
+- ``dtool.datatool.cli`` module renamed ``dtool.cli``
+
+
+Removed
+^^^^^^^
+
+- The ``arctool`` CLI
+- The ``dtool.archive`` and ``dtool.arctool`` modules
 
 
 [0.10.0] - 2017-02-07
