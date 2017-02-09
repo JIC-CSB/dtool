@@ -23,6 +23,9 @@ Deprecated
 Removed
 ^^^^^^^
 
+- Fluentd logging
+- ``dtool.slurm`` module moved into ``arctool`` package
+
 
 Fixed
 ^^^^^
