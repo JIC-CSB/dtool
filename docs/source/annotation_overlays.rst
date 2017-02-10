@@ -27,6 +27,13 @@ To save the overlay:
 
     >>> my_dataset.persist_overlay(name="geo_locations", my_overlay)
 
+To retrieve an item from an overlay:
+
+.. code-block:: python
+
+    >>> my_dataset.overlays["geo_locations"][item_hash]
+    {"latitude": 57.4, "longitude": 0.3}
+
 .. warning::
 
     You can only annotate DataSets that have been persisted to path.
