@@ -1,1 +1,1 @@
-{"readme_path": "README.yml", "uuid": "dcaaf7ca-99c5-4f3c-b1f0-028c63253d5c", "manifest_root": "data", "dtool_version": "0.9.0", "creator_username": "olssont", "type": "dataset", "manifest_path": ".dtool/manifest.json", "name": "sample_data"}
+{"readme_path": "README.yml", "uuid": "11975b55-cf28-4745-86b0-3044982d2646", "overlays_path": ".dtool/overlays", "manifest_root": "data", "dtool_version": "0.11.0", "creator_username": "olssont", "type": "dataset", "manifest_path": ".dtool/manifest.json", "name": "dataset_name"}
