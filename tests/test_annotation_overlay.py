@@ -1,3 +1,7 @@
+"""Test the annotation functionality."""
+
+import os
+
 from . import tmp_dataset_fixture  # NOQA
 
 
@@ -17,7 +21,7 @@ def test_annotation_overlay_functional(tmp_dataset_fixture):  # NOQA
     assert result == {"latitude": 57.4, "longitude": 0.3}
 
 
-def test_empty_overlay(tmp_dataset_fixture):
+def test_empty_overlay(tmp_dataset_fixture):  # NOQA
 
     actual_overlay = tmp_dataset_fixture.empty_overlay()
 
@@ -28,3 +32,16 @@ def test_empty_overlay(tmp_dataset_fixture):
     assert "b640cee82f798bb38a995b6bd30e8d71a12d7d7c" in actual_overlay
 
     assert actual_overlay.values()[0] == {}
+
+
+def test_persiste_overlay(tmp_dataset_fixture):  # NOQA
+
+    expected_path = os.path.join(
+        tmp_dataset_fixture._abs_overlays_path,
+        "empty.json")
+    assert not os.path.isfile(expected_path)
+
+    tmp_dataset_fixture.persist_overlay(
+        name="empty", overlay=dict())
+
+    assert os.path.isfile(expected_path)

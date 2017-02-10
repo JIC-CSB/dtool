@@ -307,6 +307,17 @@ class DataSet(_DtoolObject):
 
         return {entry['hash']: dict() for entry in file_list}
 
+    def persist_overlay(self, name, overlay):
+        """Write the overlay to disk.
+
+        :param name: name as a string
+        :param overlay: overlay as a dictionary
+        """
+        overlay_fname = name + ".json"
+        overlay_path = os.path.join(self._abs_overlays_path, overlay_fname)
+        with open(overlay_path, "w") as fh:
+            json.dump(overlay, fh, indent=2)
+
 
 class Collection(_DtoolObject):
     """Class for representing collections of data sets."""
