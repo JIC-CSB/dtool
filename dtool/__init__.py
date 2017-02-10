@@ -148,6 +148,7 @@ class DataSet(_DtoolObject):
             "type": "dataset",
             "name": name,
             "manifest_path": os.path.join(".dtool", "manifest.json"),
+            "overlays_path": os.path.join(".dtool", "overlays"),
             "creator_username": getpass.getuser(),
             "manifest_root": data_directory}
         super(DataSet, self).__init__(specific_metadata)
@@ -204,6 +205,17 @@ class DataSet(_DtoolObject):
             return None
         return os.path.join(self._abs_path,
                             self._admin_metadata['manifest_path'])
+
+    @property
+    def _abs_overlays_path(self):
+        """Return the absolute path of the overlays directory or None.
+
+        Returns None if not persisted to path.
+        """
+        if self._abs_path is None:
+            return None
+        return os.path.join(self._abs_path,
+                            self._admin_metadata['overlays_path'])
 
     @property
     def manifest(self):
@@ -264,6 +276,8 @@ class DataSet(_DtoolObject):
 
         dtool_dir_path = os.path.join(path, '.dtool')
         os.mkdir(dtool_dir_path)
+
+        os.mkdir(self._abs_overlays_path)
 
         self._safe_create_readme()
 
