@@ -24,8 +24,7 @@ README_SCHEMA = [
 
 @click.group()
 @click.version_option(version=__version__)
-@click.option('--fluentd-host', envvar='FLUENTD_HOST', default='v0679')
-def cli(fluentd_host):
+def cli():
     pass
 
 
