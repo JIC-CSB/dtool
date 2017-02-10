@@ -7,6 +7,11 @@ import contextlib
 
 import pytest
 
+from dtool import DataSet
+
+_HERE = os.path.dirname(__file__)
+TEST_SAMPLE_DATASET = os.path.join(_HERE, "data", "sample_data")
+
 
 @contextlib.contextmanager
 def remember_cwd():
@@ -38,3 +43,17 @@ def chdir_fixture(request):
     def teardown():
         os.chdir(cwd)
         shutil.rmtree(d)
+
+
+@pytest.fixture
+def tmp_dataset_fixture(request):
+    d = tempfile.mkdtemp()
+
+    dataset_path = os.path.join(d, 'sample_data')
+    shutil.copytree(TEST_SAMPLE_DATASET, dataset_path)
+
+    @request.addfinalizer
+    def teardown():
+        shutil.rmtree(d)
+
+    return DataSet.from_path(dataset_path)
