@@ -25,6 +25,26 @@ def test_version():
     assert output.startswith('dtool, version')
 
 
+def test_info(chdir_fixture):  # NOQA
+
+    # In a clean directory.
+    cmd = ["dtool", "info"]
+    output = subprocess.check_output(cmd)
+    output = output.decode('utf8')
+
+    assert output.startswith('Directory is not a dtool object')
+
+    # Turn directory into a dataset.
+    from dtool import DataSet
+    dataset = DataSet("testing")
+    dataset.persist_to_path(".")
+
+    cmd = ["dtool", "info"]
+    output = subprocess.check_output(cmd)
+    output = output.decode('utf8')
+    assert output.startswith('Directory is a dtool dataset')
+
+
 def test_new_dataset(chdir_fixture):  # NOQA
 
     from click.testing import CliRunner

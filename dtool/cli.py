@@ -8,7 +8,11 @@ from dtool import (
     __version__,
     DataSet,
 )
-from dtool.clickutils import create_project, generate_descriptive_metadata
+from dtool.clickutils import (
+    create_project,
+    generate_descriptive_metadata,
+    info_from_path,
+)
 
 README_SCHEMA = [
     ("project_name", u"project_name"),
@@ -27,6 +31,11 @@ README_SCHEMA = [
 def cli():
     pass
 
+
+@cli.command()
+def info():
+    message = info_from_path(".")
+    print(message)
 
 @cli.command()
 def markup():
