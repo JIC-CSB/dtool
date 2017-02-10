@@ -32,6 +32,7 @@ import yaml
 import click
 import magic
 
+from dtool.filehasher import FileHasher
 from dtool.filehasher import generate_file_hash
 from dtool.utils import write_templated_file, JINJA2_ENV
 
@@ -414,6 +415,74 @@ class DescriptiveMetadata(object):
         variables["extra_yml_content"] = extra_yml_content
 
         write_templated_file(output_path, template, variables)
+
+
+class Manifest(dict):
+    """Class for managing structural metadata."""
+
+    def __init__(self, abs_manifest_root, hash_func):
+        self.abs_manifest_root = abs_manifest_root
+        self.hash_generator = FileHasher(hash_func)
+        self["file_list"] = []
+        self["dtool_version"] = __version__
+        self["hash_function"] = self.hash_generator.name
+        self.regenerate_file_list()
+
+    def _generate_relative_paths(self):
+        """Return list of relative paths to all files in manifest root.
+
+        :returns: list of fully qualified paths to all files in manifest root
+        """
+        path = self.abs_manifest_root
+        path_length = len(path) + 1
+
+        relative_path_list = []
+
+        for dirpath, dirnames, filenames in os.walk(path):
+            for fn in filenames:
+                relative_path = os.path.join(dirpath, fn)
+                relative_path_list.append(relative_path[path_length:])
+
+        return relative_path_list
+
+    def _file_metadata(self, path):
+        """Return dictionary with file metadata.
+
+        The metadata includes:
+
+        * hash
+        * mtime (last modified time)
+        * size
+        * mimetype
+
+        :param path: path to file
+        :returns: dictionary with file metadata
+        """
+        return dict(hash=self.hash_generator(path),
+                    size=os.stat(path).st_size,
+                    mtime=os.stat(path).st_mtime,
+                    mimetype=magic.from_file(path, mime=True))
+
+    def regenerate_file_list(self):
+        """Regenerate the file list from scratch."""
+        rel_paths = self._generate_relative_paths()
+
+        file_list = []
+        for filename in rel_paths:
+            fq_filename = os.path.join(self.abs_manifest_root, filename)
+            entry = self._file_metadata(fq_filename)
+            entry['path'] = filename
+            file_list.append(entry)
+
+        self["file_list"] = file_list
+
+    def persist_to_path(self, path):
+        """Write the manifest to disk.
+
+        :param path: path to file to persist manifest to
+        """
+        with open(path, "w") as fh:
+            json.dump(self, fh, indent=2)
 
 
 def log(message):
