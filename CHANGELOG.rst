@@ -11,6 +11,7 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- ``dtool.DataSet.empty_overlay`` method
 - ``dtool info`` CLI command
 - ``dtool.clickutils.info_from_path`` function
 - ``dtool.DataSet.item_path_from_hash`` method
