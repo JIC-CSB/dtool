@@ -284,6 +284,15 @@ class DataSet(_DtoolObject):
                 return os.path.join(self._abs_path, item["path"])
         raise(KeyError("File hash not in dataset"))
 
+    def empty_overlay(self):
+        """Return an empty annotation overlay as a dictionary whose keys are
+        the hashes of items in the DataSet and whose values are empty
+        dictionaries."""
+
+        file_list = self.manifest["file_list"]
+
+        return {entry['hash']: dict() for entry in file_list}
+
 
 class Collection(_DtoolObject):
     """Class for representing collections of data sets."""
