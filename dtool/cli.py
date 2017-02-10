@@ -37,6 +37,7 @@ def info():
     message = info_from_path(".")
     print(message)
 
+
 @cli.command()
 def markup():
     descriptive_metadata = generate_descriptive_metadata(
