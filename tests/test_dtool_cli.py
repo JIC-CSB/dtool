@@ -1,50 +1,19 @@
 """Tests for the dtool cli."""
 
-import contextlib
 from distutils.dir_util import copy_tree
 import os
 import subprocess
 import shutil
-import tempfile
 import json
 
 import yaml
-import pytest
+
+from . import tmp_dir_fixture  # NOQA
+from . import chdir_fixture  # NOQA
+from . import remember_cwd
 
 HERE = os.path.dirname(__file__)
 TEST_INPUT_DATA = os.path.join(HERE, "data", "mimetype", "input", "archive")
-
-
-@contextlib.contextmanager
-def remember_cwd():
-    cwd = os.getcwd()
-    try:
-        yield
-    finally:
-        os.chdir(cwd)
-
-
-@pytest.fixture
-def chdir(request):
-    d = tempfile.mkdtemp()
-
-    cwd = os.getcwd()
-    os.chdir(d)
-
-    @request.addfinalizer
-    def teardown():
-        os.chdir(cwd)
-        shutil.rmtree(d)
-
-
-@pytest.fixture
-def tmp_dir(request):
-    d = tempfile.mkdtemp()
-
-    @request.addfinalizer
-    def teardown():
-        shutil.rmtree(d)
-    return d
 
 
 def test_version():
@@ -56,7 +25,7 @@ def test_version():
     assert output.startswith('dtool, version')
 
 
-def test_new_dataset(chdir):
+def test_new_dataset(chdir_fixture):  # NOQA
 
     from click.testing import CliRunner
     from dtool.cli import dataset
@@ -85,7 +54,7 @@ def test_new_dataset(chdir):
     assert dataset.name == 'my_dataset'
 
 
-def test_new_project(chdir):
+def test_new_project(chdir_fixture):  # NOQA
 
     from click.testing import CliRunner
     from dtool.cli import project
@@ -106,7 +75,7 @@ def test_new_project(chdir):
     Project.from_path('my_project')
 
 
-def test_new_dataset_in_project(chdir):
+def test_new_dataset_in_project(chdir_fixture):  # NOQA
 
     from click.testing import CliRunner
     from dtool.cli import dataset, project
@@ -140,18 +109,18 @@ def test_new_dataset_in_project(chdir):
     assert dataset.descriptive_metadata['project_name'] == 'new_test_project'
 
 
-def test_manifest_update(tmp_dir):
+def test_manifest_update(tmp_dir_fixture):  # NOQA
 
     from dtool import DataSet
     dataset = DataSet("test_dataset", "data")
-    dataset.persist_to_path(tmp_dir)
+    dataset.persist_to_path(tmp_dir_fixture)
 
-    data_dir = os.path.join(tmp_dir, "data")
+    data_dir = os.path.join(tmp_dir_fixture, "data")
     copy_tree(TEST_INPUT_DATA, data_dir)
 
-    cmd = ["dtool", "manifest", "update", tmp_dir]
+    cmd = ["dtool", "manifest", "update", tmp_dir_fixture]
     subprocess.call(cmd)
-    manifest_path = os.path.join(tmp_dir, ".dtool", "manifest.json")
+    manifest_path = os.path.join(tmp_dir_fixture, ".dtool", "manifest.json")
     assert os.path.isfile(manifest_path)
 
     # Ensure manifest is valid json.
@@ -176,12 +145,12 @@ def test_manifest_update(tmp_dir):
         assert expected == actual
 
 
-def test_markup(tmp_dir):
+def test_markup(tmp_dir_fixture):  # NOQA
     from click.testing import CliRunner
     from dtool.cli import markup
     from dtool import DataSet
 
-    existing_data_dir = os.path.join(tmp_dir, 'data')
+    existing_data_dir = os.path.join(tmp_dir_fixture, 'data')
 
     shutil.copytree(TEST_INPUT_DATA, existing_data_dir)
 
@@ -219,15 +188,15 @@ def test_markup(tmp_dir):
     assert descriptive_metadata["owners"][0]["name"] == "Test User"
 
 
-def test_markup_inherits_parent_metadata(tmp_dir):
+def test_markup_inherits_parent_metadata(tmp_dir_fixture):  # NOQA
     from click.testing import CliRunner
     from dtool.cli import markup
     from dtool import DataSet, Project
 
     project = Project("test_inheritance")
-    project.persist_to_path(tmp_dir)
+    project.persist_to_path(tmp_dir_fixture)
 
-    existing_data_dir = os.path.join(tmp_dir, 'data')
+    existing_data_dir = os.path.join(tmp_dir_fixture, 'data')
 
     shutil.copytree(TEST_INPUT_DATA, existing_data_dir)
 
