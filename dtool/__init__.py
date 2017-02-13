@@ -315,8 +315,25 @@ class DataSet(_DtoolObject):
         """
         overlay_fname = name + ".json"
         overlay_path = os.path.join(self._abs_overlays_path, overlay_fname)
+        if not os.path.isdir(self._abs_overlays_path):
+            os.mkdir(self._abs_overlays_path)
         with open(overlay_path, "w") as fh:
             json.dump(overlay, fh, indent=2)
+
+    @property
+    def overlays(self):
+
+        overlays = {}
+
+        for filename in os.listdir(self._abs_overlays_path):
+            base, ext = os.path.splitext(filename)
+            if ext == '.json':
+                fq_filename = os.path.join(
+                    self._abs_overlays_path, filename)
+                with open(fq_filename) as fh:
+                    overlays[base] = json.load(fh)
+
+        return overlays
 
 
 class Collection(_DtoolObject):

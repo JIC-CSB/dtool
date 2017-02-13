@@ -34,7 +34,7 @@ def test_empty_overlay(tmp_dataset_fixture):  # NOQA
     assert actual_overlay.values()[0] == {}
 
 
-def test_persiste_overlay(tmp_dataset_fixture):  # NOQA
+def test_persist_overlay(tmp_dataset_fixture):  # NOQA
 
     expected_path = os.path.join(
         tmp_dataset_fixture._abs_overlays_path,
@@ -45,3 +45,38 @@ def test_persiste_overlay(tmp_dataset_fixture):  # NOQA
         name="empty", overlay=dict())
 
     assert os.path.isfile(expected_path)
+
+
+def test_persist_multiple_overlays(tmp_dataset_fixture):  # NOQA
+
+    expected_path = os.path.join(
+        tmp_dataset_fixture._abs_overlays_path,
+        "empty.json")
+
+    assert not os.path.isfile(expected_path)
+    tmp_dataset_fixture.persist_overlay(
+        name="empty", overlay=dict())
+    assert os.path.isfile(expected_path)
+
+    expected_second_path = os.path.join(
+        tmp_dataset_fixture._abs_overlays_path,
+        "empty2.json")
+
+    assert not os.path.isfile(expected_second_path)
+    tmp_dataset_fixture.persist_overlay(
+        name="empty2", overlay=dict())
+    assert os.path.isfile(expected_second_path)
+
+
+def test_overlay_access(tmp_dataset_fixture):
+
+    overlay_content = {
+        "b640cee82f798bb38a995b6bd30e8d71a12d7d7c": {
+            "property_a": 3,
+            "property_b": 4
+        }
+    }
+
+    tmp_dataset_fixture.persist_overlay("test", overlay_content)
+
+    assert isinstance(tmp_dataset_fixture.overlays["test"], dict)
