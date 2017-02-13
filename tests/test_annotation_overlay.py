@@ -31,7 +31,8 @@ def test_empty_overlay(tmp_dataset_fixture):  # NOQA
 
     assert "b640cee82f798bb38a995b6bd30e8d71a12d7d7c" in actual_overlay
 
-    assert actual_overlay.values()[0] == {}
+    # NB: python3 dict.values() returns a view, not a list
+    assert list(actual_overlay.values())[0] == {}
 
 
 def test_persist_overlay(tmp_dataset_fixture):  # NOQA
@@ -68,7 +69,7 @@ def test_persist_multiple_overlays(tmp_dataset_fixture):  # NOQA
     assert os.path.isfile(expected_second_path)
 
 
-def test_overlay_access(tmp_dataset_fixture):
+def test_overlay_access(tmp_dataset_fixture):  # NOQA
 
     overlay_content = {
         "b640cee82f798bb38a995b6bd30e8d71a12d7d7c": {
