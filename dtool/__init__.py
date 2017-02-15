@@ -32,8 +32,8 @@ import yaml
 import click
 import magic
 
+from dtool.filehasher import shasum
 from dtool.filehasher import FileHasher
-from dtool.filehasher import generate_file_hash
 from dtool.utils import write_templated_file, JINJA2_ENV
 
 __version__ = "0.11.0"
@@ -153,6 +153,7 @@ class DataSet(_DtoolObject):
             "creator_username": getpass.getuser(),
             "manifest_root": data_directory}
         super(DataSet, self).__init__(specific_metadata)
+        self._structural_metadata = {}
 
     @classmethod
     def from_path(cls, path):
@@ -236,11 +237,8 @@ class DataSet(_DtoolObject):
         if not self._abs_path:
             return
 
-        abs_manifest_root = os.path.join(self._abs_path,
-                                         self._admin_metadata['manifest_root'])
-        manifest = generate_manifest(abs_manifest_root)
-        with open(self._abs_manifest_path, 'w') as fh:
-            json.dump(manifest, fh, indent=2)
+        self._structural_metadata.regenerate_file_list()
+        self._structural_metadata.persist_to_path(self._abs_manifest_path)
 
     def persist_to_path(self, path):
         """Mark up a directory as a dataset.
@@ -282,7 +280,8 @@ class DataSet(_DtoolObject):
 
         self._safe_create_readme()
 
-        self.update_manifest()
+        self._structural_metadata = Manifest(data_directory, shasum)
+        self._structural_metadata.persist_to_path(self._abs_manifest_path)
 
         dtool_file_path = os.path.join(dtool_dir_path, 'dtool')
         with open(dtool_file_path, 'w') as fh:
@@ -475,7 +474,8 @@ class Manifest(dict):
     """Class for managing structural metadata."""
 
     def __init__(self, abs_manifest_root, hash_func):
-        self.abs_manifest_root = abs_manifest_root
+        # Use abspath to avoid problems with trailing slashes and length
+        self.abs_manifest_root = os.path.abspath(abs_manifest_root)
         self.hash_generator = FileHasher(hash_func)
         self["file_list"] = []
         self["dtool_version"] = __version__
@@ -539,15 +539,6 @@ class Manifest(dict):
             json.dump(self, fh, indent=2)
 
 
-def log(message):
-    """Log a message.
-
-    :param message: message to be logged
-    """
-    if VERBOSE:
-        print(message)
-
-
 def metadata_from_path(path):
     """Return dictionary containing metadata derived from dtool
     objects a level of the directory structure."""
@@ -559,120 +550,3 @@ def metadata_from_path(path):
         descriptive_metadata = {}
 
     return descriptive_metadata
-
-###################################################
-# STOLEN FROM MANIFEST. PUT IT BACK LATER. MAYBE. #
-###################################################
-
-
-def generate_relative_paths(path):
-    """Return list of relative paths to all files in tree under path.
-
-    :param path: path to directory with data
-    :returns: list of fully qualified paths to all files in directories under
-              the path
-    """
-    path = os.path.abspath(path)
-    path_length = len(path) + 1
-
-    relative_path_list = []
-
-    log('Generating relative path list')
-
-    for dirpath, dirnames, filenames in os.walk(path):
-        for fn in filenames:
-            relative_path = os.path.join(dirpath, fn)
-            relative_path_list.append(relative_path[path_length:])
-
-    return relative_path_list
-
-
-def generate_filedict_list(rel_path_list):
-
-    filedict_list = []
-    for rel_path in rel_path_list:
-        filedict_list.append(dict(path=rel_path))
-
-    return filedict_list
-
-
-def apply_filedict_update(path_root, filedict_list, generate_dict_func):
-
-    for item in filedict_list:
-        rel_path = item['path']
-        abs_path = os.path.join(path_root, rel_path)
-        extra_data = generate_dict_func(abs_path)
-        item.update(extra_data)
-
-
-def file_size_dict(abs_file_path):
-
-    size = os.stat(abs_file_path).st_size
-
-    return dict(size=size)
-
-
-def create_filedict_manifest(path):
-
-    rel_path_list = generate_relative_paths(path)
-    filedict_list = generate_filedict_list(rel_path_list)
-    apply_filedict_update(path, filedict_list, file_size_dict)
-
-    return filedict_list
-
-
-def file_metadata(path):
-    """Return dictionary with file metadata.
-
-    The metadata includes:
-
-    * hash
-    * mtime (last modified time)
-    * size
-    * mimetype
-
-    :param path: path to file
-    :returns: dictionary with file metadata
-    """
-    return dict(hash=generate_file_hash(path),
-                size=os.stat(path).st_size,
-                mtime=os.stat(path).st_mtime,
-                mimetype=magic.from_file(path, mime=True))
-
-
-def generate_manifest(path):
-    """Return archive manifest data structure.
-
-    At the top level the manifest includes:
-
-    * file_list (dictionary with metadata described belwo)
-    * hash_function (name of hash function used)
-
-    The file_list includes all files in the file system rooted at path with:
-
-    * relative path
-    * hash
-    * mtime (last modification time)
-    * size
-    * mimetype
-
-    :param path: path to directory with data
-    :returns: manifest represented as a dictionary
-    """
-
-    full_file_list = generate_relative_paths(path)
-
-    log('Building manifest')
-    entries = []
-    for n, filename in enumerate(full_file_list):
-        log('Processing ({}/{}) {}'.format(1+n, len(full_file_list), filename))
-        fq_filename = os.path.join(path, filename)
-        entry = file_metadata(fq_filename)
-        entry['path'] = filename
-        entries.append(entry)
-
-    manifest = dict(file_list=entries,
-                    dtool_version=__version__,
-                    hash_function=generate_file_hash.name)
-
-    return manifest

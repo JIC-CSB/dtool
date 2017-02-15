@@ -24,14 +24,17 @@ Added
 Changed
 ^^^^^^^
 
+- Update ``dtool.Dataset`` to use ``dtool.Manifest`` for structural metadata
 
 Deprecated
 ^^^^^^^^^^
 
-
 Removed
 ^^^^^^^
 
+- ``dtool.manifest`` module
+- Manifest helper functions (now provided by ``dtool.Manifest`` class)
+- ``dtool.log``
 - Fluentd logging
 - ``dtool.slurm`` module moved into ``arctool`` package
 
