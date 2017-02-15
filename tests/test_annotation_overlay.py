@@ -81,3 +81,30 @@ def test_overlay_access(tmp_dataset_fixture):  # NOQA
     tmp_dataset_fixture.persist_overlay("test", overlay_content)
 
     assert isinstance(tmp_dataset_fixture.overlays["test"], dict)
+
+    item_hash = "b640cee82f798bb38a995b6bd30e8d71a12d7d7c"
+    assert tmp_dataset_fixture.overlays["test"][item_hash]["property_a"] == 3
+
+
+def test_persist_overlay_replaces(tmp_dataset_fixture):  # NOQA
+
+    item_hash = "b640cee82f798bb38a995b6bd30e8d71a12d7d7c"
+
+    overlay_content = {
+        item_hash: {
+            "property_a": 3,
+            "property_b": 4
+        }
+    }
+
+    tmp_dataset_fixture.persist_overlay("test", overlay_content)
+
+    overlay = tmp_dataset_fixture.overlays["test"]
+
+    overlay[item_hash]["property_a"] = 5
+
+    assert tmp_dataset_fixture.overlays["test"][item_hash]["property_a"] == 3
+
+    tmp_dataset_fixture.persist_overlay("test", overlay)
+
+    assert tmp_dataset_fixture.overlays["test"][item_hash]["property_a"] == 5

@@ -315,6 +315,9 @@ class DataSet(_DtoolObject):
         """
         overlay_fname = name + ".json"
         overlay_path = os.path.join(self._abs_overlays_path, overlay_fname)
+        # This shouldn't happen since the overlay directory should be created
+        # when the DataSet is persisted, however some programs (e.g. git) won't
+        # keep empty directories, so we might lose it.
         if not os.path.isdir(self._abs_overlays_path):
             os.mkdir(self._abs_overlays_path)
         with open(overlay_path, "w") as fh:
