@@ -14,6 +14,14 @@ def test_shasum():
     assert actual == expected
 
 
+def test_md5sum():
+    from dtool.filehasher import md5sum
+    expected = "443f2ed5a2f01e40646f615e0754a0bc"
+    test_file = os.path.join(TEST_INPUT_DATA, 'archive', 'file1.txt')
+    actual = md5sum(test_file)
+    assert actual == expected
+
+
 def test_FileHasher():
     from dtool.filehasher import FileHasher
 

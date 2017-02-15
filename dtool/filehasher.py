@@ -14,6 +14,16 @@ class FileHasher(object):
         return self.func(filename)
 
 
+def _hashsum(hasher, filename):
+    BUF_SIZE = 65536
+    with open(filename, 'rb') as f:
+        buf = f.read(BUF_SIZE)
+        while len(buf) > 0:
+            hasher.update(buf)
+            buf = f.read(BUF_SIZE)
+    return hasher.hexdigest()
+
+
 def shasum(filename):
     """Return hex digest of SHA-1 hash of file.
 
@@ -25,15 +35,18 @@ def shasum(filename):
     # Maybe not surprising as shasum on Mac was a Perl script,
     # i.e. not a compiled binary.
 
-    BUF_SIZE = 65536
     hasher = hashlib.sha1()
-    with open(filename, 'rb') as f:
-        buf = f.read(BUF_SIZE)
-        while len(buf) > 0:
-            hasher.update(buf)
-            buf = f.read(BUF_SIZE)
+    return _hashsum(hasher, filename)
 
-    return hasher.hexdigest()
+
+def md5sum(filename):
+    """Return hex digest of md5 hash of file.
+
+    :param filename: path to file
+    :returns: md5sum of file
+    """
+    hasher = hashlib.md5()
+    return _hashsum(hasher, filename)
 
 
 generate_file_hash = FileHasher(shasum)

@@ -17,6 +17,8 @@ Added
 - ``dtool info`` CLI command
 - ``dtool.clickutils.info_from_path`` function
 - ``dtool.DataSet.item_path_from_hash`` method
+- ``dtool.filehasher.md5sum`` function
+- ``dtool.Manifest`` class
 
 
 Changed
