@@ -32,8 +32,8 @@ import yaml
 import click
 import magic
 
-from dtool.filehasher import FileHasher, shasum
-from dtool.filehasher import generate_file_hash
+from dtool.filehasher import shasum
+from dtool.filehasher import FileHasher
 from dtool.utils import write_templated_file, JINJA2_ENV
 
 __version__ = "0.11.0"
@@ -537,15 +537,6 @@ class Manifest(dict):
         """
         with open(path, "w") as fh:
             json.dump(self, fh, indent=2)
-
-
-def log(message):
-    """Log a message.
-
-    :param message: message to be logged
-    """
-    if VERBOSE:
-        print(message)
 
 
 def metadata_from_path(path):
