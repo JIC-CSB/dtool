@@ -48,6 +48,10 @@ def test_dataset_initialisation():
 
     assert dataset.data_directory == '.'
 
+    expected_overlays_path = os.path.join('.dtool', 'overlays')
+    assert dataset._admin_metadata['overlays_path'] == expected_overlays_path
+    assert dataset._abs_overlays_path is None
+
 
 def test_initialise_alternative_manifest_root():
     from dtool import DataSet
@@ -75,12 +79,15 @@ def test_dataset_persist_to_path(tmp_dir):
 
     expected_dtool_dir = os.path.join(tmp_dir, '.dtool')
     expected_dtool_file = os.path.join(expected_dtool_dir, 'dtool')
+    expected_overlays_dir = os.path.join(expected_dtool_dir, "overlays")
     assert not os.path.isdir(expected_dtool_dir)
     assert not os.path.isfile(expected_dtool_file)
+    assert not os.path.isdir(expected_overlays_dir)
 
     dataset.persist_to_path(tmp_dir)
     assert os.path.isdir(expected_dtool_dir)
     assert os.path.isfile(expected_dtool_file)
+    assert os.path.isdir(expected_overlays_dir)
 
     import json
     with open(expected_dtool_file) as fh:
@@ -139,14 +146,19 @@ def test_persist_to_path_sets_abs_paths(tmp_dir):
     expected_abs_manifest_path = os.path.join(tmp_dir,
                                               '.dtool',
                                               'manifest.json')
+    expected_abs_overlays_path = os.path.join(tmp_dir,
+                                              '.dtool',
+                                              'overlays')
 
     assert dataset.abs_readme_path is None
     assert dataset._abs_manifest_path is None
+    assert dataset._abs_overlays_path is None
 
     dataset.persist_to_path(tmp_dir)
 
     assert dataset.abs_readme_path == expected_abs_readme_path
     assert dataset._abs_manifest_path == expected_abs_manifest_path
+    assert dataset._abs_overlays_path == expected_abs_overlays_path
 
 
 def test_equality():

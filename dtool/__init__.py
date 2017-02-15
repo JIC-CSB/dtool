@@ -149,6 +149,7 @@ class DataSet(_DtoolObject):
             "type": "dataset",
             "name": name,
             "manifest_path": os.path.join(".dtool", "manifest.json"),
+            "overlays_path": os.path.join(".dtool", "overlays"),
             "creator_username": getpass.getuser(),
             "manifest_root": data_directory}
         super(DataSet, self).__init__(specific_metadata)
@@ -205,6 +206,17 @@ class DataSet(_DtoolObject):
             return None
         return os.path.join(self._abs_path,
                             self._admin_metadata['manifest_path'])
+
+    @property
+    def _abs_overlays_path(self):
+        """Return the absolute path of the overlays directory or None.
+
+        Returns None if not persisted to path.
+        """
+        if self._abs_path is None:
+            return None
+        return os.path.join(self._abs_path,
+                            self._admin_metadata['overlays_path'])
 
     @property
     def manifest(self):
@@ -266,6 +278,8 @@ class DataSet(_DtoolObject):
         dtool_dir_path = os.path.join(path, '.dtool')
         os.mkdir(dtool_dir_path)
 
+        os.mkdir(self._abs_overlays_path)
+
         self._safe_create_readme()
 
         self.update_manifest()
@@ -284,6 +298,46 @@ class DataSet(_DtoolObject):
             if item["hash"] == hash_str:
                 return os.path.join(self._abs_path, item["path"])
         raise(KeyError("File hash not in dataset"))
+
+    def empty_overlay(self):
+        """Return an empty annotation overlay as a dictionary whose keys are
+        the hashes of items in the DataSet and whose values are empty
+        dictionaries."""
+
+        file_list = self.manifest["file_list"]
+
+        return {entry['hash']: dict() for entry in file_list}
+
+    def persist_overlay(self, name, overlay):
+        """Write the overlay to disk.
+
+        :param name: name as a string
+        :param overlay: overlay as a dictionary
+        """
+        overlay_fname = name + ".json"
+        overlay_path = os.path.join(self._abs_overlays_path, overlay_fname)
+        # This shouldn't happen since the overlay directory should be created
+        # when the DataSet is persisted, however some programs (e.g. git) won't
+        # keep empty directories, so we might lose it.
+        if not os.path.isdir(self._abs_overlays_path):
+            os.mkdir(self._abs_overlays_path)
+        with open(overlay_path, "w") as fh:
+            json.dump(overlay, fh, indent=2)
+
+    @property
+    def overlays(self):
+
+        overlays = {}
+
+        for filename in os.listdir(self._abs_overlays_path):
+            base, ext = os.path.splitext(filename)
+            if ext == '.json':
+                fq_filename = os.path.join(
+                    self._abs_overlays_path, filename)
+                with open(fq_filename) as fh:
+                    overlays[base] = json.load(fh)
+
+        return overlays
 
 
 class Collection(_DtoolObject):
