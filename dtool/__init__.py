@@ -295,7 +295,10 @@ class DataSet(_DtoolObject):
         """
         for item in self.manifest["file_list"]:
             if item["hash"] == hash_str:
-                return os.path.join(self._abs_path, item["path"])
+                return os.path.abspath(os.path.join(
+                    self._abs_path,
+                    self._admin_metadata["manifest_root"],
+                    item["path"]))
         raise(KeyError("File hash not in dataset"))
 
     def empty_overlay(self):

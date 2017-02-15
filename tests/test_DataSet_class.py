@@ -253,6 +253,24 @@ def test_item_path_from_hash(chdir):
         dataset.item_path_from_hash("nonsense")
 
 
+def test_item_path_from_hash_with_different_datadir(chdir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset', "crazy")
+    dataset.persist_to_path('.')
+
+    fpath = os.path.join("crazy", "test_file.txt")
+    with open(fpath, 'w') as fh:
+        fh.write('Hello world')
+
+    dataset.update_manifest()
+
+    expected_path = os.path.abspath(fpath)
+    actual_path = dataset.item_path_from_hash(
+        "7b502c3a1f48c8609ae212cdfb639dee39673f5e")
+    assert actual_path == expected_path
+
+
 def test_dataset_from_path(tmp_dir):
     from dtool import DataSet
     dataset = DataSet("my_data_set")
