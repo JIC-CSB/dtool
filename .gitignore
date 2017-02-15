@@ -13,3 +13,4 @@ dist/
 .tox/
 env/
 env35/
+htmlcov/
