@@ -72,6 +72,41 @@ def test_new_dataset(chdir_fixture):  # NOQA
 
     dataset = DataSet.from_path('my_dataset')
     assert dataset.name == 'my_dataset'
+    assert dataset.manifest["hash_function"] == "shasum"
+
+
+def test_new_dataset_md5sum(chdir_fixture):  # NOQA
+
+    from click.testing import CliRunner
+    from dtool.cli import dataset
+    from dtool import DataSet
+
+    runner = CliRunner()
+
+    input_string = 'my_project\n'
+    input_string += 'my_dataset\n'
+    input_string += '\n'  # confidential
+    input_string += '\n'  # personally identifiable information
+    input_string += 'Test User\n'
+    input_string += 'test.user@example.com\n'
+    input_string += 'usert\n'
+    input_string += '\n'  # Date
+
+    result = runner.invoke(
+        dataset,
+        args=["--hash-function=md5sum"],
+        input=input_string)
+
+    assert not result.exception
+
+    assert os.path.isdir('my_dataset')
+    expected_dtool_file = os.path.join('my_dataset', '.dtool', 'dtool')
+    assert os.path.isfile(expected_dtool_file)
+
+    dataset = DataSet.from_path('my_dataset')
+    assert dataset.name == 'my_dataset'
+    assert dataset.manifest["hash_function"] == "md5sum"
+
 
 
 def test_new_project(chdir_fixture):  # NOQA

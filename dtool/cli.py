@@ -8,6 +8,10 @@ from dtool import (
     __version__,
     DataSet,
 )
+from dtool.filehasher import (
+    shasum,
+    md5sum,
+)
 from dtool.clickutils import (
     create_project,
     generate_descriptive_metadata,
@@ -24,6 +28,11 @@ README_SCHEMA = [
     ("owner_username", u"namey"),
     ("date", u"today"),
 ]
+
+HASH_FUNCTIONS = {
+    "shasum": shasum,
+    "md5sum": md5sum,
+}
 
 
 @click.group()
@@ -58,7 +67,12 @@ def new():
 
 
 @new.command()
-def dataset():
+@click.option(
+    '--hash-function',
+    help='Hash function to use for creating dataset item identifiers',
+    type=click.Choice(list(HASH_FUNCTIONS.keys())),
+    default='shasum')
+def dataset(hash_function):
 
     descriptive_metadata = generate_descriptive_metadata(
         README_SCHEMA, '.')
@@ -72,7 +86,7 @@ def dataset():
         dataset_name, template='dtool_dataset_README.yml')
 
     ds = DataSet(dataset_name, 'data')
-    ds.persist_to_path(dataset_name)
+    ds.persist_to_path(dataset_name, HASH_FUNCTIONS[hash_function])
 
 
 @new.command()
