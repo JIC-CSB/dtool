@@ -11,16 +11,17 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- ``dtool info`` CLI command
+- ``--hash-function`` option to ``dtool new dataset`` and ``dtool markup`` CLI
+- ``dtool.Manifest`` class
 - ``dtool.DataSet.identifiers`` property
 - ``dtool.DataSet.overlays`` property
 - ``dtool.DataSet.empty_overlay`` method
 - ``dtool.DataSet.persist_overlay`` method
-- ``dtool info`` CLI command
-- ``dtool.clickutils.info_from_path`` function
 - ``dtool.DataSet.item_from_hash`` method
 - ``dtool.DataSet.item_path_from_hash`` method
 - ``dtool.filehasher.md5sum`` function
-- ``dtool.Manifest`` class
+- ``dtool.clickutils.info_from_path`` function
 
 
 Changed
