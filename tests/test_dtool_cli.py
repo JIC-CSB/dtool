@@ -108,7 +108,6 @@ def test_new_dataset_md5sum(chdir_fixture):  # NOQA
     assert dataset.manifest["hash_function"] == "md5sum"
 
 
-
 def test_new_project(chdir_fixture):  # NOQA
 
     from click.testing import CliRunner
@@ -259,7 +258,6 @@ def test_markup_default_hash_function(chdir_fixture):  # NOQA
     input_string += 'usert\n'
     input_string += '\n'  # Date
 
-
     result = runner.invoke(markup, input=input_string)
     assert not result.exception
 
@@ -282,7 +280,6 @@ def test_markup_default_hash_function(chdir_fixture):  # NOQA
     input_string += 'test.user@example.com\n'
     input_string += 'usert\n'
     input_string += '\n'  # Date
-
 
     result = runner.invoke(
         markup,
