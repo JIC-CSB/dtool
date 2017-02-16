@@ -325,19 +325,27 @@ class DataSet(_DtoolObject):
 
         return {entry['hash']: dict() for entry in file_list}
 
-    def persist_overlay(self, name, overlay):
+    def persist_overlay(self, name, overlay, overwrite=False):
         """Write the overlay to disk.
 
         :param name: name as a string
         :param overlay: overlay as a dictionary
+        :param overwrite: bool replace overlay if already present
+        :raises: IOError if overlay already exists and overwrite is False
         """
         overlay_fname = name + ".json"
         overlay_path = os.path.join(self._abs_overlays_path, overlay_fname)
+
+        if os.path.isfile(overlay_path) and not overwrite:
+            raise(IOError(
+                "Overlay exists; set overwrite=True to force replacement"))
+
         # This shouldn't happen since the overlay directory should be created
         # when the DataSet is persisted, however some programs (e.g. git) won't
         # keep empty directories, so we might lose it.
         if not os.path.isdir(self._abs_overlays_path):
             os.mkdir(self._abs_overlays_path)
+
         with open(overlay_path, "w") as fh:
             json.dump(overlay, fh, indent=2)
 

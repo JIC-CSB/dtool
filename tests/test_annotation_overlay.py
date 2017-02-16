@@ -2,6 +2,8 @@
 
 import os
 
+import pytest
+
 from . import tmp_dataset_fixture  # NOQA
 
 
@@ -105,6 +107,8 @@ def test_persist_overlay_replaces(tmp_dataset_fixture):  # NOQA
 
     assert tmp_dataset_fixture.overlays["test"][item_hash]["property_a"] == 3
 
-    tmp_dataset_fixture.persist_overlay("test", overlay)
+    with pytest.raises(IOError):
+        tmp_dataset_fixture.persist_overlay("test", overlay)
 
+    tmp_dataset_fixture.persist_overlay("test", overlay, overwrite=True)
     assert tmp_dataset_fixture.overlays["test"][item_hash]["property_a"] == 5
