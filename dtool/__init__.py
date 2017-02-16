@@ -304,13 +304,11 @@ class DataSet(_DtoolObject):
         :param hash_str: dataset item identifier as a hash string
         :returns: absolute path to dataset item
         """
-        for item in self.manifest["file_list"]:
-            if item["hash"] == hash_str:
-                return os.path.abspath(os.path.join(
-                    self._abs_path,
-                    self._admin_metadata["manifest_root"],
-                    item["path"]))
-        raise(KeyError("File hash not in dataset"))
+        item = self.item_from_hash(hash_str)
+        return os.path.abspath(os.path.join(
+            self._abs_path,
+            self._admin_metadata["manifest_root"],
+            item["path"]))
 
     def empty_overlay(self):
         """Return an empty annotation overlay as a dictionary whose keys are
