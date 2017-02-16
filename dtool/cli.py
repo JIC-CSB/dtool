@@ -48,7 +48,12 @@ def info():
 
 
 @cli.command()
-def markup():
+@click.option(
+    '--hash-function',
+    help='Hash function to use for creating dataset item identifiers',
+    type=click.Choice(list(HASH_FUNCTIONS.keys())),
+    default='shasum')
+def markup(hash_function):
     descriptive_metadata = generate_descriptive_metadata(
         README_SCHEMA, '..')
 
@@ -58,7 +63,7 @@ def markup():
         '.', template='dtool_dataset_README.yml')
 
     ds = DataSet(dataset_name)
-    ds.persist_to_path('.')
+    ds.persist_to_path('.', HASH_FUNCTIONS[hash_function])
 
 
 @cli.group()
