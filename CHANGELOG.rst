@@ -16,6 +16,7 @@ Added
 - ``dtool.DataSet.persist_overlay`` method
 - ``dtool info`` CLI command
 - ``dtool.clickutils.info_from_path`` function
+- ``dtool.DataSet.item_from_hash`` method
 - ``dtool.DataSet.item_path_from_hash`` method
 - ``dtool.filehasher.md5sum`` function
 - ``dtool.Manifest`` class
