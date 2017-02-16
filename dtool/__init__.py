@@ -246,7 +246,7 @@ class DataSet(_DtoolObject):
         self._structural_metadata.regenerate_file_list()
         self._structural_metadata.persist_to_path(self._abs_manifest_path)
 
-    def persist_to_path(self, path):
+    def persist_to_path(self, path, hash_function=shasum):
         """Mark up a directory as a dataset.
 
         Assumes that path exists.
@@ -286,7 +286,7 @@ class DataSet(_DtoolObject):
 
         self._safe_create_readme()
 
-        self._structural_metadata = Manifest(data_directory, shasum)
+        self._structural_metadata = Manifest(data_directory, hash_function)
         self._structural_metadata.persist_to_path(self._abs_manifest_path)
 
         dtool_file_path = os.path.join(dtool_dir_path, 'dtool')
