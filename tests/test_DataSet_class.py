@@ -253,6 +253,27 @@ def test_item_path_from_hash(chdir):
         dataset.item_path_from_hash("nonsense")
 
 
+def test_item_from_hash(chdir):
+    from dtool import DataSet
+
+    dataset = DataSet('my_dataset')
+
+    with open('test_file.txt', 'w') as fh:
+        fh.write('Hello world')
+
+    dataset.persist_to_path('.')
+
+    item = dataset.item_from_hash(
+        "7b502c3a1f48c8609ae212cdfb639dee39673f5e")
+    assert item["hash"] == "7b502c3a1f48c8609ae212cdfb639dee39673f5e"
+    assert "size" in item
+    assert "path" in item
+    assert "mimetype" in item
+
+    with pytest.raises(KeyError):
+        dataset.item_from_hash("nonsense")
+
+
 def test_item_path_from_hash_with_different_datadir(chdir):
     from dtool import DataSet
 
