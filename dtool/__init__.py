@@ -181,6 +181,12 @@ class DataSet(_DtoolObject):
         return dataset
 
     @property
+    def identifiers(self):
+        """Return list of dataset item identifiers."""
+        file_list = self.manifest["file_list"]
+        return [item["hash"] for item in file_list]
+
+    @property
     def name(self):
         """Return the name of the dataset."""
         return self._admin_metadata['name']

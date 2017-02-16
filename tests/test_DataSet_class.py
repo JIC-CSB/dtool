@@ -7,6 +7,7 @@ import pytest
 
 from . import tmp_dir_fixture  # NOQA
 from . import chdir_fixture  # NOQA
+from . import TEST_SAMPLE_DATASET
 
 
 def test_dataset_initialisation():
@@ -369,3 +370,12 @@ def test_decriptive_metadata_property(tmp_dir_fixture):  # NOQA
         fh.write("---\n")
         fh.write("project: my_project\n")
     assert dataset.descriptive_metadata == {"project": "my_project"}
+
+
+def test_identifiers_property():
+    from dtool import DataSet
+    dataset = DataSet.from_path(TEST_SAMPLE_DATASET)
+    assert isinstance(dataset.identifiers, list)
+    assert len(dataset.identifiers) == 7
+    real_text_file_hash = "c827a1a1a61e734828f525ae7715d9c5be591496"
+    assert real_text_file_hash in dataset.identifiers

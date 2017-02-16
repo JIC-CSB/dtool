@@ -11,6 +11,7 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+- ``dtool.DataSet.identifiers`` property
 - ``dtool.DataSet.overlays`` property
 - ``dtool.DataSet.empty_overlay`` method
 - ``dtool.DataSet.persist_overlay`` method
