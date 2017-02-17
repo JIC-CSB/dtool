@@ -278,7 +278,7 @@ def test_markup_default_hash_function(chdir_fixture):  # NOQA
     assert dataset.manifest["hash_function"] == "shasum"
 
 
-def test_markup_default_hash_function(chdir_fixture):  # NOQA
+def test_markup_md5sum_hash_function(chdir_fixture):  # NOQA
     from click.testing import CliRunner
     from dtool.cli import markup
     from dtool import DataSet
