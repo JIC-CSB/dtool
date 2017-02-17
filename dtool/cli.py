@@ -18,6 +18,11 @@ from dtool.clickutils import (
     info_from_path,
 )
 
+
+#####################################################################
+# Helper variables.
+#####################################################################
+
 README_SCHEMA = [
     ("project_name", u"project_name"),
     ("dataset_name", u"dataset_name"),
@@ -35,6 +40,10 @@ HASH_FUNCTIONS = {
 }
 
 
+#####################################################################
+# Reusable click decorators.
+#####################################################################
+
 dataset_path_option = click.argument(
     'path',
     'Path to dataset directory',
@@ -47,6 +56,11 @@ hash_function_option = click.option(
     help='Hash function to use for creating dataset item identifiers',
     type=click.Choice(list(HASH_FUNCTIONS.keys())),
     default='shasum')
+
+
+#####################################################################
+# Command line interface.
+#####################################################################
 
 
 @click.group()
