@@ -38,8 +38,6 @@ from dtool.utils import write_templated_file, JINJA2_ENV
 
 __version__ = "0.11.0"
 
-VERBOSE = True
-
 # admin/administrative metadata - .dtool/dtool
 # descriptive metadata - README.yml
 # structural metadata - manifest.json
