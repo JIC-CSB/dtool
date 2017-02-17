@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 """Tool for managing JIC archive data.
 
 The central philosophy is that this project should produce outputs that can be
