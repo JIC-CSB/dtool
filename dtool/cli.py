@@ -35,6 +35,13 @@ HASH_FUNCTIONS = {
 }
 
 
+hash_function_option = click.option(
+    '--hash-function',
+    help='Hash function to use for creating dataset item identifiers',
+    type=click.Choice(list(HASH_FUNCTIONS.keys())),
+    default='shasum')
+
+
 @click.group()
 @click.version_option(version=__version__)
 def cli():
@@ -48,11 +55,7 @@ def info():
 
 
 @cli.command()
-@click.option(
-    '--hash-function',
-    help='Hash function to use for creating dataset item identifiers',
-    type=click.Choice(list(HASH_FUNCTIONS.keys())),
-    default='shasum')
+@hash_function_option
 def markup(hash_function):
     descriptive_metadata = generate_descriptive_metadata(
         README_SCHEMA, '..')
@@ -72,11 +75,7 @@ def new():
 
 
 @new.command()
-@click.option(
-    '--hash-function',
-    help='Hash function to use for creating dataset item identifiers',
-    type=click.Choice(list(HASH_FUNCTIONS.keys())),
-    default='shasum')
+@hash_function_option
 def dataset(hash_function):
 
     descriptive_metadata = generate_descriptive_metadata(
