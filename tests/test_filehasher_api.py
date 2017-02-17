@@ -30,8 +30,3 @@ def test_FileHasher():
 
     file_hasher = FileHasher(dummy)
     assert file_hasher.name == "dummy"
-
-
-def test_generate_file_hash():
-    from dtool.filehasher import generate_file_hash
-    assert generate_file_hash.name == "shasum"

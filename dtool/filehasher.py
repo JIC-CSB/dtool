@@ -47,6 +47,3 @@ def md5sum(filename):
     """
     hasher = hashlib.md5()
     return _hashsum(hasher, filename)
-
-
-generate_file_hash = FileHasher(shasum)
