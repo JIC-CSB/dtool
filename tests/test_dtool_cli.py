@@ -304,6 +304,32 @@ def test_markup_md5sum_hash_function(chdir_fixture):  # NOQA
     assert dataset.manifest["hash_function"] == "md5sum"
 
 
+def test_markup_alt_dir(tmp_dir_fixture):  # NOQA
+    from click.testing import CliRunner
+    from dtool.cli import markup
+    from dtool import DataSet
+
+    runner = CliRunner()
+
+    input_string = 'my_project\n'
+    input_string += 'my_dataset\n'
+    input_string += '\n'  # confidential
+    input_string += '\n'  # personally identifiable information
+    input_string += 'Test User\n'
+    input_string += 'test.user@example.com\n'
+    input_string += 'usert\n'
+    input_string += '\n'  # Date
+
+    result = runner.invoke(
+        markup,
+        args=[tmp_dir_fixture],
+        input=input_string)
+    assert not result.exception
+
+    dataset = DataSet.from_path(tmp_dir_fixture)
+    assert dataset.manifest["hash_function"] == "shasum"
+
+
 def test_markup_inherits_parent_metadata(tmp_dir_fixture):  # NOQA
     from click.testing import CliRunner
     from dtool.cli import markup

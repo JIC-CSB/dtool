@@ -77,18 +77,21 @@ def info(path):
 
 
 @cli.command()
+@dataset_path_option
 @hash_function_option
-def markup(hash_function):
+def markup(path, hash_function):
+    path = os.path.abspath(path)
+    parent_dir = os.path.join(path, "..")
     descriptive_metadata = generate_descriptive_metadata(
-        README_SCHEMA, '..')
+        README_SCHEMA, parent_dir)
 
     dataset_name = descriptive_metadata["dataset_name"]
 
     descriptive_metadata.persist_to_path(
-        '.', template='dtool_dataset_README.yml')
+        path, template='dtool_dataset_README.yml')
 
     ds = DataSet(dataset_name)
-    ds.persist_to_path('.', HASH_FUNCTIONS[hash_function])
+    ds.persist_to_path(path, HASH_FUNCTIONS[hash_function])
 
 
 @cli.group()
