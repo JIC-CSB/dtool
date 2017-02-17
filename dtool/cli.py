@@ -18,6 +18,52 @@ from dtool.clickutils import (
     info_from_path,
 )
 
+#####################################################################
+# Should we change the structure of the way the CLI commands are
+# organised?
+#
+# Currently:
+# dtool
+#   info
+#   markup
+#   new
+#     dataset
+#     project
+#   manifest
+#     update
+#
+# Now I want to add a command for listing all the identifiers in a
+# dataset. Where does it fit in?
+# ``dtool idendifiers``
+# What should the above do if called on a project?
+# An alternative would be to have a dataset sub command.
+# ``dtool dataset identifiers``
+# At the moment this would be confusing in the sense that there is
+# already a:
+# ``dtool new dataset``
+# command.
+#
+# Proposal: use the terms ``project``, ``collection``, and ``dataset`` as top
+#           level sub commands.
+#
+# dtool
+#   info
+#   dataset
+#     new
+#     markup
+#     identifiers
+#     manifest
+#       update
+#       verify
+#   collection
+#     new
+#     markup
+#   project
+#     new
+#     markup
+#
+#####################################################################
+
 
 #####################################################################
 # Helper variables.
