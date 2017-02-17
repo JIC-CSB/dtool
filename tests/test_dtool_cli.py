@@ -45,6 +45,19 @@ def test_info(chdir_fixture):  # NOQA
     assert output.startswith('Directory is a dtool dataset')
 
 
+def test_info_with_dataset_path(tmp_dir_fixture):  # NOQA
+
+    # Turn directory into a dataset.
+    from dtool import DataSet
+    dataset = DataSet("testing")
+    dataset.persist_to_path(tmp_dir_fixture)
+
+    cmd = ["dtool", "info", tmp_dir_fixture]
+    output = subprocess.check_output(cmd)
+    output = output.decode('utf8')
+    assert output.startswith('Directory is a dtool dataset')
+
+
 def test_new_dataset(chdir_fixture):  # NOQA
 
     from click.testing import CliRunner

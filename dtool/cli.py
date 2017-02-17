@@ -35,6 +35,13 @@ HASH_FUNCTIONS = {
 }
 
 
+dataset_path_option = click.argument(
+    'path',
+    'Path to dataset directory',
+    default=".",
+    type=click.Path(exists=True))
+
+
 hash_function_option = click.option(
     '--hash-function',
     help='Hash function to use for creating dataset item identifiers',
@@ -49,8 +56,9 @@ def cli():
 
 
 @cli.command()
-def info():
-    message = info_from_path(".")
+@dataset_path_option
+def info(path):
+    message = info_from_path(path)
     print(message)
 
 
@@ -109,8 +117,7 @@ def manifest():
 
 
 @manifest.command()
-@click.argument('path', 'Path to dataset directory.',
-                type=click.Path(exists=True))
+@dataset_path_option
 def update(path):
     dataset = DataSet.from_path(path)
     dataset.update_manifest()
