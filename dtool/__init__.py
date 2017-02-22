@@ -31,7 +31,7 @@ import yaml
 import click
 import magic
 
-from dtool.filehasher import shasum
+from dtool.filehasher import shasum, HASH_FUNCTIONS
 from dtool.filehasher import FileHasher
 from dtool.utils import write_templated_file, JINJA2_ENV
 
@@ -496,14 +496,15 @@ class DescriptiveMetadata(object):
 class Manifest(dict):
     """Class for managing structural metadata."""
 
-    def __init__(self, abs_manifest_root, hash_func):
+    def __init__(self, abs_manifest_root, hash_func, generate_file_list=True):
         # Use abspath to avoid problems with trailing slashes and length
         self.abs_manifest_root = os.path.abspath(abs_manifest_root)
         self.hash_generator = FileHasher(hash_func)
         self["file_list"] = []
         self["dtool_version"] = __version__
         self["hash_function"] = self.hash_generator.name
-        self.regenerate_file_list()
+        if generate_file_list:
+            self.regenerate_file_list()
 
     def _generate_relative_paths(self):
         """Return list of relative paths to all files in manifest root.
@@ -560,6 +561,18 @@ class Manifest(dict):
         """
         with open(path, "w") as fh:
             json.dump(self, fh, indent=2)
+
+    @classmethod
+    def from_path(cls, manifest_path, data_directory):
+        """Return instance of :class:`dtool.Manifest` from disk."""
+        with open(manifest_path) as fh:
+            manifest_dict = json.load(fh)
+        hash_func = HASH_FUNCTIONS[manifest_dict["hash_function"]]
+        manifest = cls(data_directory, hash_func, generate_file_list=False)
+        manifest.update(manifest_dict)
+        return manifest
+
+
 
 
 def metadata_from_path(path):
