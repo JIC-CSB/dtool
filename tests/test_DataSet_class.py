@@ -302,6 +302,19 @@ def test_dataset_from_path(tmp_dir_fixture):  # NOQA
     assert dataset_again == dataset
 
 
+def test_dataset_from_path_sets_structural_metadata(tmp_dir_fixture):  # NOQA
+    from dtool import DataSet
+    dataset = DataSet("my_data_set")
+    dataset.persist_to_path(tmp_dir_fixture)
+
+    dataset_again = DataSet.from_path(tmp_dir_fixture)
+    assert hasattr(dataset_again, "_structural_metadata")
+
+    from dtool import Manifest
+    assert isinstance(dataset_again._structural_metadata,
+                      Manifest)
+
+
 def test_dataset_from_path_raises_if_no_dtool_file(tmp_dir_fixture):  # NOQA
     from dtool import DataSet, NotDtoolObject
     with pytest.raises(NotDtoolObject):

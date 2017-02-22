@@ -175,6 +175,11 @@ class DataSet(_DtoolObject):
         # This is Python's crazy way of "allowing" class promotion.
         dataset.__class__ = cls
 
+        # Remember to parse the structural metadata.
+        dataset._structural_metadata = Manifest.from_path(
+            dataset._abs_manifest_path,
+            dataset.data_directory)
+
         return dataset
 
     @property
