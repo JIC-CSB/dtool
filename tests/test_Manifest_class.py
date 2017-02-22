@@ -164,3 +164,37 @@ def test_manifest_mimetype_generation():
         actual = file['mimetype']
         expected = expected_mimetypes[file_path]
         assert expected == actual
+
+
+def test_manifest_from_path(tmp_dir_fixture):
+    from dtool import Manifest
+    from dtool.filehasher import md5sum
+
+    data_dir = os.path.join(tmp_dir_fixture, "data")
+    os.mkdir(data_dir)
+
+    test_file1 = os.path.join(data_dir, "test1.txt")
+    with open(test_file1, "w") as fh:
+        fh.write("hello")
+
+    manifest = Manifest(data_dir, md5sum)
+    manifest_path = os.path.join(tmp_dir_fixture, "manifest.json")
+    manifest.persist_to_path(manifest_path)
+
+    test_file2 = os.path.join(data_dir, "test2.txt")
+    with open(test_file2, "w") as fh:
+        fh.write("world")
+
+    parsed_manifest = Manifest.from_path(
+        manifest_path=manifest_path, data_directory=data_dir)
+    assert parsed_manifest is not manifest
+    assert parsed_manifest == manifest
+    assert isinstance(parsed_manifest, Manifest)
+
+    md5_hash_pre_regeneration = parsed_manifest["file_list"][0]["hash"]
+    assert len(parsed_manifest["file_list"]) == 1
+    parsed_manifest.regenerate_file_list()
+    assert len(parsed_manifest["file_list"]) == 2
+
+    hashes_post_regeneration = [i["hash"] for i in parsed_manifest["file_list"]]
+    assert md5_hash_pre_regeneration in hashes_post_regeneration
