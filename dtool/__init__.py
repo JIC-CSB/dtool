@@ -35,7 +35,7 @@ from dtool.filehasher import shasum
 from dtool.filehasher import FileHasher
 from dtool.utils import write_templated_file, JINJA2_ENV
 
-__version__ = "0.11.0"
+__version__ = "0.12.0"
 
 # admin/administrative metadata - .dtool/dtool
 # descriptive metadata - README.yml
