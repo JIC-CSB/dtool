@@ -315,6 +315,27 @@ def test_dataset_from_path_sets_structural_metadata(tmp_dir_fixture):  # NOQA
                       Manifest)
 
 
+def test_dataset_from_path_issue_with_manifest_datadirectory_being_relative(tmp_dir_fixture):  # NOQA
+
+    # Because the data directory is relative care must be taken to make sure
+    # that it is set correctly when creating absolute data directory when
+    # instantiating the Manifest instance for the DataSet._structural_metadata
+    # when reading from path.
+
+    from dtool import DataSet
+
+    dataset = DataSet("my_data_set", data_directory="data")
+    dataset.persist_to_path(tmp_dir_fixture)
+
+    sample_fpath = os.path.join(tmp_dir_fixture, "data", "sample.txt")
+    with open(sample_fpath, "w") as fh:
+        fh.write("hello")
+
+    dataset_again = DataSet.from_path(tmp_dir_fixture)
+    dataset_again.update_manifest()
+    assert len(dataset_again._structural_metadata["file_list"]) == 1
+
+
 def test_dataset_from_path_raises_if_no_dtool_file(tmp_dir_fixture):  # NOQA
     from dtool import DataSet, NotDtoolObject
     with pytest.raises(NotDtoolObject):

@@ -176,9 +176,10 @@ class DataSet(_DtoolObject):
         dataset.__class__ = cls
 
         # Remember to parse the structural metadata.
+        abs_data_directory = os.path.join(path, dataset.data_directory)
         dataset._structural_metadata = Manifest.from_path(
             dataset._abs_manifest_path,
-            dataset.data_directory)
+            abs_data_directory)
 
         return dataset
 
