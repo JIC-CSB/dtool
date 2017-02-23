@@ -578,8 +578,6 @@ class Manifest(dict):
         return manifest
 
 
-
-
 def metadata_from_path(path):
     """Return dictionary containing metadata derived from dtool
     objects a level of the directory structure."""

@@ -53,4 +53,3 @@ HASH_FUNCTIONS = {
     "shasum": shasum,
     "md5sum": md5sum,
 }
-

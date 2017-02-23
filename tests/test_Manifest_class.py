@@ -166,7 +166,7 @@ def test_manifest_mimetype_generation():
         assert expected == actual
 
 
-def test_manifest_from_path(tmp_dir_fixture):
+def test_manifest_from_path(tmp_dir_fixture):  # NOQA
     from dtool import Manifest
     from dtool.filehasher import md5sum
 
@@ -196,5 +196,6 @@ def test_manifest_from_path(tmp_dir_fixture):
     parsed_manifest.regenerate_file_list()
     assert len(parsed_manifest["file_list"]) == 2
 
-    hashes_post_regeneration = [i["hash"] for i in parsed_manifest["file_list"]]
+    hashes_post_regeneration = [i["hash"]
+                                for i in parsed_manifest["file_list"]]
     assert md5_hash_pre_regeneration in hashes_post_regeneration
