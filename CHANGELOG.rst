@@ -11,6 +11,51 @@ This change log uses principles from `keep a changelog <http://keepachangelog.co
 Added
 ^^^^^
 
+
+
+Changed
+^^^^^^^
+
+
+Deprecated
+^^^^^^^^^^
+
+Removed
+^^^^^^^
+
+
+
+Fixed
+^^^^^
+
+
+Security
+^^^^^^^^
+
+
+
+[0.12.1] 2017-02-23
+~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+- ``dtool.Manifest.from_path`` method to be able to fix ``dtool.DataSet.from_path``
+
+
+Fixed
+^^^^^
+
+- ``dtool.DataSet.from_path`` now sets ``DataSet._structural_metadata`` property correctly
+
+
+
+[0.12.0] 2017-02-22
+~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
 - ``dtool info`` CLI command
 - ``--hash-function`` option to ``dtool new dataset`` and ``dtool markup`` CLI
 - ``dtool.Manifest`` class
@@ -29,9 +74,6 @@ Changed
 
 - Update ``dtool.Dataset`` to use ``dtool.Manifest`` for structural metadata
 
-Deprecated
-^^^^^^^^^^
-
 Removed
 ^^^^^^^
 
@@ -40,14 +82,6 @@ Removed
 - ``dtool.log``
 - Fluentd logging
 - ``dtool.slurm`` module moved into ``arctool`` package
-
-
-Fixed
-^^^^^
-
-
-Security
-^^^^^^^^
 
 
 [0.11.0] - 2017-09-17
