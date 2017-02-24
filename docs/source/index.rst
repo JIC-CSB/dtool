@@ -6,8 +6,9 @@ dtool - a tool for managing data sets
    :caption: Table of contents:
 
    readme
-   annotation_overlays
+   usage
    installation_notes
+   annotation_overlays
    api
    developer_notes
    changelog
