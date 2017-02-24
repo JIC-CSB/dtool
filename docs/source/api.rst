@@ -6,5 +6,4 @@ API documentation
 
    api/dtool
    api/filehasher
-   api/manifest
-   api/slurm
+   api/utils
