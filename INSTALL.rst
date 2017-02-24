@@ -1,5 +1,16 @@
 Installation notes
-------------------
+==================
+
+Using pip
+---------
+
+::
+
+    $ pip install dtool
+
+
+From git
+--------
 
 ::
 
