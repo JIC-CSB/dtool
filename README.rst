@@ -28,8 +28,8 @@ The dtool project project provides tools for managing (scientific) data.
 It aims to help in three areas:
 
 1. Adding structure and meta data to your project and files
-2. Verifying the integrity of the files in your project
-3. Creating archives for long term storage
+2. Providing programmatic discovery of your data
+2. Verifying the integrity of your data
 
 
 Design philosophy
