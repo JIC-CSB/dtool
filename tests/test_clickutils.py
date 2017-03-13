@@ -4,7 +4,7 @@ import os
 
 import pytest
 
-from dtool import Project
+from dtool.project import Project
 
 from . import tmp_dir_fixture  # NOQA
 

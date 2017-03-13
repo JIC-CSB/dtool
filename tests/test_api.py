@@ -26,7 +26,7 @@ def test_metadata_from_path(tmp_dir):
 
     assert metadata_from_path(tmp_dir) == {}
 
-    from dtool import Project
+    from dtool.project import Project
     project = Project("my_project")
     project.persist_to_path(tmp_dir)
 

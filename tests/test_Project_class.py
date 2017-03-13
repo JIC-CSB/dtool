@@ -19,7 +19,7 @@ def tmp_dir(request):
 
 
 def test_project_initialisation(tmp_dir):
-    from dtool import Project
+    from dtool.project import Project
 
     project = Project('my_project')
     project.persist_to_path(tmp_dir)
@@ -34,7 +34,7 @@ def test_project_initialisation(tmp_dir):
 
 def test_create_project_does_not_overwrite_readme(tmp_dir):
 
-    from dtool import Project
+    from dtool.project import Project
 
     test_project = Project('my_test_project')
 

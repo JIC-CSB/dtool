@@ -5,11 +5,11 @@ import os
 import click
 
 from dtool import (
-    Project,
     metadata_from_path,
     _DtoolObject,
     NotDtoolObject,
 )
+from dtool.project import Project
 from dtool.utils import auto_metadata
 from dtool.metadata import DescriptiveMetadata
 

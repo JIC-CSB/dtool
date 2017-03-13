@@ -125,7 +125,7 @@ def test_new_project(chdir_fixture):  # NOQA
 
     from click.testing import CliRunner
     from dtool.cli import project
-    from dtool import Project
+    from dtool.project import Project
 
     runner = CliRunner()
 
@@ -333,7 +333,8 @@ def test_markup_alt_dir(tmp_dir_fixture):  # NOQA
 def test_markup_inherits_parent_metadata(tmp_dir_fixture):  # NOQA
     from click.testing import CliRunner
     from dtool.cli import markup
-    from dtool import DataSet, Project
+    from dtool import DataSet
+    from dtool.project import Project
 
     project = Project("test_inheritance")
     project.persist_to_path(tmp_dir_fixture)

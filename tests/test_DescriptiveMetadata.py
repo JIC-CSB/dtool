@@ -150,7 +150,8 @@ creation_date: today
 
 
 def test_descriptive_metadata_inheritence(tmp_dir):
-    from dtool import Project, Collection, DataSet
+    from dtool import Collection, DataSet
+    from dtool.project import Project
     from dtool.metadata import DescriptiveMetadata
 
     project_path = tmp_dir

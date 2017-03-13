@@ -31,7 +31,6 @@ import magic
 
 from dtool.filehasher import shasum, HASH_FUNCTIONS
 from dtool.filehasher import FileHasher
-from dtool.utils import write_templated_file
 
 __version__ = "0.12.1"
 
@@ -417,24 +416,6 @@ class Collection(_DtoolObject):
         self._safe_create_readme()
         with open(dtool_file_path, "w") as fh:
             json.dump(self._admin_metadata, fh)
-
-
-class Project(Collection):
-    """Class representing a specific project.
-
-    Writes a README.yml with the project name."""
-
-    def __init__(self, name):
-        super(Project, self).__init__()
-        self.name = name
-
-    def _safe_create_readme(self):
-        if not os.path.isfile(self.abs_readme_path):
-            descriptive_metadata = {'project_name': self.name}
-            write_templated_file(
-                self.abs_readme_path,
-                'dtool_project_README.yml',
-                descriptive_metadata)
 
 
 class Manifest(dict):
