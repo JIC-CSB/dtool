@@ -1,6 +1,5 @@
 """Tests for the _DtoolObject base class."""
 
-import os
 import shutil
 import tempfile
 
