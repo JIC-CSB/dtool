@@ -18,7 +18,7 @@ def tmp_dir(request):
 
 
 def test_DescriptiveMetadata_initialisation():
-    from dtool import DescriptiveMetadata
+    from dtool.metadata import DescriptiveMetadata
     descriptive_metadata = DescriptiveMetadata()
     assert descriptive_metadata.ordered_keys == []
 
@@ -34,7 +34,7 @@ def test_DescriptiveMetadata_initialisation():
 
 
 def test_DescriptiveMetadata_update():
-    from dtool import DescriptiveMetadata
+    from dtool.metadata import DescriptiveMetadata
     schema = [("project_name", "my_project"),
               ("aaa", "bbb")]
     descriptive_metadata = DescriptiveMetadata(schema=schema)
@@ -49,7 +49,7 @@ def test_DescriptiveMetadata_update():
 
 
 def test_DescriptiveMetadata_works_with_templating():
-    from dtool import DescriptiveMetadata
+    from dtool.metadata import DescriptiveMetadata
     schema = [("project_name", "my_project")]
     descriptive_metadata = DescriptiveMetadata(schema)
 
@@ -62,7 +62,7 @@ def test_DescriptiveMetadata_works_with_templating():
 
 
 def test_DescriptiveMetadata_iter_keys_and_defaults():
-    from dtool import DescriptiveMetadata
+    from dtool.metadata import DescriptiveMetadata
     schema = [("project_name", "old_project"),
               ("dataset_name", "old_dataset")]
     descriptive_metadata = DescriptiveMetadata(schema)
@@ -77,7 +77,7 @@ def test_DescriptiveMetadata_iter_keys_and_defaults():
 
 
 def test_DescriptiveMetadata_prompt_for_values():
-    from dtool import DescriptiveMetadata
+    from dtool.metadata import DescriptiveMetadata
     schema = [("project_name", "old_project"),
               ("dataset_name", "old_dataset")]
     descriptive_metadata = DescriptiveMetadata(schema)
@@ -100,7 +100,7 @@ def test_DescriptiveMetadata_prompt_for_values():
 
 
 def test_DescriptiveMetadata_persist_to_file(tmp_dir):
-    from dtool import DescriptiveMetadata
+    from dtool.metadata import DescriptiveMetadata
     from dtool.cli import README_SCHEMA
     descriptive_metadata = DescriptiveMetadata(README_SCHEMA)
 

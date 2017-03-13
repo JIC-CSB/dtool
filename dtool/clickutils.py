@@ -6,12 +6,12 @@ import click
 
 from dtool import (
     Project,
-    DescriptiveMetadata,
     metadata_from_path,
     _DtoolObject,
     NotDtoolObject,
 )
 from dtool.utils import auto_metadata
+from dtool.metadata import DescriptiveMetadata
 
 
 def create_project(path):

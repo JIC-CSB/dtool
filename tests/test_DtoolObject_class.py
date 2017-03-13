@@ -46,7 +46,8 @@ def test_from_path_on_empty_dir_raises_NotDtoolObject(tmp_dir):
 
 
 def test_descriptive_metadata_inheritence(tmp_dir):
-    from dtool import Project, Collection, DataSet, DescriptiveMetadata
+    from dtool import Project, Collection, DataSet
+    from dtool.metadata import DescriptiveMetadata
 
     project_path = tmp_dir
     project = Project("my_project")
