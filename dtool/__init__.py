@@ -496,16 +496,3 @@ class Manifest(dict):
         manifest = cls(data_directory, hash_func, generate_file_list=False)
         manifest.update(manifest_dict)
         return manifest
-
-
-def metadata_from_path(path):
-    """Return dictionary containing metadata derived from dtool
-    objects a level of the directory structure."""
-
-    try:
-        dtool_object = _DtoolObject.from_path(path)
-        descriptive_metadata = dtool_object.descriptive_metadata
-    except NotDtoolObject:
-        descriptive_metadata = {}
-
-    return descriptive_metadata

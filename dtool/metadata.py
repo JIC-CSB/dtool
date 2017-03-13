@@ -5,6 +5,7 @@ import os
 import jinja2.meta
 import click
 
+from dtool import _DtoolObject, NotDtoolObject
 from dtool.utils import write_templated_file, JINJA2_ENV
 
 
@@ -66,3 +67,16 @@ class DescriptiveMetadata(object):
         variables["extra_yml_content"] = extra_yml_content
 
         write_templated_file(output_path, template, variables)
+
+
+def metadata_from_path(path):
+    """Return dictionary containing metadata derived from dtool
+    objects a level of the directory structure."""
+
+    try:
+        dtool_object = _DtoolObject.from_path(path)
+        descriptive_metadata = dtool_object.descriptive_metadata
+    except NotDtoolObject:
+        descriptive_metadata = {}
+
+    return descriptive_metadata

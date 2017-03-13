@@ -22,7 +22,7 @@ def test_version_is_str():
 
 
 def test_metadata_from_path(tmp_dir):
-    from dtool import metadata_from_path
+    from dtool.metadata import metadata_from_path
 
     assert metadata_from_path(tmp_dir) == {}
 
