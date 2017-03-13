@@ -187,3 +187,15 @@ def test_descriptive_metadata_inheritence(tmp_dir):
     assert dataset.descriptive_metadata["project_name"] == "my_project"
     assert dataset.descriptive_metadata["collection_name"] == "my_collection"
     assert dataset.descriptive_metadata["dataset_name"] == "my_dataset"
+
+
+def test_metadata_from_path(tmp_dir):
+    from dtool.metadata import metadata_from_path
+
+    assert metadata_from_path(tmp_dir) == {}
+
+    from dtool.project import Project
+    project = Project("my_project")
+    project.persist_to_path(tmp_dir)
+
+    assert metadata_from_path(tmp_dir) == {"project_name": "my_project"}

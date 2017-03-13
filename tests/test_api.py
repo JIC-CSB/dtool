@@ -19,15 +19,3 @@ def tmp_dir(request):
 def test_version_is_str():
     from dtool import __version__
     assert isinstance(__version__, str)
-
-
-def test_metadata_from_path(tmp_dir):
-    from dtool.metadata import metadata_from_path
-
-    assert metadata_from_path(tmp_dir) == {}
-
-    from dtool.project import Project
-    project = Project("my_project")
-    project.persist_to_path(tmp_dir)
-
-    assert metadata_from_path(tmp_dir) == {"project_name": "my_project"}
