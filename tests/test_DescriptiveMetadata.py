@@ -147,3 +147,42 @@ creation_date: today
 # budget_codes:
 #  - E.g. CCBS1H10S
 """
+
+
+def test_descriptive_metadata_inheritence(tmp_dir):
+    from dtool import Project, Collection, DataSet
+    from dtool.metadata import DescriptiveMetadata
+
+    project_path = tmp_dir
+    project = Project("my_project")
+    project.persist_to_path(project_path)
+
+    collection_path = os.path.join(project_path, "my_collection")
+    os.mkdir(collection_path)
+    collection = Collection()
+    collection.persist_to_path(collection_path)
+
+    dataset_path = os.path.join(collection_path, "my_dataset")
+    os.mkdir(dataset_path)
+    dataset = DataSet("my_dataset")
+    dataset.persist_to_path(dataset_path)
+
+    project_metadata = DescriptiveMetadata([
+        ("project_name", "my_project"),
+        ("collection_name", "should_not_see_this"),
+        ("dataset_name", "should_not_see_this")])
+    project_metadata.persist_to_path(project_path)
+
+    collection_metadata = DescriptiveMetadata([
+        ("collection_name", "my_collection"),
+        ("dataset_name", "should_not_see_this")])
+    collection_metadata.persist_to_path(collection_path)
+
+    dataset_metadata = DescriptiveMetadata([
+        ("dataset_name", "my_dataset")])
+    dataset_metadata.persist_to_path(dataset_path)
+
+    dataset = DataSet.from_path(dataset_path)
+    assert dataset.descriptive_metadata["project_name"] == "my_project"
+    assert dataset.descriptive_metadata["collection_name"] == "my_collection"
+    assert dataset.descriptive_metadata["dataset_name"] == "my_dataset"
