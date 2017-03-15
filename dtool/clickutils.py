@@ -4,7 +4,7 @@ import os
 
 import click
 
-from dtool import (
+from dtoolcore import (
     _DtoolObject,
     NotDtoolObject,
 )

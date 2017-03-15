@@ -17,9 +17,9 @@ setup(name="dtool",
       download_url="{}/tarball/{}".format(url, version),
       install_requires=[
         "click",
+        "dtoolcore",
         "jinja2",
         "pyyaml",
-        "python-magic",
       ],
       entry_points={
           'console_scripts': ['dtool=dtool.cli:cli']

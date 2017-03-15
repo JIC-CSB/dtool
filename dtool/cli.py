@@ -4,14 +4,11 @@ import os
 
 import click
 
-from dtool import (
+from dtoolcore import (
     __version__,
     DataSet,
 )
-from dtool.filehasher import (
-    shasum,
-    md5sum,
-)
+from dtoolcore.filehasher import shasum
 from dtool.clickutils import (
     create_project,
     generate_descriptive_metadata,
@@ -34,12 +31,6 @@ README_SCHEMA = [
     ("date", u"today"),
 ]
 
-HASH_FUNCTIONS = {
-    "shasum": shasum,
-    "md5sum": md5sum,
-}
-
-
 #####################################################################
 # Reusable click decorators.
 #####################################################################
@@ -49,13 +40,6 @@ dataset_path_option = click.argument(
     'Path to dataset directory',
     default=".",
     type=click.Path(exists=True))
-
-
-hash_function_option = click.option(
-    '--hash-function',
-    help='Hash function to use for creating dataset item identifiers',
-    type=click.Choice(list(HASH_FUNCTIONS.keys())),
-    default='shasum')
 
 
 #####################################################################
@@ -78,8 +62,7 @@ def info(path):
 
 @cli.command()
 @dataset_path_option
-@hash_function_option
-def markup(path, hash_function):
+def markup(path):
     path = os.path.abspath(path)
     parent_dir = os.path.join(path, "..")
     descriptive_metadata = generate_descriptive_metadata(
@@ -91,7 +74,7 @@ def markup(path, hash_function):
         path, template='dtool_dataset_README.yml')
 
     ds = DataSet(dataset_name)
-    ds.persist_to_path(path, HASH_FUNCTIONS[hash_function])
+    ds.persist_to_path(path)
 
 
 @cli.group()
@@ -100,8 +83,7 @@ def new():
 
 
 @new.command()
-@hash_function_option
-def dataset(hash_function):
+def dataset():
 
     descriptive_metadata = generate_descriptive_metadata(
         README_SCHEMA, '.')
@@ -115,7 +97,7 @@ def dataset(hash_function):
         dataset_name, template='dtool_dataset_README.yml')
 
     ds = DataSet(dataset_name, 'data')
-    ds.persist_to_path(dataset_name, HASH_FUNCTIONS[hash_function])
+    ds.persist_to_path(dataset_name)
 
 
 @new.command()

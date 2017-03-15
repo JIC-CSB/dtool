@@ -35,7 +35,7 @@ def test_info(chdir_fixture):  # NOQA
     assert output.startswith('Directory is not a dtool object')
 
     # Turn directory into a dataset.
-    from dtool import DataSet
+    from dtoolcore import DataSet
     dataset = DataSet("testing")
     dataset.persist_to_path(".")
 
@@ -48,7 +48,7 @@ def test_info(chdir_fixture):  # NOQA
 def test_info_with_dataset_path(tmp_dir_fixture):  # NOQA
 
     # Turn directory into a dataset.
-    from dtool import DataSet
+    from dtoolcore import DataSet
     dataset = DataSet("testing")
     dataset.persist_to_path(tmp_dir_fixture)
 
@@ -62,7 +62,7 @@ def test_new_dataset(chdir_fixture):  # NOQA
 
     from click.testing import CliRunner
     from dtool.cli import dataset
-    from dtool import DataSet
+    from dtoolcore import DataSet
 
     runner = CliRunner()
 
@@ -86,39 +86,6 @@ def test_new_dataset(chdir_fixture):  # NOQA
     dataset = DataSet.from_path('my_dataset')
     assert dataset.name == 'my_dataset'
     assert dataset.manifest["hash_function"] == "shasum"
-
-
-def test_new_dataset_md5sum(chdir_fixture):  # NOQA
-
-    from click.testing import CliRunner
-    from dtool.cli import dataset
-    from dtool import DataSet
-
-    runner = CliRunner()
-
-    input_string = 'my_project\n'
-    input_string += 'my_dataset\n'
-    input_string += '\n'  # confidential
-    input_string += '\n'  # personally identifiable information
-    input_string += 'Test User\n'
-    input_string += 'test.user@example.com\n'
-    input_string += 'usert\n'
-    input_string += '\n'  # Date
-
-    result = runner.invoke(
-        dataset,
-        args=["--hash-function=md5sum"],
-        input=input_string)
-
-    assert not result.exception
-
-    assert os.path.isdir('my_dataset')
-    expected_dtool_file = os.path.join('my_dataset', '.dtool', 'dtool')
-    assert os.path.isfile(expected_dtool_file)
-
-    dataset = DataSet.from_path('my_dataset')
-    assert dataset.name == 'my_dataset'
-    assert dataset.manifest["hash_function"] == "md5sum"
 
 
 def test_new_project(chdir_fixture):  # NOQA
@@ -146,7 +113,7 @@ def test_new_dataset_in_project(chdir_fixture):  # NOQA
 
     from click.testing import CliRunner
     from dtool.cli import dataset, project
-    from dtool import DataSet
+    from dtoolcore import DataSet
 
     runner = CliRunner()
 
@@ -178,7 +145,7 @@ def test_new_dataset_in_project(chdir_fixture):  # NOQA
 
 def test_manifest_update(tmp_dir_fixture):  # NOQA
 
-    from dtool import DataSet
+    from dtoolcore import DataSet
     dataset = DataSet("test_dataset", "data")
     dataset.persist_to_path(tmp_dir_fixture)
 
@@ -195,27 +162,13 @@ def test_manifest_update(tmp_dir_fixture):  # NOQA
         manifest = json.load(fh)
 
     file_list = manifest["file_list"]
-
-    expected_mimetypes = {
-        'actually_a_png.txt': 'image/png',
-        'actually_a_text_file.jpg': 'text/plain',
-        'empty_file': 'inode/x-empty',
-        'random_bytes': 'application/octet-stream',
-        'real_text_file.txt': 'text/plain',
-        'tiny.png': 'image/png'
-    }
-
-    for file in file_list:
-        file_path = file['path']
-        actual = file['mimetype']
-        expected = expected_mimetypes[file_path]
-        assert expected == actual
+    assert len(file_list) == 6
 
 
 def test_markup(tmp_dir_fixture):  # NOQA
     from click.testing import CliRunner
     from dtool.cli import markup
-    from dtool import DataSet
+    from dtoolcore import DataSet
 
     existing_data_dir = os.path.join(tmp_dir_fixture, 'data')
 
@@ -258,7 +211,7 @@ def test_markup(tmp_dir_fixture):  # NOQA
 def test_markup_default_hash_function(chdir_fixture):  # NOQA
     from click.testing import CliRunner
     from dtool.cli import markup
-    from dtool import DataSet
+    from dtoolcore import DataSet
 
     runner = CliRunner()
 
@@ -278,36 +231,10 @@ def test_markup_default_hash_function(chdir_fixture):  # NOQA
     assert dataset.manifest["hash_function"] == "shasum"
 
 
-def test_markup_md5sum_hash_function(chdir_fixture):  # NOQA
-    from click.testing import CliRunner
-    from dtool.cli import markup
-    from dtool import DataSet
-
-    runner = CliRunner()
-
-    input_string = 'my_project\n'
-    input_string += 'my_dataset\n'
-    input_string += '\n'  # confidential
-    input_string += '\n'  # personally identifiable information
-    input_string += 'Test User\n'
-    input_string += 'test.user@example.com\n'
-    input_string += 'usert\n'
-    input_string += '\n'  # Date
-
-    result = runner.invoke(
-        markup,
-        args=["--hash-function=md5sum"],
-        input=input_string)
-    assert not result.exception
-
-    dataset = DataSet.from_path('.')
-    assert dataset.manifest["hash_function"] == "md5sum"
-
-
 def test_markup_alt_dir(tmp_dir_fixture):  # NOQA
     from click.testing import CliRunner
     from dtool.cli import markup
-    from dtool import DataSet
+    from dtoolcore import DataSet
 
     runner = CliRunner()
 
@@ -333,7 +260,7 @@ def test_markup_alt_dir(tmp_dir_fixture):  # NOQA
 def test_markup_inherits_parent_metadata(tmp_dir_fixture):  # NOQA
     from click.testing import CliRunner
     from dtool.cli import markup
-    from dtool import DataSet
+    from dtoolcore import DataSet
     from dtool.project import Project
 
     project = Project("test_inheritance")

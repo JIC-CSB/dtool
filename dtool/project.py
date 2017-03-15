@@ -2,7 +2,7 @@
 
 import os
 
-from dtool import Collection
+from dtoolcore import Collection
 from dtool.utils import write_templated_file
 
 

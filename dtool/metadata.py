@@ -5,7 +5,7 @@ import os
 import jinja2.meta
 import click
 
-from dtool import _DtoolObject, NotDtoolObject
+from dtoolcore import _DtoolObject, NotDtoolObject
 from dtool.utils import write_templated_file, JINJA2_ENV
 
 

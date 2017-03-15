@@ -54,7 +54,7 @@ def test_info_from_path_raises_on_file(tmp_dir_fixture):  # NOQA
 
 
 def test_info_from_path_on_dataset(tmp_dir_fixture):  # NOQA
-    from dtool import DataSet
+    from dtoolcore import DataSet
     from dtool.clickutils import info_from_path
 
     dataset = DataSet("mydataset")
