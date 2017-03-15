@@ -8,7 +8,6 @@ from dtoolcore import (
     __version__,
     DataSet,
 )
-from dtoolcore.filehasher import shasum
 from dtool.clickutils import (
     create_project,
     generate_descriptive_metadata,
