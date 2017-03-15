@@ -14,9 +14,13 @@ Added
 - Descriptive ``dtool`` CLI documentation
 
 
-
 Changed
 ^^^^^^^
+
+- Made code work with ``dtoolcore`` api
+- ``dtool.DescriptiveMetadata`` -> ``dtool.metadata.DescriptiveMetadata``
+- ``dtool.metadata_from_path`` -> ``dtool.metadata.metadata_from_path``
+- ``dtool.Project`` -> ``dtool.project.Project``
 
 
 Deprecated
@@ -25,6 +29,12 @@ Deprecated
 Removed
 ^^^^^^^
 
+- ``dtool.DataSet`` class now in ``dtoolcore``
+- ``dtool.Collection`` class now in ``dtoolcore``
+- ``dtool.Manifest`` class now in ``dtoolcore``
+- ``dtool.filehasher`` module now in ``dtoolcore``
+- ``mimetype`` from structural metadata in manifest
+- ``--hash-function`` option from ``dtool new dataset`` and ``dtool markup`` CLI
 
 
 Fixed
@@ -33,7 +43,6 @@ Fixed
 
 Security
 ^^^^^^^^
-
 
 
 [0.12.1] 2017-02-23
