@@ -89,8 +89,8 @@ Features
 
 - Give better error message when a user tries to update manifests at a project level
 - Make use of mimetype overlay in dtool
+- Work out if we can remove project (and make collection fill that role more flexibly)
 - Expose the ability to create collections to dtool
-- Add ability to mark up a directory as a project to dtool
 - Add ability to mark up a directory as a collection to dtool
 - Add validation step checking the numbers of files in the manifest root before
   with some meaningful feedback if there are lots of files present
@@ -111,5 +111,6 @@ Documentation
 ------------
 
 - Brainstorm better name for functionality contained datademo
+- Refactor datademo to use dtoolcore
 - Rename and release datademo
 - Build datademo on cluster
