@@ -18,6 +18,7 @@ setup(name="dtool",
       install_requires=[
         "click",
         "dtoolcore",
+        "dtoolutils",
         "jinja2",
         "pyyaml",
       ],

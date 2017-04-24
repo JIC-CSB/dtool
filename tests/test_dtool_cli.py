@@ -87,6 +87,9 @@ def test_new_dataset(chdir_fixture):  # NOQA
     assert dataset.name == 'my_dataset'
     assert dataset.manifest["hash_function"] == "shasum"
 
+    overlays = dataset.access_overlays()
+    assert "mimetype" in overlays
+
 
 def test_new_project(chdir_fixture):  # NOQA
 

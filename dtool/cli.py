@@ -8,6 +8,7 @@ from dtoolcore import (
     __version__,
     DataSet,
 )
+from dtoolutils.overlays import add_mimetype
 from dtool.clickutils import (
     create_project,
     generate_descriptive_metadata,
@@ -97,6 +98,7 @@ def dataset():
 
     ds = DataSet(dataset_name, 'data')
     ds.persist_to_path(dataset_name)
+    add_mimetype(ds)
 
 
 @new.command()
