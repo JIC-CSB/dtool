@@ -167,6 +167,13 @@ def test_manifest_update(tmp_dir_fixture):  # NOQA
     file_list = manifest["file_list"]
     assert len(file_list) == 6
 
+    ds = DataSet.from_path(tmp_dir_fixture)
+    overlays = ds.access_overlays()
+    assert "mimetype" in overlays
+    assert len(overlays["mimetype"]) == 6
+    identifier = "09648d19e11f0b20e5473594fc278afbede3c9a4"
+    assert overlays["mimetype"][identifier] == "image/png"
+
 
 def test_markup(tmp_dir_fixture):  # NOQA
     from click.testing import CliRunner
@@ -202,13 +209,18 @@ def test_markup(tmp_dir_fixture):  # NOQA
 
     assert os.path.isfile(expected_dtool_file)
 
-    DataSet.from_path(existing_data_dir)
-
     readme_path = os.path.join(existing_data_dir, "README.yml")
     with open(readme_path) as fh:
         descriptive_metadata = yaml.load(fh)
     assert "owner_name" not in descriptive_metadata
     assert descriptive_metadata["owners"][0]["name"] == "Test User"
+
+    ds = DataSet.from_path(existing_data_dir)
+    overlays = ds.access_overlays()
+    assert "mimetype" in overlays
+    assert len(overlays["mimetype"]) == 6
+    identifier = "09648d19e11f0b20e5473594fc278afbede3c9a4"
+    assert overlays["mimetype"][identifier] == "image/png"
 
 
 def test_markup_default_hash_function(chdir_fixture):  # NOQA

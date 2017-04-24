@@ -122,5 +122,6 @@ def manifest():
 def update(path):
     dataset = DataSet.from_path(path)
     dataset.update_manifest()
+    add_mimetype(dataset)
 
     click.secho('Updated manifest')
