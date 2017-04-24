@@ -233,6 +233,9 @@ def test_markup_default_hash_function(chdir_fixture):  # NOQA
     dataset = DataSet.from_path('.')
     assert dataset.manifest["hash_function"] == "shasum"
 
+    overlays = dataset.access_overlays()
+    assert "mimetype" in overlays
+
 
 def test_markup_alt_dir(tmp_dir_fixture):  # NOQA
     from click.testing import CliRunner

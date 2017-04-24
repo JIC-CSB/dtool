@@ -75,6 +75,7 @@ def markup(path):
 
     ds = DataSet(dataset_name)
     ds.persist_to_path(path)
+    add_mimetype(ds)
 
 
 @cli.group()
