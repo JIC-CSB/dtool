@@ -1,20 +1,8 @@
 """Test the DescriptiveMetadata class."""
 
 import os
-import shutil
-import tempfile
 
-import pytest
-
-
-@pytest.fixture
-def tmp_dir(request):
-    d = tempfile.mkdtemp()
-
-    @request.addfinalizer
-    def teardown():
-        shutil.rmtree(d)
-    return d
+from . import tmp_dir_fixture  # NOQA
 
 
 def test_DescriptiveMetadata_initialisation():
@@ -99,13 +87,13 @@ def test_DescriptiveMetadata_prompt_for_values():
     assert descriptive_metadata['project_name'] == 'new_project'
 
 
-def test_DescriptiveMetadata_persist_to_file(tmp_dir):
+def test_DescriptiveMetadata_persist_to_file(tmp_dir_fixture):  # NOQA
     from dtool.metadata import DescriptiveMetadata
     from dtool.cli import README_SCHEMA
     descriptive_metadata = DescriptiveMetadata(README_SCHEMA)
 
-    output_file = os.path.join(tmp_dir, 'README.yml')
-    descriptive_metadata.persist_to_path(tmp_dir)
+    output_file = os.path.join(tmp_dir_fixture, 'README.yml')
+    descriptive_metadata.persist_to_path(tmp_dir_fixture)
 
     assert os.path.isfile(output_file)
 
@@ -125,7 +113,7 @@ date: today
 """
 
     descriptive_metadata.persist_to_path(
-        tmp_dir, template='dtool_dataset_README.yml')
+        tmp_dir_fixture, template='dtool_dataset_README.yml')
 
     with open(output_file) as fh:
         contents = fh.read()
@@ -149,12 +137,12 @@ creation_date: today
 """
 
 
-def test_descriptive_metadata_inheritence(tmp_dir):
+def test_descriptive_metadata_inheritence(tmp_dir_fixture):  # NOQA
     from dtoolcore import Collection, DataSet
     from dtool.project import Project
     from dtool.metadata import DescriptiveMetadata
 
-    project_path = tmp_dir
+    project_path = tmp_dir_fixture
     project = Project("my_project")
     project.persist_to_path(project_path)
 
@@ -189,13 +177,14 @@ def test_descriptive_metadata_inheritence(tmp_dir):
     assert dataset.descriptive_metadata["dataset_name"] == "my_dataset"
 
 
-def test_metadata_from_path(tmp_dir):
+def test_metadata_from_path(tmp_dir_fixture):  # NOQA
     from dtool.metadata import metadata_from_path
 
-    assert metadata_from_path(tmp_dir) == {}
+    assert metadata_from_path(tmp_dir_fixture) == {}
 
     from dtool.project import Project
     project = Project("my_project")
-    project.persist_to_path(tmp_dir)
+    project.persist_to_path(tmp_dir_fixture)
 
-    assert metadata_from_path(tmp_dir) == {"project_name": "my_project"}
+    expected = {"project_name": "my_project"}
+    assert metadata_from_path(tmp_dir_fixture) == expected
