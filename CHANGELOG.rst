@@ -12,6 +12,7 @@ Added
 ^^^^^
 
 - Descriptive ``dtool`` CLI documentation
+- Writing of mimetype overlay to ``dtool new dataset``, ``dtool markup dataset``, and ``dtool manifest update``
 
 
 Changed
